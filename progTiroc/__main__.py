@@ -1,10 +1,9 @@
-print('prova')
-
-import api
+from progTiroc.api import app
 import os
 import sys
 
-if __name__ == '__main__':
+
+def start_server():
     envDebug: str = os.environ.get('DEBUG')
     debug: bool = (envDebug is not None) and (envDebug == '1')
 
@@ -20,7 +19,10 @@ if __name__ == '__main__':
 
     print(envDebug, port)
 
-
     port = int(os.environ.get("PORT", 5000))
-    api.app.run(host='0.0.0.0', port=port, debug=debug)
+    app.run(host='0.0.0.0', port=port, debug=debug)
+
+
+if __name__ == '__main__':
+    start_server()
 

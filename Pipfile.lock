@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "43ca24b7470b6949d1351f7158c1ee756332dd36545c0f9a403728b61365099b"
+            "sha256": "aa8b684a2d3da70cdd76c62fb9b229e1b271b0e40cadab7ccc5b16ec5c6ae70e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,13 @@
         ]
     },
     "default": {
+        "aniso8601": {
+            "hashes": [
+                "sha256:7849749cf00ae0680ad2bdfe4419c7a662bef19c03691a19e008c8b9a5267802",
+                "sha256:94f90871fcd314a458a3d4eca1c84448efbd200e86f55fe4c733c7a40149ef50"
+            ],
+            "version": "==3.0.2"
+        },
         "click": {
             "hashes": [
                 "sha256:29f99fc6125fbc931b758dc053b3114e55c77a6e4c6c3a2674a2dc986016381d",
@@ -31,6 +38,13 @@
             "index": "pypi",
             "version": "==1.0.2"
         },
+        "flask-restplus": {
+            "hashes": [
+                "sha256:1664401e61bcec4fdcfbfd25df81b233fe7388a6ae73c37b78918957609508b6"
+            ],
+            "index": "pypi",
+            "version": "==0.11.0"
+        },
         "itsdangerous": {
             "hashes": [
                 "sha256:cbb3fcf8d3e33df861709ecaf89d9e6629cff0a217bc2848f1b41cd30d360519"
@@ -43,6 +57,13 @@
                 "sha256:f84be1bb0040caca4cea721fcbbbbd61f9be9464ca236387158b0feea01914a4"
             ],
             "version": "==2.10"
+        },
+        "jsonschema": {
+            "hashes": [
+                "sha256:000e68abd33c972a5248544925a0cae7d1125f9bf6c58280d37546b946769a08",
+                "sha256:6ff5f3180870836cae40f06fa10419f557208175f13ad7bc26caa77beb1f6e02"
+            ],
+            "version": "==2.6.0"
         },
         "markupsafe": {
             "hashes": [
@@ -89,6 +110,13 @@
                 "sha256:f7f309ebbda39fb00ec28f311e90b8ec9def924c41b658c45d6ab8077aadece8"
             ],
             "version": "==3.7.0"
+        },
+        "pytz": {
+            "hashes": [
+                "sha256:a061aa0a9e06881eb8b3b2b43f05b9439d6583c206d0a6c340ff72a7b6669053",
+                "sha256:ffb9ef1de172603304d9d2819af6f5ece76f2e85ec10692a524dd876e72bf277"
+            ],
+            "version": "==2018.5"
         },
         "six": {
             "hashes": [

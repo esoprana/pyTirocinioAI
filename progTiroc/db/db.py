@@ -1,5 +1,6 @@
 import os
 import sys
+
 import mongoengine
 
 host: str = os.environ.get('DBHOST', '127.0.0.1')
@@ -37,6 +38,8 @@ class User(mongoengine.Document):
 
     username = mongoengine.StringField(required=True, null=False)
     googleSessionId = mongoengine.UUIDField(required=True, null=False)
+
+    externallyVisible = ['id', 'username']
 
 
 class Rule(mongoengine.Document):
