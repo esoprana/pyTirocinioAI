@@ -24,7 +24,7 @@ user = ns.model('User', {
 userPutRQ = reqparse.RequestParser(bundle_errors=True)
 userPutRQ.add_argument('username', type=str, required=True, help='The user\'s username', location='json')
 
-@ns.route('/')
+@ns.route('')
 class UserList(Resource):
     """ Show a list of all the users or insert user in list """
 

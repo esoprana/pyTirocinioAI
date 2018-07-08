@@ -7,6 +7,8 @@ def start_server():
     envDebug: str = os.environ.get('DEBUG')
     debug: bool = (envDebug is not None) and (envDebug == '1')
 
+    print(os.environ)
+
     try:
         port = int(os.environ.get('PORT', 5000))
     except ValueError:
