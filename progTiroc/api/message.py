@@ -15,25 +15,30 @@ ns = Namespace(name='message', description='Message operations')
 message = ns.model('Message', {
     'id': fields.String(
             readonly=True,
+            required=False,
             description='The message unique identifier'
         ),
     'text': fields.String(
-            readonly=True,
+            required=True,
             description='Message\'s text'
         ),
     'timestamp': fields.DateTime(
             readonly=True,
+            required=False,
             description='The message\'s timestamp'
         )
 })
+
+messagePutRQ = reqparse.RequestParser(bundle_errors=True)
+messagePutRQ.add_argument('text', type=str, required=True, help='The text of the message', location='json')
 
 @ns.route('/<string:fr>/<string:to>')
 class SingleMessage(Resource):
     """ Save messages """
 
-    #@ns.marshal_with(message)
+    @ns.marshal_with(message)
     @ns.doc(params={'fr': 'The id of the user/bot from that sends the message', 'to': 'The id of the user that receives the message'})
-    @ns.doc(body=fields.Raw)
+    @ns.doc(body=message)
     def put(self, fr: str, to: str):
         text = request.data
         isWoz: bool = fr == WOZ_BOT_ID or to == WOZ_BOT_ID
@@ -84,12 +89,8 @@ class SingleMessage(Resource):
                     501, 'Not yet implemented'
                 )
 
-        #return {
-        #        'id': str(msg.id),
-        #        'text': msg.text,
-        #        'timestamp': msg.timestamp
-        #    }, 200
         return {
-                'status': 'ok'
-            }
-
+                'id': str(msg.id),
+                'text': msg.text,
+                'timestamp': msg.timestamp
+            }, 200
