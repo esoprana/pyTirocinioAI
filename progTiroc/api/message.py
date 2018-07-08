@@ -55,22 +55,14 @@ class SingleMessage(Resource):
             contextsOfUser = db.Context.objects(ofUser=fr, endTimestamp=None)
             if (len(contextsOfUser) > 1):
                 ns.abort(
-                        500,
-                        {
-                            'status': 'error',
-                            'message':  'Errore dovrebbe esserci un esattamente un' +
-                                        ' contesto attivo(>1 al momento)'
-                        }
+                        500, 'Errore dovrebbe esserci un esattamente un' +
+                             ' contesto attivo(>1 al momento)'
                     )
             elif (len(contextsOfUser) == 0):
                 ns.abort(
-                        500,
-                        {
-                            'status': 'error',
-                            'message':  'Errore dovrebbe esserci un esattamente un' +
-                                        ' contesto attivo(0 al momento)\n' +
-                                        'Controllare che l\'utente esista'
-                        }
+                        500, 'Errore dovrebbe esserci un esattamente un' +
+                             ' contesto attivo(0 al momento)\n' +
+                             'Controllare che l\'utente esista'
                     )
 
             context: db.Context = contextsOfUser[0]
@@ -79,27 +71,18 @@ class SingleMessage(Resource):
             context.save()
         elif (to != NWOZ_BOT_ID):
             ns.abort(
-                    400,
-                    {
-                        'status': 'error',
-                        'message':  'La comunicazione può avvenire solo come:\n' +
-                                    ' WOZ BOT'
-                                    ' 000000000000000000000000 -> user\n' +
-                                    ' user -> 000000000000000000000000\n' +
-                                    '\n' +
-                                    ' NON WOZ BOT' +
-                                    ' user -> 000000000000000000000001\n'
-                    }
+                    400, 'La comunicazione può avvenire solo come:\n' +
+                         ' WOZ BOT'
+                         ' 000000000000000000000000 -> user\n' +
+                         ' user -> 000000000000000000000000\n' +
+                         '\n' +
+                         ' NON WOZ BOT' +
+                         ' user -> 000000000000000000000001\n'
                 )
         else:
-            #ns.abort(
-            #        502,
-            #        {
-            #            'status': 'error',
-            #            'message': 'Not yet implemented'
-            #        }
-            #    )
-            pass
+            ns.abort(
+                    501, 'Not yet implemented'
+                )
 
         #return {
         #        'id': str(msg.id),

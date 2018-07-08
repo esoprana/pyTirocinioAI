@@ -37,11 +37,7 @@ class UserList(Resource):
             ]
         except Exception:
             ns.abort(
-                    500,
-                    {
-                        'status': 'error',
-                        'message': 'Impossible to get the data requested'
-                    }
+                    500, 'Impossible to get the data requested'
                 )
 
         return data, 200
@@ -62,10 +58,7 @@ class UserList(Resource):
             user.save()
         except mongoengine.OperationError:
             ns.abort(
-                    500, {
-                        "status": "error",
-                        "message": "Impossible to save changes"
-                    }
+                    500, 'Impossible to save changes'
                 )
 
         context = db.Context(
@@ -80,10 +73,7 @@ class UserList(Resource):
             context.save()
         except mongoengine.OperationError:
             ns.abort(
-                    500, {
-                        "status": "error",
-                        "message": "Impossible to save changes"
-                    }
+                    500, 'Impossible to save changes'
                 )
             # TODO: Gestire caso in cui user è comunque salvato
 
@@ -106,17 +96,11 @@ class SingleUser(Resource):
             user = db.User.objects(id=oId).only(*db.User.externallyVisible).get()
         except mongoengine.MultipleObjectsReturned:
             ns.abort(
-                    500, {
-                        "status": "error",
-                        "message": "There should be one user but more than one were found"
-                    }
+                    500, 'There should be one user but more than one were found'
                 )
         except mongoengine.DoesNotExist:
             ns.abort(
-                    400, {
-                        "status": "error",
-                        "message": "Requested user not found"
-                    }
+                    400, 'Requested user not found'
                 )
 
         return {
@@ -134,17 +118,11 @@ class SingleUser(Resource):
             user = db.User.objects(id=oId).only(*db.User.externallyVisible).get()
         except mongoengine.MultipleObjectsReturned:
             ns.abort(
-                    500, {
-                        "status": "error",
-                        "message": "There should be one user but more than one were found"
-                    }
+                    500, 'There should be one user but more than one were found'
                 )
         except mongoengine.DoesNotExist:
             ns.abort(
-                    400, {
-                        "status": "error",
-                        "message": "Requested user not found"
-                    }
+                    400, 'Requested user not found'
                 )
 
         args = userPutRQ.parse_args()
