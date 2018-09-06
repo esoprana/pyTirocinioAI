@@ -7,11 +7,16 @@ name = "pypi"
 flask = "*"
 mongoengine = "*"
 flask-restplus = "*"
+google-cloud-language = "*"
+google-api-python-client = "*"
+dialogflow = "*"
 
 [dev-packages]
 pytest = "*"
 sphinx = "*"
 sphinx-rtd-theme = "*"
+python-language-server = {version = "*", extras = ["all"]}
+pytest-cov = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"

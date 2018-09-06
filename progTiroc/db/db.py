@@ -33,6 +33,10 @@ class User(mongoengine.Document):
             type: String,
             required: true,
         },
+        username: {
+            type: String,
+            required: true
+        },
     }
     """
 
@@ -49,6 +53,10 @@ class Rule(mongoengine.Document):
 class Topic(mongoengine.Document):
     """
     {
+        name: {
+            type: String,
+            required: true
+        }
         rules: {
             type: [{
                 type: mongoose.Schema.Types.ObjectId,
@@ -56,10 +64,19 @@ class Topic(mongoengine.Document):
                 required: true,
             }],
         },
+        var_names: {
+            type: [{
+                type: String,
+                required: true
+            }]
+            required: true
+        }
     }
     """
 
+    name = mongoengine.StringField(required=True, null=False)
     rules = mongoengine.ListField(mongoengine.ReferenceField(Rule), required=True, null=False)
+    var_names = mongoengine.ListField(mongoengine.StringField(required=True, null=False), required=True, null=False)
 
 
 class Params(mongoengine.EmbeddedDocument):
@@ -193,7 +210,7 @@ class Context(mongoengine.Document):
         },
     }
     """
-    ofUser = mongoengine.LazyReferenceField(User, required=True, null=False)
+    ofUser = mongoengine.ReferenceField(User, required=True, null=False)
     startTimestamp = mongoengine.DateTimeField(required=True, null=False)
     endTimestamp = mongoengine.DateTimeField(required=False, null=True)
     params = mongoengine.ListField(mongoengine.EmbeddedDocumentField(Params))  # TODO: Ricontrollare priorità(usare indice implicito in lista)
@@ -249,14 +266,17 @@ class Action(mongoengine.EmbeddedDocument):
             type: Boolean,
             required: true,
         },
+        immediatlyNext : {
+            type: Boolean,
+            required: true,
+        },
     }
     """
 
     text = mongoengine.ListField(mongoengine.StringField, required=True, null=False)
-    exportNames = mongoengine.ListField(TopicAndNames, required=True)
-    popUntil = mongoengine.ReferenceField(Topic, required=True, null=False)
-    pushTopic = mongoengine.ListField(TopicAndNames, required=True)
+    operations = mongoengine.ListField(mongoengine.DictField)
     isQuestion = mongoengine.BooleanField(required=True, null=False)
+    immediatlyNext = mongoengine.BooleanField(required=True, null=False)
 
 
 class Rule(mongoengine.Document):

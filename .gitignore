@@ -1,3 +1,24 @@
+# env variables
 .envrc
+
+# mypy
 .mypy_cache/
+
+# Ide
+.idea/
+
+# Pytest
+.pytest_cache/
+
+# Pytest coverage
+.coverage
+htmlcov/
+
+# __pycache__
 __pycache__/
+
+# Debug files
+debug.log
+tests/debug.log
+
+docs/build/*

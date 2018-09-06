@@ -15,19 +15,16 @@ help:
 	@echo 'runi           : run main.py in interactive mode'
 	@echo 'doc            : generate documentation both in pdf and html'
 	@echo 'doc_html       : generate html documentation'
-	@echo 'doc_pdf        : generate html documentation'
 	@echo 'test           : execute all tests'
+	@echo 'conf_git       : configure git hooks dir'
 
 # Clean rules
 clean: clean_doc clean_pycache
 
-clean_doc: clean_doc_html clean_doc_pdf
+clean_doc: clean_doc_html
 
 clean_doc_html:
 	@rm -Rf docs/build/html
-
-clean_doc_pdf:
-	@rm -Rf docs/build/pdf
 
 clean_pycache:
 	@find . | grep -E "(__pycache__|\.pyc|\.pyo)" | xargs rm -rf
@@ -47,15 +44,16 @@ runi:
 .sphinx_prep:
 	@cd docs; sphinx-apidoc -f -o source ../ai/;
 
-doc: doc_html doc_pdf
+doc: doc_html
 
 doc_html:
 	@echo ${@:4};
-	@cd docs; $(MAKE) html;
-
-doc_pdf:
-	@cd docs; $(MAKE) pdf;
+	@cd docs; $(MAKE) -j4 html;
 
 # Test rules
 test:
-	pytest --cov=ai --cov-branch
+	python -m pytest
+	#pytest --cov=ai --cov-branch
+
+conf_git:
+	git config core.hooksPath .githooks
