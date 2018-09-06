@@ -1,4 +1,4 @@
-.PHONY: help clean clean_doc clean_pycache test run runi doc doc_html doc_pdf
+.PHONY: help clean clean_doc clean_pycache test run runi doc doc_html conf_git
 
 # === Aux rules ==============================================================
 # Help rules
@@ -33,10 +33,10 @@ clean_pycache:
 # === Normal rules ===========================================================
 # Run rules
 run:
-	python -m progTiroc
+	@python -m progTiroc
 
 runi:
-	python -i -m progTiroc
+	@python -i -m progTiroc
 
 
 # === Dev rules ==============================================================
@@ -52,8 +52,7 @@ doc_html:
 
 # Test rules
 test:
-	python -m pytest
-	#pytest --cov=ai --cov-branch
+	@python -m pytest
 
 conf_git:
-	git config core.hooksPath .githooks
+	@git config core.hooksPath hooks
