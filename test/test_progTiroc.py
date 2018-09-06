@@ -115,5 +115,45 @@ def test_single_op_None(condition, value):
     ({'a__ge': 1, 'a__ne':  2}, {'a': 2}, False),
     ({'a__ge': 1, 'a__ne':  3}, {'a': 2}, True),
 ])
-def test_single_op_None(condition, value, expected):
+def test_multiple_op(condition, value, expected):
     assert check(condition, value) == expected
+
+
+@pytest.mark.parametrize("condition,value", [
+    ({'n': {'a__lt':        1}}, {}),
+    ({'n': {'a__gt':        1}}, {}),
+    ({'n': {'a__le':        1}}, {}),
+    ({'n': {'a__ge':        1}}, {}),
+    ({'n': {'a__eq':        1}}, {}),
+    ({'n': {'a__ne':        1}}, {}),
+    ({'n': {'a__in':  [1,2,3]}}, {}),
+    ({'n': {'a__nin': [1,2,3]}}, {}),
+])
+def test_nested_op_None(condition, value):
+    assert check(condition, value) is True
+
+
+@pytest.mark.parametrize("condition,value,expected", [
+    ({'n': {'a__lt':          1}}, {'n': {'a': 1}}, False),
+    ({'n': {'a__gt':          1}}, {'n': {'a': 1}}, False),
+    ({'n': {'a__le':          1}}, {'n': {'a': 2}}, False),
+    ({'n': {'a__ge':          1}}, {'n': {'a': 0}}, False),
+    ({'n': {'a__eq':          1}}, {'n': {'a': 2}}, False),
+    ({'n': {'a__ne':          1}}, {'n': {'a': 1}}, False),
+    ({'n': {'a__in':  [1, 2, 3]}}, {'n': {'a': 0}}, False),
+    ({'n': {'a__nin': [1, 2, 3]}}, {'n': {'a': 1}}, False),
+
+    ({'n': {'a__lt':          1}}, {'n': {'a': 0}}, True),
+    ({'n': {'a__gt':          1}}, {'n': {'a': 2}}, True),
+    ({'n': {'a__le':          1}}, {'n': {'a': 1}}, True),
+    ({'n': {'a__ge':          1}}, {'n': {'a': 1}}, True),
+    ({'n': {'a__eq':          1}}, {'n': {'a': 1}}, True),
+    ({'n': {'a__ne':          1}}, {'n': {'a': 0}}, True),
+    ({'n': {'a__in':  [1, 2, 3]}}, {'n': {'a': 1}}, True),
+    ({'n': {'a__nin': [1, 2, 3]}}, {'n': {'a': 4}}, True),
+])
+def test_nested_op(condition, value, expected):
+    assert check(condition, value) == expected
+
+
+
