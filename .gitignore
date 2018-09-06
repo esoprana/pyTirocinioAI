@@ -20,5 +20,3 @@ __pycache__/
 # Debug files
 debug.log
 tests/debug.log
-
-docs/build/*
