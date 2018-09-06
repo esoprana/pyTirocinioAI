@@ -23,8 +23,6 @@ if __name__ == '__main__':
         print('Enviroment varible port should be number')
         sys.exit(5)
 
-
     print(envDebug, port)
 
     start_server(debug=debug, port=port)
-

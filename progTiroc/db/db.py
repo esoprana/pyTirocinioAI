@@ -20,7 +20,8 @@ if (port >= 65535):
     sys.exit(2)
 
 try:
-    mongoengine.connect(name, host=host, port=port, username=user, password=pswd)
+    mongoengine.connect(
+        name, host=host, port=port, username=user, password=pswd)
 except Exception as ex:
     print(ex)
     sys.exit(3)
@@ -75,8 +76,12 @@ class Topic(mongoengine.Document):
     """
 
     name = mongoengine.StringField(required=True, null=False)
-    rules = mongoengine.ListField(mongoengine.ReferenceField(Rule), required=True, null=False)
-    var_names = mongoengine.ListField(mongoengine.StringField(required=True, null=False), required=True, null=False)
+    rules = mongoengine.ListField(
+        mongoengine.ReferenceField(Rule), required=True, null=False)
+    var_names = mongoengine.ListField(
+        mongoengine.StringField(required=True, null=False),
+        required=True,
+        null=False)
 
 
 class Params(mongoengine.EmbeddedDocument):
@@ -103,7 +108,8 @@ class Params(mongoengine.EmbeddedDocument):
     """
 
     ofTopic = mongoengine.ReferenceField(Topic, required=True, null=False)
-    values = mongoengine.DictField(required=True, default=dict)  # TODO: Ricontrollare
+    values = mongoengine.DictField(
+        required=True, default=dict)  # TODO: Ricontrollare
     startTime = mongoengine.DateTimeField(required=True, null=False)
     priority = mongoengine.IntField(required=True, null=False)
 
@@ -213,13 +219,19 @@ class Context(mongoengine.Document):
     ofUser = mongoengine.ReferenceField(User, required=True, null=False)
     startTimestamp = mongoengine.DateTimeField(required=True, null=False)
     endTimestamp = mongoengine.DateTimeField(required=False, null=True)
-    params = mongoengine.ListField(mongoengine.EmbeddedDocumentField(Params))  # TODO: Ricontrollare priorità(usare indice implicito in lista)
-    messages = mongoengine.ListField(mongoengine.EmbeddedDocumentField(Message), required=False, default=list)
+    params = mongoengine.ListField(
+        mongoengine.EmbeddedDocumentField(Params)
+    )  # TODO: Ricontrollare priorità(usare indice implicito in lista)
+    messages = mongoengine.ListField(
+        mongoengine.EmbeddedDocumentField(Message),
+        required=False,
+        default=list)
 
 
 class TopicAndNames(mongoengine.EmbeddedDocument):
     targetTopic = mongoengine.ReferenceField(Topic, required=True, null=False)
-    namesToExport = mongoengine.ListField(mongoengine.StringField(), required=True)
+    namesToExport = mongoengine.ListField(
+        mongoengine.StringField(), required=True)
 
 
 class Action(mongoengine.EmbeddedDocument):
@@ -273,7 +285,8 @@ class Action(mongoengine.EmbeddedDocument):
     }
     """
 
-    text = mongoengine.ListField(mongoengine.StringField, required=True, null=False)
+    text = mongoengine.ListField(
+        mongoengine.StringField, required=True, null=False)
     operations = mongoengine.ListField(mongoengine.DictField)
     isQuestion = mongoengine.BooleanField(required=True, null=False)
     immediatlyNext = mongoengine.BooleanField(required=True, null=False)
@@ -298,7 +311,8 @@ class Rule(mongoengine.Document):
     """
     condition = mongoengine.DictField(required=True, null=False)
     score = mongoengine.IntField(required=True, null=False)
-    action = mongoengine.EmbeddedDocumentField(Action, required=True, null=False)
+    action = mongoengine.EmbeddedDocumentField(
+        Action, required=True, null=False)
 
 
 """
@@ -354,4 +368,3 @@ function getCurrentContextByUser(this: IContextModel, user: IUser): Promise< ICo
 contextSchema.statics.getCurrentContextByUser = getCurrentContextByUser;
 contextSchema.statics.getCurrentContextByUserId = getCurrentContextByUserId;
 """
-

@@ -1,6 +1,7 @@
 import dialogflow_v2 as dialogflow
 import google.cloud.language
 
+
 def analyze_intent(project_id, session_id, text: str, language_code, log):
     """Returns the result of detect intent with texts as inputs.
 
@@ -30,9 +31,7 @@ def analyze_categories(text: str, log) -> list:
     )
 
     try:
-        response = client.classify_text(
-            document=document
-        ).categories
+        response = client.classify_text(document=document).categories
     except Exception as ex:
         log.critical(ex)
         response = []
@@ -54,9 +53,6 @@ def analyze_sentiment(text: str, log) -> dict:
         ).document_sentiment
     except Exception as ex:
         print(ex)
-        sentiment = {
-            'score': 0.0,
-            'magnitude': 0.0
-        }
+        sentiment = {'score': 0.0, 'magnitude': 0.0}
 
     return sentiment
