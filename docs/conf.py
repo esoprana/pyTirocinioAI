@@ -14,7 +14,8 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../'))
+
 
 # -- Project information -----------------------------------------------------
 
@@ -27,6 +28,7 @@ version = ''
 # The full version, including alpha/beta/rc tags
 release = '0.1'
 
+
 # -- General configuration ---------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -38,6 +40,7 @@ release = '0.1'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
 ]
@@ -64,10 +67,11 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path .
-exclude_patterns = []
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
+
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -97,10 +101,12 @@ html_static_path = ['_static']
 #
 # html_sidebars = {}
 
+
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'pyTirocinioAIdoc'
+
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -130,12 +136,16 @@ latex_documents = [
      'Enrico Soprana', 'manual'),
 ]
 
+
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, 'pytirocinioai', 'pyTirocinioAI Documentation',
-              [author], 1)]
+man_pages = [
+    (master_doc, 'pytirocinioai', 'pyTirocinioAI Documentation',
+     [author], 1)
+]
+
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -143,28 +153,15 @@ man_pages = [(master_doc, 'pytirocinioai', 'pyTirocinioAI Documentation',
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'pyTirocinioAI', 'pyTirocinioAI Documentation', author,
-     'pyTirocinioAI', 'One line description of project.', 'Miscellaneous'),
+    (master_doc, 'pyTirocinioAI', 'pyTirocinioAI Documentation',
+     author, 'pyTirocinioAI', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
-# -- Options for Epub output -------------------------------------------------
-
-# Bibliographic Dublin Core info.
-epub_title = project
-epub_author = author
-epub_publisher = author
-epub_copyright = copyright
-
-# The unique identifier of the text. This can be a ISBN number
-# or the project homepage.
-#
-# epub_identifier = ''
-
-# A unique identification for the text.
-#
-# epub_uid = ''
-
-# A list of files that should not be packed into the epub file.
-epub_exclude_files = ['search.html']
 
 # -- Extension configuration -------------------------------------------------
+
+# -- Options for intersphinx extension ---------------------------------------
+
+# Example configuration for intersphinx: refer to the Python standard library.
+intersphinx_mapping = {'https://docs.python.org/': None}
