@@ -3,11 +3,11 @@ import sys
 
 import mongoengine
 
-host: str = os.environ.get('DBHOST', '127.0.0.1')
-port: str = os.environ.get('DBPORT', '27017')
-name: str = os.environ.get('DBNAME', 'db')
-user: str = os.environ.get('DBUSER', 'user')
-pswd: str = os.environ.get('DBPSWD', 'example')
+host = os.environ.get('DBHOST', '127.0.0.1')
+port = os.environ.get('DBPORT', '27017')
+name = os.environ.get('DBNAME', 'db')
+user = os.environ.get('DBUSER', 'user')
+pswd = os.environ.get('DBPSWD', 'example')
 
 try:
     port: int = int(port)
