@@ -9,8 +9,9 @@ import re
 import logging
 import os
 import mongoengine
+import datetime
 
-from typing import List, Tuple, Union, Dict, Any, Optional
+from typing import List, Tuple, Dict, Any, Optional
 
 logging.basicConfig(filename='debug.log', level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -209,26 +210,32 @@ class AI:
 
         text: str = action.text[randint(0, len(action.text) - 1)]
 
-        print(text)
+        db.BotMessage
+
+        ord_param = sorted(ctx.params, lambda p: p.priority, reverse=True)[:action[0] + 1]
+        _ = [ord_param[mapping[i]] for i in range(len(mapping))]
 
         # Non ci sono topic di cui fare il push nè nomi da esportare nè
         # togliere argomenti
-        new_ctx = db.Context(**{k: v for (k, v) in ctx.to_json() if k != '_id'})
+        if action.operations:
+            ctx.endTimestamp = datetime.datetime.now()
+            ctx.save()
 
-        new_ctx.params = sorted(
-            ctx.params, lambda p: p.priority, reverse=True)[:action[0] + 1]
-        _ = [new_ctx.params[mapping[i]] for i in range(len(mapping))]
 
-        changed: bool = False
+            new_ctx = db.Context(
+                **{k: v for (k, v) in ctx.to_mongo().items() if k != '_id'})
+            new_ctx.startTimestamp = ctx.endTimestamp
 
-        # for do in action.operations:
-        #     if do.op == 'exportNames':
-        #         param: db.Params = _[do.index]
-        #         [do.name] = eval(
-        #                 do.val,
-        #                 globals={},
-        #                 locals={'_': _, 'm': msg}
-        #         )
-        #     elif do.po == 'push':
+            changed: bool = False
+
+            # for do in action.operations:
+            #     if do.op == 'exportNames':
+            #         param: db.Params = _[do.index]
+            #         [do.name] = eval(
+            #                 do.val,
+            #                 globals={},
+            #                 locals={'_': _, 'm': msg}
+            #         )
+            #     elif do.po == 'push':
 
         return text.format(_=_, m=msg)
