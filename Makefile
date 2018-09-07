@@ -42,7 +42,7 @@ runi:
 # === Dev rules ==============================================================
 # Documentation rules
 .sphinx_prep:
-	@cd docs; sphinx-apidoc -f -o source ../ai/;
+	@cd docs; sphinx-apidoc -f -o . ../progTiroc/;
 
 doc: doc_html
 
