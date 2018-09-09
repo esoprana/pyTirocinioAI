@@ -33,7 +33,6 @@
             
   <h1>Source code for progTiroc.api.message</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">flask_restplus</span> <span class="k">import</span> <span class="n">Namespace</span><span class="p">,</span> <span class="n">Resource</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">reqparse</span>
-<span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">request</span>
 <span class="kn">import</span> <span class="nn">mongoengine</span>
 
 <span class="kn">from</span> <span class="nn">progTiroc</span> <span class="k">import</span> <span class="n">db</span>
@@ -77,47 +76,55 @@
             <span class="s1">&#39;fr&#39;</span><span class="p">:</span> <span class="s1">&#39;The id of the user/bot from that sends the message&#39;</span><span class="p">,</span>
             <span class="s1">&#39;to&#39;</span><span class="p">:</span> <span class="s1">&#39;The id of the user that receives the message&#39;</span>
         <span class="p">})</span>
-    <span class="nd">@ns</span><span class="o">.</span><span class="n">doc</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">message</span><span class="p">)</span>
+    <span class="nd">@ns</span><span class="o">.</span><span class="n">doc</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">messagePutRQ</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span>
         <span class="n">isWoz</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">fr</span> <span class="o">==</span> <span class="n">WOZ_BOT_ID</span> <span class="ow">or</span> <span class="n">to</span> <span class="o">==</span> <span class="n">WOZ_BOT_ID</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">isWoz</span><span class="p">):</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">fr</span> <span class="o">==</span> <span class="n">WOZ_BOT_ID</span><span class="p">):</span>
-                <span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">to</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">fr</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">messagePutRQ</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
-                <span class="n">msg</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">WozBotMessage</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">WozUserMessage</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
-
-            <span class="n">contextsOfUser</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">ofUser</span><span class="o">=</span><span class="n">fr</span><span class="p">,</span> <span class="n">endTimestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contextsOfUser</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span>
-                    <span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Errore dovrebbe esserci un esattamente un&#39;</span> <span class="o">+</span>
-                    <span class="s1">&#39; contesto attivo(&gt;1 al momento)&#39;</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contextsOfUser</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-                <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span>
-                    <span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Errore dovrebbe esserci un esattamente un&#39;</span> <span class="o">+</span>
-                    <span class="s1">&#39; contesto attivo(0 al momento)</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
-                    <span class="s1">&#39;Controllare che l</span><span class="se">\&#39;</span><span class="s1">utente esista&#39;</span><span class="p">)</span>
-
-            <span class="n">context</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">contextsOfUser</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-            <span class="n">context</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="n">context</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="n">to</span> <span class="o">!=</span> <span class="n">NWOZ_BOT_ID</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">isWoz</span> <span class="ow">and</span> <span class="n">to</span> <span class="o">!=</span> <span class="n">NWOZ_BOT_ID</span><span class="p">):</span>
             <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span>
-                <span class="mi">400</span><span class="p">,</span> <span class="s1">&#39;La comunicazione può avvenire solo come:</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39; WOZ BOT&#39;</span>
-                <span class="s1">&#39; 000000000000000000000000 -&gt; user</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
-                <span class="s1">&#39; user -&gt; 000000000000000000000000</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39; NON WOZ BOT&#39;</span> <span class="o">+</span>
+                <span class="mi">400</span><span class="p">,</span> <span class="s1">&#39;La comunicazione può avvenire solo come:</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39; WOZ BOT</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="o">+</span> <span class="s1">&#39; 000000000000000000000000 -&gt; user</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+                <span class="s1">&#39; user -&gt; 000000000000000000000000</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39; NON WOZ BOT</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
                 <span class="s1">&#39; user -&gt; 000000000000000000000001</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">msg</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Message</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">isWoz</span><span class="p">):</span>
+            <span class="c1"># TODO: Create vera risposta</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">UserMessage</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">fr</span> <span class="o">==</span> <span class="n">WOZ_BOT_ID</span><span class="p">):</span>
+            <span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">to</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">fr</span><span class="p">)</span>
+
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">WozBotMessage</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span><span class="mi">501</span><span class="p">,</span> <span class="s1">&#39;Not yet implemented&#39;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">WozUserMessage</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Get the list of context of user in decresend order of timestamp</span>
+        <span class="n">contextsOfUser</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">ofUser</span><span class="o">=</span><span class="n">fr</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-timestamp&#39;</span><span class="p">)</span>
+
+        <span class="c1"># If no active context send error(at least one should be)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contextsOfUser</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span>
+                <span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Errore dovrebbe esserci un &#39;</span> <span class="o">+</span>
+                <span class="s1">&#39;contesto attivo(0 al momento)</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+                <span class="s1">&#39;Controllare che l</span><span class="se">\&#39;</span><span class="s1">utente esista&#39;</span><span class="p">)</span>
+
+        <span class="n">old_context</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">contextsOfUser</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">context</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
+            <span class="n">ofUser</span><span class="o">=</span><span class="n">old_context</span><span class="o">.</span><span class="n">ofUser</span><span class="p">,</span>
+            <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">old_context</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
-            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-            <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="o">.</span><span class="n">timestamp</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">context</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+            <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">context</span><span class="o">.</span><span class="n">timestamp</span>
         <span class="p">},</span> <span class="mi">200</span></div></div>
 </pre></div>
 

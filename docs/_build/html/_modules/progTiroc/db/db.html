@@ -87,58 +87,21 @@
 
 <div class="viewcode-block" id="Topic"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Topic">[docs]</a><span class="k">class</span> <span class="nc">Topic</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    {</span>
-<span class="sd">        name: {</span>
-<span class="sd">            type: String,</span>
-<span class="sd">            required: true</span>
-<span class="sd">        }</span>
-<span class="sd">        rules: {</span>
-<span class="sd">            type: [{</span>
-<span class="sd">                type: mongoose.Schema.Types.ObjectId,</span>
-<span class="sd">                ref: &quot;Rule&quot;,</span>
-<span class="sd">                required: true,</span>
-<span class="sd">            }],</span>
-<span class="sd">        },</span>
-<span class="sd">        var_names: {</span>
-<span class="sd">            type: [{</span>
-<span class="sd">                type: String,</span>
-<span class="sd">                required: true</span>
-<span class="sd">            }]</span>
-<span class="sd">            required: true</span>
-<span class="sd">        }</span>
-<span class="sd">    }</span>
+<span class="sd">    :ivar str name:</span>
+<span class="sd">    :ivar typing.List[Rule] rules:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">rules</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span>
-        <span class="n">mongoengine</span><span class="o">.</span><span class="n">ReferenceField</span><span class="p">(</span><span class="n">Rule</span><span class="p">),</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">var_names</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span>
-        <span class="n">mongoengine</span><span class="o">.</span><span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+        <span class="n">mongoengine</span><span class="o">.</span><span class="n">ReferenceField</span><span class="p">(</span><span class="n">Rule</span><span class="p">),</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Params"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Params">[docs]</a><span class="k">class</span> <span class="nc">Params</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    {</span>
-<span class="sd">        ofTopic: {</span>
-<span class="sd">            type: mongoose.Schema.Types.ObjectId,</span>
-<span class="sd">            ref: &quot;Topic&quot;,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        values: {</span>
-<span class="sd">            type: mongoose.Schema.Types.Mixed,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        startTime: {</span>
-<span class="sd">            type: Date,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        priority: {</span>
-<span class="sd">            type: Number,</span>
-<span class="sd">            required: true</span>
-<span class="sd">        }</span>
-<span class="sd">    }</span>
+<span class="sd">    :ivar Topic ofTopic:</span>
+<span class="sd">    :ivar Dict values:</span>
+<span class="sd">    :ivar datetime startTime:</span>
+<span class="sd">    :ivar int priority:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">ofTopic</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ReferenceField</span><span class="p">(</span><span class="n">Topic</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -150,56 +113,33 @@
 
 <div class="viewcode-block" id="Message"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Message">[docs]</a><span class="k">class</span> <span class="nc">Message</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    {</span>
-<span class="sd">        timestamp: {</span>
-<span class="sd">            type: Date,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        text: {</span>
-<span class="sd">            type: String,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">    }</span>
+<span class="sd">    :ivar str text:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;allow_inheritance&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="BotMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.BotMessage">[docs]</a><span class="k">class</span> <span class="nc">BotMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    {</span>
-<span class="sd">        selectedVariant: {</span>
-<span class="sd">            type: Number,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        fromRule: {</span>
-<span class="sd">            type: mongoose.Schema.Types.ObjectId,</span>
-<span class="sd">            ref: &quot;Rule&quot;,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">    }</span>
+<span class="sd">    :ivar Rule fromRule:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">selectedVariant</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">IntField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">fromRule</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ReferenceField</span><span class="p">(</span><span class="n">Rule</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="UserMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.UserMessage">[docs]</a><span class="k">class</span> <span class="nc">UserMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    {</span>
-<span class="sd">        intent: mongoose.Schema.Types.Mixed,</span>
-<span class="sd">        photo: mongoose.Schema.Types.Mixed,</span>
-<span class="sd">        sentiment: mongoose.Schema.Types.Mixed,</span>
-<span class="sd">        googleTopic: mongoose.Schema.Types.Mixed,</span>
-<span class="sd">    }</span>
+<span class="sd">    :ivar Dict intent:</span>
+<span class="sd">    :ivar Dict photo:</span>
+<span class="sd">    :ivar Dict sentiment:</span>
+<span class="sd">    :ivar Dict googleTopic:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">intent</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">photo</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">sentiment</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">googlTopic</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="c1"># All of them can be empty</span>
+    <span class="n">intent</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">photo</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">sentiment</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">googleTopic</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WozBotMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.WozBotMessage">[docs]</a><span class="k">class</span> <span class="nc">WozBotMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
@@ -214,109 +154,23 @@
 
 <div class="viewcode-block" id="Context"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Context">[docs]</a><span class="k">class</span> <span class="nc">Context</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    {</span>
-<span class="sd">        ofUser: {</span>
-<span class="sd">            type: mongoose.Schema.Types.ObjectId,</span>
-<span class="sd">            ref: &quot;User&quot;,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        startTimestamp: {</span>
-<span class="sd">            type: Date,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        endTimestamp: {</span>
-<span class="sd">            type: Date,</span>
-<span class="sd">            required: false,</span>
-<span class="sd">        },</span>
-<span class="sd">        params: {</span>
-<span class="sd">            type: [{</span>
-<span class="sd">                param: {</span>
-<span class="sd">                    type: paramsSchema,</span>
-<span class="sd">                    required: true,</span>
-<span class="sd">                },</span>
-<span class="sd">                priority: {</span>
-<span class="sd">                    type: Number,</span>
-<span class="sd">                    required: true,</span>
-<span class="sd">                },</span>
-<span class="sd">            }],</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        messages: {</span>
-<span class="sd">            type: [{</span>
-<span class="sd">                type: messageSchema,</span>
-<span class="sd">                required: true,</span>
-<span class="sd">            }],</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">    }</span>
+<span class="sd">    :ivar User ofUser:</span>
+<span class="sd">    :ivar datetime timestamp:</span>
+<span class="sd">    :ivar typing.List[Params] params:</span>
+<span class="sd">    :ivar Message message:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ofUser</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ReferenceField</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">startTimestamp</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">endTimestamp</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span>
-        <span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span><span class="n">Params</span><span class="p">)</span>
-    <span class="p">)</span>  <span class="c1"># TODO: Ricontrollare priorità(usare indice implicito in lista)</span>
-    <span class="n">messages</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span>
-        <span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span><span class="n">Message</span><span class="p">),</span>
-        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="TopicAndNames"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.TopicAndNames">[docs]</a><span class="k">class</span> <span class="nc">TopicAndNames</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
-    <span class="n">targetTopic</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ReferenceField</span><span class="p">(</span><span class="n">Topic</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">namesToExport</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span>
-        <span class="n">mongoengine</span><span class="o">.</span><span class="n">StringField</span><span class="p">(),</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span><span class="n">Params</span><span class="p">))</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span><span class="n">Message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    {</span>
-<span class="sd">        text: {</span>
-<span class="sd">            type: [{type: String}],</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        exportNames: {</span>
-<span class="sd">            type: [{</span>
-<span class="sd">                targetTopic: {</span>
-<span class="sd">                    type: mongoose.Schema.Types.ObjectId,</span>
-<span class="sd">                    ref: &quot;Topic&quot;,</span>
-<span class="sd">                    required: true,</span>
-<span class="sd">                },</span>
-<span class="sd">                namesToExport: {</span>
-<span class="sd">                    type: [{type: String, required: true}],</span>
-<span class="sd">                    required: true,</span>
-<span class="sd">                },</span>
-<span class="sd">            }],</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        popUntil: {</span>
-<span class="sd">            type: mongoose.Schema.Types.ObjectId,</span>
-<span class="sd">            ref: &quot;Topic&quot;,</span>
-<span class="sd">            required: false,</span>
-<span class="sd">        },</span>
-<span class="sd">        pushTopic: {</span>
-<span class="sd">            type: [{</span>
-<span class="sd">                targetTopic: {</span>
-<span class="sd">                    type: mongoose.Schema.Types.ObjectId,</span>
-<span class="sd">                    ref: &quot;Topic&quot;,</span>
-<span class="sd">                    required: true,</span>
-<span class="sd">                },</span>
-<span class="sd">                namesToExport: {</span>
-<span class="sd">                    type: [{type: String, required: true}],</span>
-<span class="sd">                    required: true,</span>
-<span class="sd">                },</span>
-<span class="sd">            }],</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        isQuestion: {</span>
-<span class="sd">            type: Boolean,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        immediatlyNext : {</span>
-<span class="sd">            type: Boolean,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">    }</span>
+<span class="sd">    :ivar typing.List[str] text:</span>
+<span class="sd">    :ivar List[Dict] operations:</span>
+<span class="sd">    :ivar isQuestion bool:</span>
+<span class="sd">    :ivar immediatlyNext bool:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">text</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span>
@@ -328,20 +182,9 @@
 
 <div class="viewcode-block" id="Rule"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Rule">[docs]</a><span class="k">class</span> <span class="nc">Rule</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    {</span>
-<span class="sd">        condition: {</span>
-<span class="sd">            type: mongoose.Schema.Types.Mixed, // TODO: Da cambiare in tipo più preciso</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        score: {</span>
-<span class="sd">            type: Number,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        action: {</span>
-<span class="sd">            type: actionSchema,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">    }</span>
+<span class="sd">    :ivar Dict condition:</span>
+<span class="sd">    :ivar int score:</span>
+<span class="sd">    :ivar Action action:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">condition</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">score</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">IntField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>

@@ -36,7 +36,8 @@ class UserList(Resource):
                 'id': str(user.id),
                 'username': user.username
             } for user in db.User.objects.only(*db.User.externallyVisible)]
-        except Exception:
+        except Exception as e:
+            print(e)
             ns.abort(500, 'Impossible to get the data requested')
 
         return data, 200
@@ -55,19 +56,21 @@ class UserList(Resource):
 
         try:
             user.save()
-        except mongoengine.OperationError:
+        except mongoengine.OperationError as oe:
+            print(oe)
             ns.abort(500, 'Impossible to save changes')
+            # TODO: Gestire caso in cui user è comunque salvato
 
         context = db.Context(
             ofUser=user,
-            startTimestamp=datetime.now(),
-            endTimestamp=None,
+            timestamp=datetime.now(),
             params=[],
-            messages=[])
+            message=db.Message(text='ciao'))
 
         try:
-            context.save()
-        except mongoengine.OperationError:
+            context.save(cascade=True)
+        except mongoengine.OperationError as oe:
+            print(oe)
             ns.abort(500, 'Impossible to save changes')
             # TODO: Gestire caso in cui user è comunque salvato
 
@@ -106,10 +109,12 @@ class SingleUser(Resource):
         try:
             user = db.User.objects(
                 id=oId).only(*db.User.externallyVisible).get()
-        except mongoengine.MultipleObjectsReturned:
+        except mongoengine.MultipleObjectsReturned as e:
+            print(e)
             ns.abort(500,
                      'There should be one user but more than one were found')
-        except mongoengine.DoesNotExist:
+        except mongoengine.DoesNotExist as e:
+            print(e)
             ns.abort(400, 'Requested user not found')
 
         args = userPutRQ.parse_args()

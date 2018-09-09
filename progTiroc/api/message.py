@@ -1,5 +1,4 @@
 from flask_restplus import Namespace, Resource, fields, reqparse
-from flask import request
 import mongoengine
 
 from progTiroc import db
@@ -43,45 +42,53 @@ class SingleMessage(Resource):
             'fr': 'The id of the user/bot from that sends the message',
             'to': 'The id of the user that receives the message'
         })
-    @ns.doc(body=message)
+    @ns.doc(body=messagePutRQ)
     def put(self, fr: str, to: str):
-        text = request.data
         isWoz: bool = fr == WOZ_BOT_ID or to == WOZ_BOT_ID
 
-        if (isWoz):
-            if (fr == WOZ_BOT_ID):
-                (fr, to) = (to, fr)
+        args = messagePutRQ.parse_args()
 
-                msg = db.WozBotMessage(text=text, timestamp=datetime.now())
-            else:
-                msg = db.WozUserMessage(text=text, timestamp=datetime.now())
-
-            contextsOfUser = db.Context.objects(ofUser=fr, endTimestamp=None)
-            if (len(contextsOfUser) > 1):
-                ns.abort(
-                    500, 'Errore dovrebbe esserci un esattamente un' +
-                    ' contesto attivo(>1 al momento)')
-            elif (len(contextsOfUser) == 0):
-                ns.abort(
-                    500, 'Errore dovrebbe esserci un esattamente un' +
-                    ' contesto attivo(0 al momento)\n' +
-                    'Controllare che l\'utente esista')
-
-            context: db.Context = contextsOfUser[0]
-
-            context.messages.append(msg)
-            context.save()
-        elif (to != NWOZ_BOT_ID):
+        if (not isWoz and to != NWOZ_BOT_ID):
             ns.abort(
-                400, 'La comunicazione può avvenire solo come:\n' + ' WOZ BOT'
-                ' 000000000000000000000000 -> user\n' +
-                ' user -> 000000000000000000000000\n' + '\n' + ' NON WOZ BOT' +
+                400, 'La comunicazione può avvenire solo come:\n' + ' WOZ BOT\n'
+                + ' 000000000000000000000000 -> user\n' +
+                ' user -> 000000000000000000000000\n' + ' NON WOZ BOT\n' +
                 ' user -> 000000000000000000000001\n')
+            return
+
+        msg: db.Message = None
+
+        if (not isWoz):
+            # TODO: Create vera risposta
+            msg = db.UserMessage(text=args['text'])
+        elif (fr == WOZ_BOT_ID):
+            (fr, to) = (to, fr)
+
+            msg = db.WozBotMessage(text=args['text'])
         else:
-            ns.abort(501, 'Not yet implemented')
+            msg = db.WozUserMessage(text=args['text'])
+
+        # Get the list of context of user in decresend order of timestamp
+        contextsOfUser = db.Context.objects(ofUser=fr).order_by('-timestamp')
+
+        # If no active context send error(at least one should be)
+        if (len(contextsOfUser) == 0):
+            ns.abort(
+                500, 'Errore dovrebbe esserci un ' +
+                'contesto attivo(0 al momento)\n' +
+                'Controllare che l\'utente esista')
+
+        old_context: db.Context = contextsOfUser[0]
+
+        context: db.Context = db.Context(
+            ofUser=old_context.ofUser,
+            timestamp=datetime.now(),
+            params=old_context.params,
+            message=msg)
+        context.save()
 
         return {
-            'id': str(msg.id),
-            'text': msg.text,
-            'timestamp': msg.timestamp
+            'id': str(context.id),
+            'text': context.message.text,
+            'timestamp': context.timestamp
         }, 200

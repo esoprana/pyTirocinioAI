@@ -246,7 +246,8 @@
 
         <span class="n">db</span><span class="o">.</span><span class="n">BotMessage</span>
 
-        <span class="n">ord_param</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">ord_param</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
         <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">ord_param</span><span class="p">[</span><span class="n">mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">))]</span>
 
         <span class="c1"># Non ci sono topic di cui fare il push nè nomi da esportare nè</span>
@@ -254,7 +255,6 @@
         <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">operations</span><span class="p">:</span>
             <span class="n">ctx</span><span class="o">.</span><span class="n">endTimestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
             <span class="n">ctx</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-
 
             <span class="n">new_ctx</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
                 <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">to_mongo</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;_id&#39;</span><span class="p">})</span>

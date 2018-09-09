@@ -53,58 +53,21 @@ class Rule(mongoengine.Document):
 
 class Topic(mongoengine.Document):
     """
-    {
-        name: {
-            type: String,
-            required: true
-        }
-        rules: {
-            type: [{
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Rule",
-                required: true,
-            }],
-        },
-        var_names: {
-            type: [{
-                type: String,
-                required: true
-            }]
-            required: true
-        }
-    }
+    :ivar str name:
+    :ivar typing.List[Rule] rules:
     """
 
     name = mongoengine.StringField(required=True, null=False)
     rules = mongoengine.ListField(
         mongoengine.ReferenceField(Rule), required=True, null=False)
-    var_names = mongoengine.ListField(
-        mongoengine.StringField(required=True, null=False),
-        required=True,
-        null=False)
 
 
 class Params(mongoengine.EmbeddedDocument):
     """
-    {
-        ofTopic: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Topic",
-            required: true,
-        },
-        values: {
-            type: mongoose.Schema.Types.Mixed,
-            required: true,
-        },
-        startTime: {
-            type: Date,
-            required: true,
-        },
-        priority: {
-            type: Number,
-            required: true
-        }
-    }
+    :ivar Topic ofTopic:
+    :ivar Dict values:
+    :ivar datetime startTime:
+    :ivar int priority:
     """
 
     ofTopic = mongoengine.ReferenceField(Topic, required=True, null=False)
@@ -116,56 +79,33 @@ class Params(mongoengine.EmbeddedDocument):
 
 class Message(mongoengine.EmbeddedDocument):
     """
-    {
-        timestamp: {
-            type: Date,
-            required: true,
-        },
-        text: {
-            type: String,
-            required: true,
-        },
-    }
+    :ivar str text:
     """
 
-    timestamp = mongoengine.DateTimeField(required=True, null=False)
     text = mongoengine.StringField(required=True, null=False)
     meta = {'allow_inheritance': True}
 
 
 class BotMessage(Message):
     """
-    {
-        selectedVariant: {
-            type: Number,
-            required: true,
-        },
-        fromRule: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Rule",
-            required: true,
-        },
-    }
+    :ivar Rule fromRule:
     """
-
-    selectedVariant = mongoengine.IntField(required=True, null=False)
     fromRule = mongoengine.ReferenceField(Rule, required=True, null=False)
 
 
 class UserMessage(Message):
     """
-    {
-        intent: mongoose.Schema.Types.Mixed,
-        photo: mongoose.Schema.Types.Mixed,
-        sentiment: mongoose.Schema.Types.Mixed,
-        googleTopic: mongoose.Schema.Types.Mixed,
-    }
+    :ivar Dict intent:
+    :ivar Dict photo:
+    :ivar Dict sentiment:
+    :ivar Dict googleTopic:
     """
 
-    intent = mongoengine.DictField(required=True, null=True)
-    photo = mongoengine.DictField(required=True, null=True)
-    sentiment = mongoengine.DictField(required=True, null=True)
-    googlTopic = mongoengine.DictField(required=True, null=True)
+    # All of them can be empty
+    intent = mongoengine.DictField(required=False)
+    photo = mongoengine.DictField(required=False)
+    sentiment = mongoengine.DictField(required=False)
+    googleTopic = mongoengine.DictField(required=False)
 
 
 class WozBotMessage(Message):
@@ -180,109 +120,23 @@ class WozUserMessage(Message):
 
 class Context(mongoengine.Document):
     """
-    {
-        ofUser: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        startTimestamp: {
-            type: Date,
-            required: true,
-        },
-        endTimestamp: {
-            type: Date,
-            required: false,
-        },
-        params: {
-            type: [{
-                param: {
-                    type: paramsSchema,
-                    required: true,
-                },
-                priority: {
-                    type: Number,
-                    required: true,
-                },
-            }],
-            required: true,
-        },
-        messages: {
-            type: [{
-                type: messageSchema,
-                required: true,
-            }],
-            required: true,
-        },
-    }
+    :ivar User ofUser:
+    :ivar datetime timestamp:
+    :ivar typing.List[Params] params:
+    :ivar Message message:
     """
     ofUser = mongoengine.ReferenceField(User, required=True, null=False)
-    startTimestamp = mongoengine.DateTimeField(required=True, null=False)
-    endTimestamp = mongoengine.DateTimeField(required=False, null=True)
-    params = mongoengine.ListField(
-        mongoengine.EmbeddedDocumentField(Params)
-    )  # TODO: Ricontrollare priorità(usare indice implicito in lista)
-    messages = mongoengine.ListField(
-        mongoengine.EmbeddedDocumentField(Message),
-        required=False,
-        default=list)
-
-
-class TopicAndNames(mongoengine.EmbeddedDocument):
-    targetTopic = mongoengine.ReferenceField(Topic, required=True, null=False)
-    namesToExport = mongoengine.ListField(
-        mongoengine.StringField(), required=True)
+    timestamp = mongoengine.DateTimeField(required=True, null=False)
+    params = mongoengine.ListField(mongoengine.EmbeddedDocumentField(Params))
+    message = mongoengine.EmbeddedDocumentField(Message)
 
 
 class Action(mongoengine.EmbeddedDocument):
     """
-    {
-        text: {
-            type: [{type: String}],
-            required: true,
-        },
-        exportNames: {
-            type: [{
-                targetTopic: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "Topic",
-                    required: true,
-                },
-                namesToExport: {
-                    type: [{type: String, required: true}],
-                    required: true,
-                },
-            }],
-            required: true,
-        },
-        popUntil: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Topic",
-            required: false,
-        },
-        pushTopic: {
-            type: [{
-                targetTopic: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "Topic",
-                    required: true,
-                },
-                namesToExport: {
-                    type: [{type: String, required: true}],
-                    required: true,
-                },
-            }],
-            required: true,
-        },
-        isQuestion: {
-            type: Boolean,
-            required: true,
-        },
-        immediatlyNext : {
-            type: Boolean,
-            required: true,
-        },
-    }
+    :ivar typing.List[str] text:
+    :ivar List[Dict] operations:
+    :ivar isQuestion bool:
+    :ivar immediatlyNext bool:
     """
 
     text = mongoengine.ListField(
@@ -294,20 +148,9 @@ class Action(mongoengine.EmbeddedDocument):
 
 class Rule(mongoengine.Document):
     """
-    {
-        condition: {
-            type: mongoose.Schema.Types.Mixed, // TODO: Da cambiare in tipo più preciso
-            required: true,
-        },
-        score: {
-            type: Number,
-            required: true,
-        },
-        action: {
-            type: actionSchema,
-            required: true,
-        },
-    }
+    :ivar Dict condition:
+    :ivar int score:
+    :ivar Action action:
     """
     condition = mongoengine.DictField(required=True, null=False)
     score = mongoengine.IntField(required=True, null=False)

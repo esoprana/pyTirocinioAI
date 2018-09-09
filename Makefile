@@ -1,4 +1,4 @@
-.PHONY: help clean clean_doc clean_pycache test run runi doc doc_html conf_git
+.PHONY: help clean clean_doc clean_pycache test run runi debug debugi doc doc_html conf_git
 
 # === Aux rules ==============================================================
 # Help rules
@@ -13,6 +13,8 @@ help:
 	@echo 'clean_pycache  : clean __pycache__'
 	@echo 'run            : run main.py'
 	@echo 'runi           : run main.py in interactive mode'
+	@echo 'run            : run main.py in debug mode'
+	@echo 'runi           : run main.py in debug and interactive mode'
 	@echo 'doc            : generate documentation both in pdf and html'
 	@echo 'doc_html       : generate html documentation'
 	@echo 'test           : execute all tests'
@@ -33,10 +35,16 @@ clean_pycache:
 # === Normal rules ===========================================================
 # Run rules
 run:
-	@python -m progTiroc
+	@PYTHONPATH=$PWD:$PYTHONPATH python -m progTiroc
 
 runi:
-	@python -i -m progTiroc
+	@PYTHONPATH=$PWD:$PYTHONPATH python -i -m progTiroc
+
+debug:
+	@FLASK_ENV=development DEBUG=1 PYTHONPATH=${PWD}:${PYTHONPATH} python -m progTiroc
+
+debugi:
+	@DEBUG=1 PYTHONPATH=${PWD}:${PYTHONPATH} python -m -i progTiroc
 
 
 # === Dev rules ==============================================================

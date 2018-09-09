@@ -212,7 +212,8 @@ class AI:
 
         db.BotMessage
 
-        ord_param = sorted(ctx.params, lambda p: p.priority, reverse=True)[:action[0] + 1]
+        ord_param = sorted(
+            ctx.params, lambda p: p.priority, reverse=True)[:action[0] + 1]
         _ = [ord_param[mapping[i]] for i in range(len(mapping))]
 
         # Non ci sono topic di cui fare il push nè nomi da esportare nè
@@ -220,7 +221,6 @@ class AI:
         if action.operations:
             ctx.endTimestamp = datetime.datetime.now()
             ctx.save()
-
 
             new_ctx = db.Context(
                 **{k: v for (k, v) in ctx.to_mongo().items() if k != '_id'})

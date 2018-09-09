@@ -70,7 +70,8 @@
                 <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
                 <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span>
             <span class="p">}</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">db</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="o">*</span><span class="n">db</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">externallyVisible</span><span class="p">)]</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Impossible to get the data requested&#39;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="mi">200</span></div>
@@ -89,19 +90,21 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">OperationError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">OperationError</span> <span class="k">as</span> <span class="n">oe</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">oe</span><span class="p">)</span>
             <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Impossible to save changes&#39;</span><span class="p">)</span>
+            <span class="c1"># TODO: Gestire caso in cui user è comunque salvato</span>
 
         <span class="n">context</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
             <span class="n">ofUser</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
-            <span class="n">startTimestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
-            <span class="n">endTimestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
             <span class="n">params</span><span class="o">=</span><span class="p">[],</span>
-            <span class="n">messages</span><span class="o">=</span><span class="p">[])</span>
+            <span class="n">message</span><span class="o">=</span><span class="n">db</span><span class="o">.</span><span class="n">Message</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;ciao&#39;</span><span class="p">))</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">context</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">OperationError</span><span class="p">:</span>
+            <span class="n">context</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">cascade</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">OperationError</span> <span class="k">as</span> <span class="n">oe</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">oe</span><span class="p">)</span>
             <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;Impossible to save changes&#39;</span><span class="p">)</span>
             <span class="c1"># TODO: Gestire caso in cui user è comunque salvato</span>
 
@@ -140,10 +143,12 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
                 <span class="nb">id</span><span class="o">=</span><span class="n">oId</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="o">*</span><span class="n">db</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">externallyVisible</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">MultipleObjectsReturned</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">MultipleObjectsReturned</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span>
                      <span class="s1">&#39;There should be one user but more than one were found&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DoesNotExist</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="s1">&#39;Requested user not found&#39;</span><span class="p">)</span>
 
         <span class="n">args</span> <span class="o">=</span> <span class="n">userPutRQ</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
