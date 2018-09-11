@@ -47,17 +47,27 @@
 <code class="descname">create_database</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/ai/main.html#AI.create_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.main.AI.create_database" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="staticmethod">
 <dt id="progTiroc.ai.main.AI.get_action">
-<code class="descname">get_action</code><span class="sig-paren">(</span><em>msg: Dict[str, Any], ctx: progTiroc.db.db.Context</em><span class="sig-paren">)</span> &#x2192; Optional[Tuple[int, progTiroc.db.db.Action, List[int]]]<a class="reference internal" href="_modules/progTiroc/ai/main.html#AI.get_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.main.AI.get_action" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">get_action</code><span class="sig-paren">(</span><em>msg: Dict[str, Any], ctx: progTiroc.db.db.Context</em><span class="sig-paren">)</span> &#x2192; Optional[Tuple[int, progTiroc.db.db.Rule, List[int]]]<a class="reference internal" href="_modules/progTiroc/ai/main.html#AI.get_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.main.AI.get_action" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="staticmethod">
 <dt id="progTiroc.ai.main.AI.get_message">
-<code class="descname">get_message</code><span class="sig-paren">(</span><em>userId: int</em>, <em>text: str</em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/progTiroc/ai/main.html#AI.get_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.main.AI.get_message" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">get_message</code><span class="sig-paren">(</span><em>userId: int, msg: Dict[str, Any]</em><span class="sig-paren">)</span> &#x2192; Optional[str]<a class="reference internal" href="_modules/progTiroc/ai/main.html#AI.get_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.main.AI.get_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="progTiroc.ai.main.AI.update_context">
+<em class="property">static </em><code class="descname">update_context</code><span class="sig-paren">(</span><em>mapping: List[int], action: progTiroc.db.db.Action, options: Dict[str, Any], init_values: Dict[str, Any]</em><span class="sig-paren">)</span> &#x2192; progTiroc.db.db.Context<a class="reference internal" href="_modules/progTiroc/ai/main.html#AI.update_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.main.AI.update_context" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
+
+<dl class="function">
+<dt id="progTiroc.ai.main.analyze_text">
+<code class="descclassname">progTiroc.ai.main.</code><code class="descname">analyze_text</code><span class="sig-paren">(</span><em>text: str</em>, <em>googleSessionId: &lt;module 'uuid' from '/usr/lib64/python3.7/uuid.py'&gt;</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="reference internal" href="_modules/progTiroc/ai/main.html#analyze_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.main.analyze_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="progTiroc.ai.main.check">

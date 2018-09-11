@@ -8,8 +8,10 @@ from random import randint
 import re
 import logging
 import os
+from datetime import datetime
+import uuid
+
 import mongoengine
-import datetime
 
 from typing import List, Tuple, Dict, Any, Optional
 
@@ -27,7 +29,7 @@ LIBRARY_CONDITIONS = ['__type__', '__has__']
 
 def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
 
-    def std_check(k: str, v: Any, value: Dict[str, Any]):
+    def std_check(k: str, v: Any, value: Dict[str, Any]) -> bool:
         matches = re.match(r'^(.+?)(?:__(lt|gt|eq|ne|le|ge|in|nin))?$', k)
 
         if matches is None:
@@ -69,7 +71,8 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
         return False
 
     return all([
-        std_check(k, v, value) for k, v in condition.items()
+        std_check(k, v, value)
+        for k, v in condition.items()
         if k not in LIBRARY_CONDITIONS
     ])
 
@@ -102,11 +105,11 @@ def verify_mapping(msg: Dict[str, Any], params: List[db.Params],
     if py is None:
         return True
 
-    mapped = [params[mapping[i]] for i in range(len(mapping))]
+    _ = list([params[iM] for iM in mapping])
 
     return eval(
         py, globals=None, locals={
-            '_': mapped,
+            '_': _,
             'm': msg
         })  # Should be boolean expression in terms of _
 
@@ -139,13 +142,26 @@ def get_mapping(msg: Dict[str, Any], msg_condition: Dict[str, Any],
     return mappings[randint(0, len(mappings) - 1)]
 
 
+def analyze_text(text: str, googleSessionId: uuid) -> Dict[str, Any]:
+    intent = analyze_intent(PROJECT_ID, googleSessionId, text, 'en', log)
+
+    intent.intent.name = intent.intent.name[len('projects/') + len(PROJECT_ID) +
+                                            len('/agent/intents/'):]
+
+    sentiment = analyze_sentiment(text, log)
+    categories = analyze_categories(text, log)
+
+    return {'intent': intent, 'sentiment': sentiment, 'categories': categories}
+
+
 class AI:
 
     def create_database(self):
         return None  # TODO: Da implementare
 
-    def get_action(self, msg: Dict[str, Any], ctx: db.Context
-                  ) -> Optional[Tuple[int, db.Action, List[int]]]:
+    @staticmethod
+    def get_action(msg: Dict[str, Any],
+                   ctx: db.Context) -> Optional[Tuple[int, db.Rule, List[int]]]:
         params: List[db.Params] = sorted(
             ctx.params, lambda p: p.priority, reverse=True)
 
@@ -162,7 +178,8 @@ class AI:
             ]
 
             # Condition può restituire un singolo oggetto
-            res += [(i + 1, rule, mapping) for (rule, mapping) in conditions
+            res += [(i + 1, rule, mapping)
+                    for (rule, mapping) in conditions
                     if mapping is not None]
 
         actions = list(
@@ -174,68 +191,101 @@ class AI:
             selection = actions[bisect.bisect_right([x[0] for x in actions],
                                                     randint(0, actions[-1][0]))]
 
-            return selection[1][0], selection[1][1].action, selection[1][2]
+            return selection[1][0], selection[1][1], selection[1][2]
 
-    def get_message(self, userId: int, text: str) -> str:
+    @staticmethod
+    def update_context(mapping: List[int], action: db.Action,
+                       options: Dict[str, Any],
+                       init_values: Dict[str, Any]) -> db.Context:
+        new_ctx = db.Context(**init_values)
+
+        max_pr = new_ctx.params[-1].priority
+        _ = options['_']
+
+        for do in action.operations:
+
+            if do['op'] == 'exportName':
+                # Get old param values
+                old_param = _[do['index']]
+
+                # Create a new param object
+                new_param = db.Params(
+                    ofTopic=old_param.ofTopic,
+                    values=old_param.values,
+                    startTime=datetime.now(),
+                    priority=old_param.priority)
+
+                # Change/add value using eval(no globals only locals)
+                new_val = eval(do['val'], {}, options)
+
+                if new_val is None:
+                    del new_param.values[do['name']]
+                else:
+                    new_param.values[do['name']] = new_val
+
+                # Sobstitute old Param instance
+                new_ctx.params[mapping[do['index']]] = new_param
+                _[do['index']] = new_param
+            elif do['op'] == 'push':
+                max_pr = max_pr - 1
+                new_param = db.Params(
+                    ofTopic=do['topic'],
+                    values={},
+                    startTime=datetime.now(),
+                    priority=max_pr)
+
+                new_ctx.params.append(new_param)
+                _.append(new_param)
+                # mapping.append(len(new_ctx.params) - 1)
+            elif do['op'] == 'popUntil':
+                new_ctx.params = new_ctx.params[:mapping[do['index']] + 1]
+            elif do['op'] == 'pop':
+                new_ctx.params = new_ctx.params[:-1]
+
+        return new_ctx
+
+    @staticmethod
+    def get_message(userId: int, msg: Dict[str, Any]) -> Optional[str]:
         # Se condition è fatto come una condizione mongodb allora posso
         # eseguirla e eventualmente decidere con cosa posso eseguire tale regola
 
-        ctx: db.Context
+        old_ctx: db.Context
         try:
-            ctx = db.Context.objects(ofUser=userId, endTimestamp=None).get()
+            contexts: List[db.Context] = db.Context.objects(
+                ofUser=userId).order_by('-timestamp')
+            if len(contexts) == 0:
+                log.error("0 contexts")  # TODO: Use logger
+                return None
+            else:
+                old_ctx = contexts[0]
         except mongoengine.DoesNotExist as e:
-            log.fatal(e)
-            exit(1)
-
-        intent = analyze_intent(PROJECT_ID, ctx.ofUser.googleSessionId, text,
-                                'en', log)
-
-        intent.intent.name = intent.intent.name[
-            len('projects/') + len(PROJECT_ID) + len('/agent/intents/'):]
-
-        sentiment = analyze_sentiment(text, log)
-        categories = analyze_categories(text, log)
-
-        msg = {
-            'intent': intent,
-            'sentiment': sentiment,
-            'categories': categories
-        }
+            log.error(e)
+            return None
 
         max_priority: int
-        action: db.Action
+        rule: db.Rule
         mapping: List[int]
 
-        max_priority, action, mapping = self.get_action(msg, ctx)
+        max_priority, rule, mapping = AI.get_action(msg, old_ctx)
 
-        text: str = action.text[randint(0, len(action.text) - 1)]
-
-        db.BotMessage
+        text: str = rule.action.text[randint(0, len(rule.action.text) - 1)]
 
         ord_param = sorted(
-            ctx.params, lambda p: p.priority, reverse=True)[:action[0] + 1]
-        _ = [ord_param[mapping[i]] for i in range(len(mapping))]
+            old_ctx.params, lambda p: p.priority,
+            reverse=True)[:max_priority + 1]
 
-        # Non ci sono topic di cui fare il push nè nomi da esportare nè
-        # togliere argomenti
-        if action.operations:
-            ctx.endTimestamp = datetime.datetime.now()
-            ctx.save()
+        _ = [ord_param[mpItem] for mpItem in mapping]
 
-            new_ctx = db.Context(
-                **{k: v for (k, v) in ctx.to_mongo().items() if k != '_id'})
-            new_ctx.startTimestamp = ctx.endTimestamp
+        options = {'_': _, 'm': msg}
 
-            changed: bool = False
+        new_ctx: db.Context = AI.update_context(
+            mapping, rule.action, options,
+            dict(
+                ofUser=old_ctx.ofUser,
+                timestamp=datetime.now(),
+                params=ord_param,
+                message=db.BotMessage(text=text.format(**options))))
 
-            # for do in action.operations:
-            #     if do.op == 'exportNames':
-            #         param: db.Params = _[do.index]
-            #         [do.name] = eval(
-            #                 do.val,
-            #                 globals={},
-            #                 locals={'_': _, 'm': msg}
-            #         )
-            #     elif do.po == 'push':
+        new_ctx.save()
 
-        return text.format(_=_, m=msg)
+        return new_ctx.message.text

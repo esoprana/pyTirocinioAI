@@ -63,16 +63,8 @@
 
 <div class="viewcode-block" id="User"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.User">[docs]</a><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    {</span>
-<span class="sd">        googleSessionID: {</span>
-<span class="sd">            type: String,</span>
-<span class="sd">            required: true,</span>
-<span class="sd">        },</span>
-<span class="sd">        username: {</span>
-<span class="sd">            type: String,</span>
-<span class="sd">            required: true</span>
-<span class="sd">        },</span>
-<span class="sd">    }</span>
+<span class="sd">    :ivar str username:</span>
+<span class="sd">    :ivar uuid googleSessionId</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">username</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">StringField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -81,8 +73,31 @@
     <span class="n">externallyVisible</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">]</span></div>
 
 
-<span class="k">class</span> <span class="nc">Rule</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
-    <span class="k">pass</span>
+<div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :ivar typing.List[str] text:</span>
+<span class="sd">    :ivar List[Dict] operations:</span>
+<span class="sd">    :ivar isQuestion bool:</span>
+<span class="sd">    :ivar immediatlyNext bool:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span>
+        <span class="n">mongoengine</span><span class="o">.</span><span class="n">StringField</span><span class="p">(),</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">operations</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(),</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">isQuestion</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">immediatlyNext</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Rule"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Rule">[docs]</a><span class="k">class</span> <span class="nc">Rule</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :ivar Dict condition:</span>
+<span class="sd">    :ivar int score:</span>
+<span class="sd">    :ivar Action action:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">condition</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">IntField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span>
+        <span class="n">Action</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Topic"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Topic">[docs]</a><span class="k">class</span> <span class="nc">Topic</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
@@ -106,7 +121,7 @@
 
     <span class="n">ofTopic</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ReferenceField</span><span class="p">(</span><span class="n">Topic</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">values</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span>
-        <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># TODO: Ricontrollare</span>
+        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># TODO: Ricontrollare</span>
     <span class="n">startTime</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">priority</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">IntField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
@@ -163,33 +178,6 @@
     <span class="n">timestamp</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">params</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span><span class="n">Params</span><span class="p">))</span>
     <span class="n">message</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span><span class="n">Message</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :ivar typing.List[str] text:</span>
-<span class="sd">    :ivar List[Dict] operations:</span>
-<span class="sd">    :ivar isQuestion bool:</span>
-<span class="sd">    :ivar immediatlyNext bool:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">text</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span>
-        <span class="n">mongoengine</span><span class="o">.</span><span class="n">StringField</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">operations</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ListField</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">)</span>
-    <span class="n">isQuestion</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">immediatlyNext</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Rule"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Rule">[docs]</a><span class="k">class</span> <span class="nc">Rule</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :ivar Dict condition:</span>
-<span class="sd">    :ivar int score:</span>
-<span class="sd">    :ivar Action action:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">condition</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">score</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">IntField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">action</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocumentField</span><span class="p">(</span>
-        <span class="n">Action</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <span class="sd">&quot;&quot;&quot;</span>

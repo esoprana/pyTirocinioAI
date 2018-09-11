@@ -17,6 +17,7 @@ sphinx = "*"
 sphinx-rtd-theme = "*"
 python-language-server = {version = "*", extras = ["all"]}
 pytest-cov = "*"
+pytest-ordering = "*"
 
 [requires]
 python_version = "3.7"

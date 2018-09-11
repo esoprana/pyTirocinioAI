@@ -29,16 +29,8 @@ except Exception as ex:
 
 class User(mongoengine.Document):
     """
-    {
-        googleSessionID: {
-            type: String,
-            required: true,
-        },
-        username: {
-            type: String,
-            required: true
-        },
-    }
+    :ivar str username:
+    :ivar uuid googleSessionId
     """
 
     username = mongoengine.StringField(required=True, null=False)
@@ -47,8 +39,31 @@ class User(mongoengine.Document):
     externallyVisible = ['id', 'username']
 
 
+class Action(mongoengine.EmbeddedDocument):
+    """
+    :ivar typing.List[str] text:
+    :ivar List[Dict] operations:
+    :ivar isQuestion bool:
+    :ivar immediatlyNext bool:
+    """
+
+    text = mongoengine.ListField(
+        mongoengine.StringField(), required=True, null=False)
+    operations = mongoengine.ListField(mongoengine.DictField(), required=False)
+    isQuestion = mongoengine.BooleanField(required=True, null=False)
+    immediatlyNext = mongoengine.BooleanField(required=True, null=False)
+
+
 class Rule(mongoengine.Document):
-    pass
+    """
+    :ivar Dict condition:
+    :ivar int score:
+    :ivar Action action:
+    """
+    condition = mongoengine.DictField(required=True, null=False)
+    score = mongoengine.IntField(required=True, null=False)
+    action = mongoengine.EmbeddedDocumentField(
+        Action, required=True, null=False)
 
 
 class Topic(mongoengine.Document):
@@ -72,7 +87,7 @@ class Params(mongoengine.EmbeddedDocument):
 
     ofTopic = mongoengine.ReferenceField(Topic, required=True, null=False)
     values = mongoengine.DictField(
-        required=True, default=dict)  # TODO: Ricontrollare
+        required=False, default=dict)  # TODO: Ricontrollare
     startTime = mongoengine.DateTimeField(required=True, null=False)
     priority = mongoengine.IntField(required=True, null=False)
 
@@ -129,33 +144,6 @@ class Context(mongoengine.Document):
     timestamp = mongoengine.DateTimeField(required=True, null=False)
     params = mongoengine.ListField(mongoengine.EmbeddedDocumentField(Params))
     message = mongoengine.EmbeddedDocumentField(Message)
-
-
-class Action(mongoengine.EmbeddedDocument):
-    """
-    :ivar typing.List[str] text:
-    :ivar List[Dict] operations:
-    :ivar isQuestion bool:
-    :ivar immediatlyNext bool:
-    """
-
-    text = mongoengine.ListField(
-        mongoengine.StringField, required=True, null=False)
-    operations = mongoengine.ListField(mongoengine.DictField)
-    isQuestion = mongoengine.BooleanField(required=True, null=False)
-    immediatlyNext = mongoengine.BooleanField(required=True, null=False)
-
-
-class Rule(mongoengine.Document):
-    """
-    :ivar Dict condition:
-    :ivar int score:
-    :ivar Action action:
-    """
-    condition = mongoengine.DictField(required=True, null=False)
-    score = mongoengine.IntField(required=True, null=False)
-    action = mongoengine.EmbeddedDocumentField(
-        Action, required=True, null=False)
 
 
 """

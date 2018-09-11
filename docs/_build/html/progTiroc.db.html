@@ -200,7 +200,7 @@ Only valid values are subclasses of <code class="xref py py-class docutils liter
 
 <dl class="attribute">
 <dt id="progTiroc.db.db.Context.objects">
-<code class="descname">objects</code><em class="property"> = [&lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;]</em><a class="headerlink" href="#progTiroc.db.db.Context.objects" title="Permalink to this definition">¶</a></dt>
+<code class="descname">objects</code><em class="property"> = [&lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;, &lt;Context: Context object&gt;]</em><a class="headerlink" href="#progTiroc.db.db.Context.objects" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -455,7 +455,7 @@ similar to an embedded document, but the structure is not defined.</p>
 
 <dl class="attribute">
 <dt id="progTiroc.db.db.Rule.objects">
-<code class="descname">objects</code><em class="property"> = []</em><a class="headerlink" href="#progTiroc.db.db.Rule.objects" title="Permalink to this definition">¶</a></dt>
+<code class="descname">objects</code><em class="property"> = [&lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, &lt;Rule: Rule object&gt;, '...(remaining elements truncated)...']</em><a class="headerlink" href="#progTiroc.db.db.Rule.objects" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -508,7 +508,7 @@ similar to an embedded document, but the structure is not defined.</p>
 
 <dl class="attribute">
 <dt id="progTiroc.db.db.Topic.objects">
-<code class="descname">objects</code><em class="property"> = []</em><a class="headerlink" href="#progTiroc.db.db.Topic.objects" title="Permalink to this definition">¶</a></dt>
+<code class="descname">objects</code><em class="property"> = [&lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;, &lt;Topic: Topic object&gt;]</em><a class="headerlink" href="#progTiroc.db.db.Topic.objects" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -529,22 +529,15 @@ of the field to be used as a list in the database.</p>
 <dt id="progTiroc.db.db.User">
 <em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">User</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#User"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.User" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.document.Document</span></code></p>
-<dl class="docutils">
-<dt>{</dt>
-<dd><dl class="first docutils">
-<dt>googleSessionID: {</dt>
-<dd>type: String,
-required: true,</dd>
-</dl>
-<p>},
-username: {</p>
-<blockquote>
-<div>type: String,
-required: true</div></blockquote>
-<p class="last">},</p>
-</dd>
-</dl>
-<p>}</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><a class="reference internal" href="#progTiroc.db.db.User.username" title="progTiroc.db.db.User.username"><strong>username</strong></a> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+<p>:ivar uuid googleSessionId</p>
 <dl class="exception">
 <dt id="progTiroc.db.db.User.DoesNotExist">
 <em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#progTiroc.db.db.User.DoesNotExist" title="Permalink to this definition">¶</a></dt>
@@ -579,7 +572,7 @@ required: true</div></blockquote>
 
 <dl class="attribute">
 <dt id="progTiroc.db.db.User.objects">
-<code class="descname">objects</code><em class="property"> = [&lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, '...(remaining elements truncated)...']</em><a class="headerlink" href="#progTiroc.db.db.User.objects" title="Permalink to this definition">¶</a></dt>
+<code class="descname">objects</code><em class="property"> = [&lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;, &lt;User: User object&gt;]</em><a class="headerlink" href="#progTiroc.db.db.User.objects" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">

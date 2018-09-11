@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e8ff57aa4349d17b4d219d565500b3af4f316b841875f828164b677b3aa7045f"
+            "sha256": "a93e49201fd9afdd23ffd291faa228a7b5d59edfc80ee5cca7dfb3aaf85d0193"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -75,10 +75,10 @@
         },
         "google-api-core": {
             "hashes": [
-                "sha256:4f2a564322f8907721e72b54923512ec71bf588ef4503e0e8416cbf5daa16dd1",
-                "sha256:ac85fc7f6687bb0271f2f70ca298da90f35789f9de1fe3a11e8caeb571332b77"
+                "sha256:121cc7b93fcf5bde0bf8047a5fb9b5217a7e663eaf83f828044a073781c88901",
+                "sha256:1953a4109ede689cf681c43d91cc1fd55e2432b52b6337f95f5a1841bcb3b707"
             ],
-            "version": "==1.3.0"
+            "version": "==1.4.0"
         },
         "google-api-python-client": {
             "hashes": [
@@ -556,6 +556,14 @@
             "index": "pypi",
             "version": "==2.6.0"
         },
+        "pytest-ordering": {
+            "hashes": [
+                "sha256:673589dfd08599eadda4c3974df82dd12a1bf6754ee53263356443fa429fdf22",
+                "sha256:98ae00eaa1f4c25570327952016f17a0c4dcb2717d9c98766d071aefe629e2ff"
+            ],
+            "index": "pypi",
+            "version": "==0.5"
+        },
         "python-jsonrpc-server": {
             "hashes": [
                 "sha256:ebebaa68b732c9d0aa024ffba2c3baca8b5704530f81d5a894a1ab6981b492c7"
@@ -564,10 +572,10 @@
         },
         "python-language-server": {
             "hashes": [
-                "sha256:c832ae97245291e8a785eacc8ce05b755c6d04469cca987a3e19dcf98ad3e04b"
+                "sha256:fa9162acb1402b807132d7288b7f521db2bd666d63505d8a4d9464d4b8488c52"
             ],
             "index": "pypi",
-            "version": "==0.21.0"
+            "version": "==0.21.2"
         },
         "pytz": {
             "hashes": [
@@ -637,10 +645,10 @@
         },
         "yapf": {
             "hashes": [
-                "sha256:330632d2592e67571ef2c113fe6f5802e2fa5d657448755d5546eea00693dc31",
-                "sha256:55ead4ff1cc1cba5ad7dcfca88fe3930c2ec912c1cfe4a152aa0e7572ff1b49f"
+                "sha256:b96815bd0bbd2ab290f2ae9e610756940b17a0523ef2f6b2d31da749fc395137",
+                "sha256:cebb6faf35c9027c08996c07831b8971f3d67c0eb615269f66dfd7e6815fdc2a"
             ],
-            "version": "==0.23.0"
+            "version": "==0.24.0"
         }
     }
 }
