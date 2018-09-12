@@ -20,6 +20,8 @@ pytest-cov = "*"
 pytest-ordering = "*"
 mock = "*"
 mongomock = "*"
+codacy-coverage = "*"
+codecov = "*"
 
 [requires]
 python_version = "3.7"

@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
    
@@ -117,14 +118,14 @@
 <div class="viewcode-block" id="possible"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.possible">[docs]</a><span class="k">def</span> <span class="nf">possible</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
     <span class="n">poss</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
         <span class="c1"># Se il tipo non è corretto non considerare questo caso</span>
-        <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ofTopic</span> <span class="o">!=</span> <span class="n">condition</span><span class="p">[</span><span class="s1">&#39;__type__&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">ofTopic</span> <span class="o">!=</span> <span class="n">condition</span><span class="p">[</span><span class="s1">&#39;__type__&#39;</span><span class="p">]:</span>
             <span class="k">continue</span>
 
         <span class="c1"># Se qualche condizione(di quelle standard immediatamente controllabili) non è rispettata</span>
         <span class="c1"># non considerare questo caso</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">check</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">values</span><span class="p">):</span>
             <span class="k">continue</span>
 
         <span class="c1"># Se ha passato tutte le casistiche considera questo caso</span>
@@ -371,7 +372,7 @@
       &copy;2018, Enrico Soprana.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>

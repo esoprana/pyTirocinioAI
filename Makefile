@@ -60,7 +60,7 @@ doc_html:
 
 # Test rules
 test:
-	@python -m pytest
+	@pytest; python-codacy-coverage -r coverage.xml
 
 conf_git:
 	@git config core.hooksPath hooks
