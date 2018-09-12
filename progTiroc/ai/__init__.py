@@ -1,1 +1,1 @@
-from .main import AI
+from .main import *
