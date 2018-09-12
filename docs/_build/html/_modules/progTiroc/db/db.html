@@ -32,33 +32,27 @@
           <div class="body" role="main">
             
   <h1>Source code for progTiroc.db.db</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">import</span> <span class="nn">mongoengine</span>
 
-<span class="kn">import</span> <span class="nn">mongoengine</span>
 
-<span class="n">host</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DBHOST&#39;</span><span class="p">,</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">)</span>
-<span class="n">port</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DBPORT&#39;</span><span class="p">,</span> <span class="s1">&#39;27017&#39;</span><span class="p">)</span>
-<span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DBNAME&#39;</span><span class="p">,</span> <span class="s1">&#39;db&#39;</span><span class="p">)</span>
-<span class="n">user</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DBUSER&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">)</span>
-<span class="n">pswd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DBPSWD&#39;</span><span class="p">,</span> <span class="s1">&#39;example&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="mock_connect"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.mock_connect">[docs]</a><span class="k">def</span> <span class="nf">mock_connect</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;db&#39;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;mongomock://localhost&#39;</span><span class="p">)</span></div>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Enviroment variable DBPORT is not integer number&#39;</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="p">(</span><span class="n">port</span> <span class="o">&gt;=</span> <span class="mi">65535</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Enviroment variable DBPORT is non valid port&#39;</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<div class="viewcode-block" id="connect"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.connect">[docs]</a><span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="n">database_host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">database_user</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_pwd</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">database_port</span> <span class="o">&gt;=</span> <span class="mi">65535</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Enviroment variable DBPORT is non valid port&#39;</span><span class="p">)</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">mongoengine</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-        <span class="n">name</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">pswd</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">database_name</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="n">database_host</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="n">database_port</span><span class="p">,</span>
+            <span class="n">username</span><span class="o">=</span><span class="n">database_user</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="n">database_pwd</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+        <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="User"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.User">[docs]</a><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>

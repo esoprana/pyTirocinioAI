@@ -1,30 +1,24 @@
-import os
-import sys
-
 import mongoengine
 
-host = os.environ.get('DBHOST', '127.0.0.1')
-port = os.environ.get('DBPORT', '27017')
-name = os.environ.get('DBNAME', 'db')
-user = os.environ.get('DBUSER', 'user')
-pswd = os.environ.get('DBPSWD', 'example')
 
-try:
-    port: int = int(port)
-except ValueError:
-    print('Enviroment variable DBPORT is not integer number')
-    sys.exit(1)
+def mock_connect():
+    return mongoengine.connect('db', host='mongomock://localhost')
 
-if (port >= 65535):
-    print('Enviroment variable DBPORT is non valid port')
-    sys.exit(2)
 
-try:
-    mongoengine.connect(
-        name, host=host, port=port, username=user, password=pswd)
-except Exception as ex:
-    print(ex)
-    sys.exit(3)
+def connect(database_host: str, database_port: int, database_name: str,
+            database_user: str, database_pwd: str):
+    if (database_port >= 65535):
+        raise Exception('Enviroment variable DBPORT is non valid port')
+
+    try:
+        return mongoengine.connect(
+            database_name,
+            host=database_host,
+            port=database_port,
+            username=database_user,
+            password=database_pwd)
+    except Exception as ex:
+        pass
 
 
 class User(mongoengine.Document):

@@ -38,6 +38,11 @@
 </div>
 <div class="section" id="module-progTiroc.api.index">
 <span id="progtiroc-api-index-module"></span><h2>progTiroc.api.index module<a class="headerlink" href="#module-progTiroc.api.index" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="progTiroc.api.index.create_api">
+<code class="descclassname">progTiroc.api.index.</code><code class="descname">create_api</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; flask.blueprints.Blueprint<a class="reference internal" href="_modules/progTiroc/api/index.html#create_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.index.create_api" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-progTiroc.api.message">
 <span id="progtiroc-api-message-module"></span><h2>progTiroc.api.message module<a class="headerlink" href="#module-progTiroc.api.message" title="Permalink to this headline">¶</a></h2>
@@ -46,16 +51,6 @@
 <em class="property">class </em><code class="descclassname">progTiroc.api.message.</code><code class="descname">SingleMessage</code><span class="sig-paren">(</span><em>api=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/message.html#SingleMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.message.SingleMessage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restplus.resource.Resource</span></code></p>
 <p>Save messages</p>
-<dl class="attribute">
-<dt id="progTiroc.api.message.SingleMessage.endpoint">
-<code class="descname">endpoint</code><em class="property"> = 'message_single_message'</em><a class="headerlink" href="#progTiroc.api.message.SingleMessage.endpoint" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="progTiroc.api.message.SingleMessage.mediatypes">
-<code class="descname">mediatypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#progTiroc.api.message.SingleMessage.mediatypes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="attribute">
 <dt id="progTiroc.api.message.SingleMessage.methods">
 <code class="descname">methods</code><em class="property"> = {'PUT'}</em><a class="headerlink" href="#progTiroc.api.message.SingleMessage.methods" title="Permalink to this definition">¶</a></dt>
@@ -76,21 +71,11 @@
 <em class="property">class </em><code class="descclassname">progTiroc.api.user.</code><code class="descname">SingleUser</code><span class="sig-paren">(</span><em>api=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#SingleUser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.SingleUser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restplus.resource.Resource</span></code></p>
 <p>Show single user</p>
-<dl class="attribute">
-<dt id="progTiroc.api.user.SingleUser.endpoint">
-<code class="descname">endpoint</code><em class="property"> = 'user_single_user'</em><a class="headerlink" href="#progTiroc.api.user.SingleUser.endpoint" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="progTiroc.api.user.SingleUser.get">
 <code class="descname">get</code><span class="sig-paren">(</span><em>oId: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#SingleUser.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.SingleUser.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get existing user</p>
 </dd></dl>
-
-<dl class="method">
-<dt id="progTiroc.api.user.SingleUser.mediatypes">
-<code class="descname">mediatypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#progTiroc.api.user.SingleUser.mediatypes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="progTiroc.api.user.SingleUser.methods">
@@ -110,21 +95,11 @@
 <em class="property">class </em><code class="descclassname">progTiroc.api.user.</code><code class="descname">UserList</code><span class="sig-paren">(</span><em>api=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#UserList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.UserList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restplus.resource.Resource</span></code></p>
 <p>Show a list of all the users or insert user in list</p>
-<dl class="attribute">
-<dt id="progTiroc.api.user.UserList.endpoint">
-<code class="descname">endpoint</code><em class="property"> = 'user_user_list'</em><a class="headerlink" href="#progTiroc.api.user.UserList.endpoint" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="progTiroc.api.user.UserList.get">
 <code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#UserList.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.UserList.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>List all users</p>
 </dd></dl>
-
-<dl class="method">
-<dt id="progTiroc.api.user.UserList.mediatypes">
-<code class="descname">mediatypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#progTiroc.api.user.UserList.mediatypes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="progTiroc.api.user.UserList.methods">
