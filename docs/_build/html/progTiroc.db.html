@@ -1,0 +1,788 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>progTiroc.db package &#8212; pyTirocinioAI 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="progtiroc-db-package">
+<h1>progTiroc.db package<a class="headerlink" href="#progtiroc-db-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-progTiroc.db.db">
+<span id="progtiroc-db-db-module"></span><h2>progTiroc.db.db module<a class="headerlink" href="#module-progTiroc.db.db" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="progTiroc.db.db.Action">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">Action</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#Action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.document.EmbeddedDocument</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#progTiroc.db.db.Action.text" title="progTiroc.db.db.Action.text"><strong>text</strong></a> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em>]</em>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.Action.operations" title="progTiroc.db.db.Action.operations"><strong>operations</strong></a> (<em>List</em><em>[</em><em>Dict</em><em>]</em>) – </li>
+<li><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><strong>bool</strong></a> (<em>immediatlyNext</em>) – </li>
+<li><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><strong>bool</strong></a> – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="progTiroc.db.db.Action.immediatlyNext">
+<code class="descname">immediatlyNext</code><a class="headerlink" href="#progTiroc.db.db.Action.immediatlyNext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean field type.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.2.</span></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Action.isQuestion">
+<code class="descname">isQuestion</code><a class="headerlink" href="#progTiroc.db.db.Action.isQuestion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean field type.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.1.2.</span></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Action.operations">
+<code class="descname">operations</code><a class="headerlink" href="#progTiroc.db.db.Action.operations" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list field that wraps a standard field, allowing multiple instances
+of the field to be used as a list in the database.</p>
+<p>If using with ReferenceFields see: <span class="xref std std-ref">one-to-many-with-listfields</span></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Required means it cannot be empty - as the default for ListFields is []</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Action.text">
+<code class="descname">text</code><a class="headerlink" href="#progTiroc.db.db.Action.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list field that wraps a standard field, allowing multiple instances
+of the field to be used as a list in the database.</p>
+<p>If using with ReferenceFields see: <span class="xref std std-ref">one-to-many-with-listfields</span></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Required means it cannot be empty - as the default for ListFields is []</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.db.db.BotMessage">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">BotMessage</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#BotMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.BotMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#progTiroc.db.db.Message" title="progTiroc.db.db.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">progTiroc.db.db.Message</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><a class="reference internal" href="#progTiroc.db.db.BotMessage.fromRule" title="progTiroc.db.db.BotMessage.fromRule"><strong>fromRule</strong></a> (<a class="reference internal" href="#progTiroc.db.db.Rule" title="progTiroc.db.db.Rule"><em>Rule</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="progTiroc.db.db.BotMessage.fromRule">
+<code class="descname">fromRule</code><a class="headerlink" href="#progTiroc.db.db.BotMessage.fromRule" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reference to a document that will be automatically dereferenced on
+access (lazily).</p>
+<p>Note this means you will get a database I/O access everytime you access
+this field. This is necessary because the field returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code>
+which precise type can depend of the value of the <cite>_cls</cite> field present in the
+document in database.
+In short, using this type of field can lead to poor performances (especially
+if you access this field only to retrieve it <cite>pk</cite> field which is already
+known before dereference). To solve this you should consider using the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">LazyReferenceField</span></code>.</p>
+<p>Use the <cite>reverse_delete_rule</cite> to handle what should happen if the document
+the field is referencing is deleted.  EmbeddedDocuments, DictFields and
+MapFields does not support reverse_delete_rule and an <cite>InvalidDocumentError</cite>
+will be raised if trying to set on one of these Document / Field types.</p>
+<p>The options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>DO_NOTHING (0)  - don’t do anything (default).</li>
+<li>NULLIFY    (1)  - Updates the reference to null.</li>
+<li>CASCADE    (2)  - Deletes the documents associated with the reference.</li>
+<li>DENY       (3)  - Prevent the deletion of the reference object.</li>
+<li>PULL       (4)  - Pull the reference from a <code class="xref py py-class docutils literal notranslate"><span class="pre">ListField</span></code> of references</li>
+</ul>
+</div></blockquote>
+<p>Alternative syntax for registering delete rules (useful when implementing
+bi-directional delete rules)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Bar</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="n">ReferenceField</span><span class="p">(</span><span class="s1">&#39;Foo&#39;</span><span class="p">)</span>
+
+<span class="n">Foo</span><span class="o">.</span><span class="n">register_delete_rule</span><span class="p">(</span><span class="n">Bar</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">NULLIFY</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.5: </span>added <cite>reverse_delete_rule</cite></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.db.db.Context">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">Context</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#Context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.Context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.document.Document</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#progTiroc.db.db.Context.ofUser" title="progTiroc.db.db.Context.ofUser"><strong>ofUser</strong></a> (<a class="reference internal" href="#progTiroc.db.db.User" title="progTiroc.db.db.User"><em>User</em></a>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.Context.timestamp" title="progTiroc.db.db.Context.timestamp"><strong>timestamp</strong></a> (<em>datetime</em>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.Context.params" title="progTiroc.db.db.Context.params"><strong>params</strong></a> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="#progTiroc.db.db.Params" title="progTiroc.db.db.Params"><em>Params</em></a><em>]</em>) – </li>
+<li><a class="reference internal" href="progTiroc.api.html#module-progTiroc.api.message" title="progTiroc.api.message"><strong>message</strong></a> (<a class="reference internal" href="#progTiroc.db.db.Message" title="progTiroc.db.db.Message"><em>Message</em></a>) – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="exception">
+<dt id="progTiroc.db.db.Context.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#progTiroc.db.db.Context.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.errors.DoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="progTiroc.db.db.Context.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#progTiroc.db.db.Context.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.errors.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Context.id">
+<code class="descname">id</code><a class="headerlink" href="#progTiroc.db.db.Context.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field wrapper around MongoDB’s ObjectIds.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Context.message">
+<code class="descname">message</code><a class="headerlink" href="#progTiroc.db.db.Context.message" title="Permalink to this definition">¶</a></dt>
+<dd><p>An embedded document field - with a declared document_type.
+Only valid values are subclasses of <code class="xref py py-class docutils literal notranslate"><span class="pre">EmbeddedDocument</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Context.objects">
+<code class="descname">objects</code><a class="headerlink" href="#progTiroc.db.db.Context.objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default QuerySet Manager.</p>
+<p>Custom QuerySet Manager functions can extend this class and users can
+add extra queryset functionality.  Any custom manager methods must accept a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code> class as its first argument, and a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">QuerySet</span></code> as its second argument.</p>
+<p>The method function should return a <code class="xref py py-class docutils literal notranslate"><span class="pre">QuerySet</span></code>
+, probably the same one that was passed in, but modified in some way.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Context.ofUser">
+<code class="descname">ofUser</code><a class="headerlink" href="#progTiroc.db.db.Context.ofUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reference to a document that will be automatically dereferenced on
+access (lazily).</p>
+<p>Note this means you will get a database I/O access everytime you access
+this field. This is necessary because the field returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code>
+which precise type can depend of the value of the <cite>_cls</cite> field present in the
+document in database.
+In short, using this type of field can lead to poor performances (especially
+if you access this field only to retrieve it <cite>pk</cite> field which is already
+known before dereference). To solve this you should consider using the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">LazyReferenceField</span></code>.</p>
+<p>Use the <cite>reverse_delete_rule</cite> to handle what should happen if the document
+the field is referencing is deleted.  EmbeddedDocuments, DictFields and
+MapFields does not support reverse_delete_rule and an <cite>InvalidDocumentError</cite>
+will be raised if trying to set on one of these Document / Field types.</p>
+<p>The options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>DO_NOTHING (0)  - don’t do anything (default).</li>
+<li>NULLIFY    (1)  - Updates the reference to null.</li>
+<li>CASCADE    (2)  - Deletes the documents associated with the reference.</li>
+<li>DENY       (3)  - Prevent the deletion of the reference object.</li>
+<li>PULL       (4)  - Pull the reference from a <code class="xref py py-class docutils literal notranslate"><span class="pre">ListField</span></code> of references</li>
+</ul>
+</div></blockquote>
+<p>Alternative syntax for registering delete rules (useful when implementing
+bi-directional delete rules)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Bar</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="n">ReferenceField</span><span class="p">(</span><span class="s1">&#39;Foo&#39;</span><span class="p">)</span>
+
+<span class="n">Foo</span><span class="o">.</span><span class="n">register_delete_rule</span><span class="p">(</span><span class="n">Bar</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">NULLIFY</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.5: </span>added <cite>reverse_delete_rule</cite></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Context.params">
+<code class="descname">params</code><a class="headerlink" href="#progTiroc.db.db.Context.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list field that wraps a standard field, allowing multiple instances
+of the field to be used as a list in the database.</p>
+<p>If using with ReferenceFields see: <span class="xref std std-ref">one-to-many-with-listfields</span></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Required means it cannot be empty - as the default for ListFields is []</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Context.timestamp">
+<code class="descname">timestamp</code><a class="headerlink" href="#progTiroc.db.db.Context.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Datetime field.</p>
+<p>Uses the python-dateutil library if available alternatively use time.strptime
+to parse the dates.  Note: python-dateutil’s parser is fully featured and when
+installed you can utilise it to convert varying types of date formats into valid
+python datetime objects.</p>
+<dl class="docutils">
+<dt>Note: Microseconds are rounded to the nearest millisecond.</dt>
+<dd>Pre UTC microsecond support is effectively broken.
+Use <code class="xref py py-class docutils literal notranslate"><span class="pre">ComplexDateTimeField</span></code> if you
+need accurate microsecond support.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.db.db.Message">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">Message</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#Message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.document.EmbeddedDocument</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><a class="reference internal" href="#progTiroc.db.db.Action.text" title="progTiroc.db.db.Action.text"><strong>text</strong></a> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="progTiroc.db.db.Message.text">
+<code class="descname">text</code><a class="headerlink" href="#progTiroc.db.db.Message.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unicode string field.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.db.db.Params">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">Params</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#Params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.Params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.document.EmbeddedDocument</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#progTiroc.db.db.Params.ofTopic" title="progTiroc.db.db.Params.ofTopic"><strong>ofTopic</strong></a> (<a class="reference internal" href="#progTiroc.db.db.Topic" title="progTiroc.db.db.Topic"><em>Topic</em></a>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.Params.values" title="progTiroc.db.db.Params.values"><strong>values</strong></a> (<em>Dict</em>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.Params.startTime" title="progTiroc.db.db.Params.startTime"><strong>startTime</strong></a> (<em>datetime</em>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.Params.priority" title="progTiroc.db.db.Params.priority"><strong>priority</strong></a> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="progTiroc.db.db.Params.ofTopic">
+<code class="descname">ofTopic</code><a class="headerlink" href="#progTiroc.db.db.Params.ofTopic" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reference to a document that will be automatically dereferenced on
+access (lazily).</p>
+<p>Note this means you will get a database I/O access everytime you access
+this field. This is necessary because the field returns a <code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code>
+which precise type can depend of the value of the <cite>_cls</cite> field present in the
+document in database.
+In short, using this type of field can lead to poor performances (especially
+if you access this field only to retrieve it <cite>pk</cite> field which is already
+known before dereference). To solve this you should consider using the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">LazyReferenceField</span></code>.</p>
+<p>Use the <cite>reverse_delete_rule</cite> to handle what should happen if the document
+the field is referencing is deleted.  EmbeddedDocuments, DictFields and
+MapFields does not support reverse_delete_rule and an <cite>InvalidDocumentError</cite>
+will be raised if trying to set on one of these Document / Field types.</p>
+<p>The options are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>DO_NOTHING (0)  - don’t do anything (default).</li>
+<li>NULLIFY    (1)  - Updates the reference to null.</li>
+<li>CASCADE    (2)  - Deletes the documents associated with the reference.</li>
+<li>DENY       (3)  - Prevent the deletion of the reference object.</li>
+<li>PULL       (4)  - Pull the reference from a <code class="xref py py-class docutils literal notranslate"><span class="pre">ListField</span></code> of references</li>
+</ul>
+</div></blockquote>
+<p>Alternative syntax for registering delete rules (useful when implementing
+bi-directional delete rules)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Bar</span><span class="p">(</span><span class="n">Document</span><span class="p">):</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">foo</span> <span class="o">=</span> <span class="n">ReferenceField</span><span class="p">(</span><span class="s1">&#39;Foo&#39;</span><span class="p">)</span>
+
+<span class="n">Foo</span><span class="o">.</span><span class="n">register_delete_rule</span><span class="p">(</span><span class="n">Bar</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="n">NULLIFY</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.5: </span>added <cite>reverse_delete_rule</cite></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Params.priority">
+<code class="descname">priority</code><a class="headerlink" href="#progTiroc.db.db.Params.priority" title="Permalink to this definition">¶</a></dt>
+<dd><p>32-bit integer field.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Params.startTime">
+<code class="descname">startTime</code><a class="headerlink" href="#progTiroc.db.db.Params.startTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Datetime field.</p>
+<p>Uses the python-dateutil library if available alternatively use time.strptime
+to parse the dates.  Note: python-dateutil’s parser is fully featured and when
+installed you can utilise it to convert varying types of date formats into valid
+python datetime objects.</p>
+<dl class="docutils">
+<dt>Note: Microseconds are rounded to the nearest millisecond.</dt>
+<dd>Pre UTC microsecond support is effectively broken.
+Use <code class="xref py py-class docutils literal notranslate"><span class="pre">ComplexDateTimeField</span></code> if you
+need accurate microsecond support.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Params.values">
+<code class="descname">values</code><a class="headerlink" href="#progTiroc.db.db.Params.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary field that wraps a standard Python dictionary. This is
+similar to an embedded document, but the structure is not defined.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Required means it cannot be empty - as the default for DictFields is {}</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.3.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.5: </span>- Can now handle complex / varying types of data</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.db.db.Rule">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">Rule</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#Rule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.Rule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.document.Document</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#progTiroc.db.db.Rule.condition" title="progTiroc.db.db.Rule.condition"><strong>condition</strong></a> (<em>Dict</em>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.Rule.score" title="progTiroc.db.db.Rule.score"><strong>score</strong></a> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.Rule.action" title="progTiroc.db.db.Rule.action"><strong>action</strong></a> (<a class="reference internal" href="#progTiroc.db.db.Action" title="progTiroc.db.db.Action"><em>Action</em></a>) – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="exception">
+<dt id="progTiroc.db.db.Rule.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#progTiroc.db.db.Rule.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.errors.DoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="progTiroc.db.db.Rule.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#progTiroc.db.db.Rule.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.errors.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Rule.action">
+<code class="descname">action</code><a class="headerlink" href="#progTiroc.db.db.Rule.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>An embedded document field - with a declared document_type.
+Only valid values are subclasses of <code class="xref py py-class docutils literal notranslate"><span class="pre">EmbeddedDocument</span></code>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Rule.condition">
+<code class="descname">condition</code><a class="headerlink" href="#progTiroc.db.db.Rule.condition" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary field that wraps a standard Python dictionary. This is
+similar to an embedded document, but the structure is not defined.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Required means it cannot be empty - as the default for DictFields is {}</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.3.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.5: </span>- Can now handle complex / varying types of data</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Rule.id">
+<code class="descname">id</code><a class="headerlink" href="#progTiroc.db.db.Rule.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field wrapper around MongoDB’s ObjectIds.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Rule.objects">
+<code class="descname">objects</code><a class="headerlink" href="#progTiroc.db.db.Rule.objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default QuerySet Manager.</p>
+<p>Custom QuerySet Manager functions can extend this class and users can
+add extra queryset functionality.  Any custom manager methods must accept a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code> class as its first argument, and a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">QuerySet</span></code> as its second argument.</p>
+<p>The method function should return a <code class="xref py py-class docutils literal notranslate"><span class="pre">QuerySet</span></code>
+, probably the same one that was passed in, but modified in some way.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Rule.score">
+<code class="descname">score</code><a class="headerlink" href="#progTiroc.db.db.Rule.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>32-bit integer field.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.db.db.Topic">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">Topic</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#Topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.Topic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.document.Document</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#progTiroc.db.db.Topic.name" title="progTiroc.db.db.Topic.name"><strong>name</strong></a> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.Topic.rules" title="progTiroc.db.db.Topic.rules"><strong>rules</strong></a> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.7)"><em>typing.List</em></a><em>[</em><a class="reference internal" href="#progTiroc.db.db.Rule" title="progTiroc.db.db.Rule"><em>Rule</em></a><em>]</em>) – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="exception">
+<dt id="progTiroc.db.db.Topic.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#progTiroc.db.db.Topic.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.errors.DoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="progTiroc.db.db.Topic.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#progTiroc.db.db.Topic.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.errors.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Topic.id">
+<code class="descname">id</code><a class="headerlink" href="#progTiroc.db.db.Topic.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field wrapper around MongoDB’s ObjectIds.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Topic.name">
+<code class="descname">name</code><a class="headerlink" href="#progTiroc.db.db.Topic.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unicode string field.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Topic.objects">
+<code class="descname">objects</code><a class="headerlink" href="#progTiroc.db.db.Topic.objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default QuerySet Manager.</p>
+<p>Custom QuerySet Manager functions can extend this class and users can
+add extra queryset functionality.  Any custom manager methods must accept a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code> class as its first argument, and a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">QuerySet</span></code> as its second argument.</p>
+<p>The method function should return a <code class="xref py py-class docutils literal notranslate"><span class="pre">QuerySet</span></code>
+, probably the same one that was passed in, but modified in some way.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.Topic.rules">
+<code class="descname">rules</code><a class="headerlink" href="#progTiroc.db.db.Topic.rules" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list field that wraps a standard field, allowing multiple instances
+of the field to be used as a list in the database.</p>
+<p>If using with ReferenceFields see: <span class="xref std std-ref">one-to-many-with-listfields</span></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Required means it cannot be empty - as the default for ListFields is []</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.db.db.User">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">User</code><span class="sig-paren">(</span><em>*args</em>, <em>**values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#User"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.document.Document</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><a class="reference internal" href="#progTiroc.db.db.User.username" title="progTiroc.db.db.User.username"><strong>username</strong></a> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – </td>
+</tr>
+</tbody>
+</table>
+<p>:ivar uuid googleSessionId</p>
+<dl class="exception">
+<dt id="progTiroc.db.db.User.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#progTiroc.db.db.User.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.errors.DoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="progTiroc.db.db.User.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#progTiroc.db.db.User.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mongoengine.errors.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.User.externallyVisible">
+<code class="descname">externallyVisible</code><em class="property"> = ['id', 'username']</em><a class="headerlink" href="#progTiroc.db.db.User.externallyVisible" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.User.googleSessionId">
+<code class="descname">googleSessionId</code><a class="headerlink" href="#progTiroc.db.db.User.googleSessionId" title="Permalink to this definition">¶</a></dt>
+<dd><p>A UUID field.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.6.</span></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.User.id">
+<code class="descname">id</code><a class="headerlink" href="#progTiroc.db.db.User.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A field wrapper around MongoDB’s ObjectIds.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.User.objects">
+<code class="descname">objects</code><a class="headerlink" href="#progTiroc.db.db.User.objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default QuerySet Manager.</p>
+<p>Custom QuerySet Manager functions can extend this class and users can
+add extra queryset functionality.  Any custom manager methods must accept a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Document</span></code> class as its first argument, and a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">QuerySet</span></code> as its second argument.</p>
+<p>The method function should return a <code class="xref py py-class docutils literal notranslate"><span class="pre">QuerySet</span></code>
+, probably the same one that was passed in, but modified in some way.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.User.username">
+<code class="descname">username</code><a class="headerlink" href="#progTiroc.db.db.User.username" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unicode string field.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.db.db.UserMessage">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">UserMessage</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#UserMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.UserMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#progTiroc.db.db.Message" title="progTiroc.db.db.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">progTiroc.db.db.Message</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><a class="reference internal" href="#progTiroc.db.db.UserMessage.intent" title="progTiroc.db.db.UserMessage.intent"><strong>intent</strong></a> (<em>Dict</em>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.UserMessage.photo" title="progTiroc.db.db.UserMessage.photo"><strong>photo</strong></a> (<em>Dict</em>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.UserMessage.sentiment" title="progTiroc.db.db.UserMessage.sentiment"><strong>sentiment</strong></a> (<em>Dict</em>) – </li>
+<li><a class="reference internal" href="#progTiroc.db.db.UserMessage.googleTopic" title="progTiroc.db.db.UserMessage.googleTopic"><strong>googleTopic</strong></a> (<em>Dict</em>) – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="progTiroc.db.db.UserMessage.googleTopic">
+<code class="descname">googleTopic</code><a class="headerlink" href="#progTiroc.db.db.UserMessage.googleTopic" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary field that wraps a standard Python dictionary. This is
+similar to an embedded document, but the structure is not defined.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Required means it cannot be empty - as the default for DictFields is {}</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.3.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.5: </span>- Can now handle complex / varying types of data</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.UserMessage.intent">
+<code class="descname">intent</code><a class="headerlink" href="#progTiroc.db.db.UserMessage.intent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary field that wraps a standard Python dictionary. This is
+similar to an embedded document, but the structure is not defined.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Required means it cannot be empty - as the default for DictFields is {}</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.3.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.5: </span>- Can now handle complex / varying types of data</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.UserMessage.photo">
+<code class="descname">photo</code><a class="headerlink" href="#progTiroc.db.db.UserMessage.photo" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary field that wraps a standard Python dictionary. This is
+similar to an embedded document, but the structure is not defined.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Required means it cannot be empty - as the default for DictFields is {}</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.3.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.5: </span>- Can now handle complex / varying types of data</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.db.db.UserMessage.sentiment">
+<code class="descname">sentiment</code><a class="headerlink" href="#progTiroc.db.db.UserMessage.sentiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary field that wraps a standard Python dictionary. This is
+similar to an embedded document, but the structure is not defined.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Required means it cannot be empty - as the default for DictFields is {}</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 0.3.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">Changed in version 0.5: </span>- Can now handle complex / varying types of data</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.db.db.WozBotMessage">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">WozBotMessage</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#WozBotMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.WozBotMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#progTiroc.db.db.Message" title="progTiroc.db.db.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">progTiroc.db.db.Message</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.db.db.WozUserMessage">
+<em class="property">class </em><code class="descclassname">progTiroc.db.db.</code><code class="descname">WozUserMessage</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#WozUserMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.WozUserMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#progTiroc.db.db.Message" title="progTiroc.db.db.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">progTiroc.db.db.Message</span></code></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="progTiroc.db.db.connect">
+<code class="descclassname">progTiroc.db.db.</code><code class="descname">connect</code><span class="sig-paren">(</span><em>database_host: str</em>, <em>database_port: int</em>, <em>database_name: str</em>, <em>database_user: str</em>, <em>database_pwd: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="progTiroc.db.db.mock_connect">
+<code class="descclassname">progTiroc.db.db.</code><code class="descname">mock_connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/db/db.html#mock_connect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.db.db.mock_connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-progTiroc.db">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-progTiroc.db" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pyTirocinioAI</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Enrico Soprana.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/progTiroc.db.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
