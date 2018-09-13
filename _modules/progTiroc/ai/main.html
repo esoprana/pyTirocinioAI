@@ -1,35 +1,142 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>progTiroc.ai.main &#8212; pyTirocinioAI 0.1 documentation</title>
-    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>progTiroc.ai.main &mdash; pyTirocinioAI 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+  <div class="wy-grid-for-nav">
 
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
           
 
-          <div class="body" role="main">
+          
+            <a href="../../../index.html" class="icon icon-home"> pyTirocinioAI
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyTirocinioAI</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>progTiroc.ai.main</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <h1>Source code for progTiroc.ai.main</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">progTiroc.db</span> <span class="k">as</span> <span class="nn">db</span>
@@ -42,8 +149,10 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+
 <span class="kn">import</span> <span class="nn">mongoengine</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 
@@ -61,7 +170,7 @@
 
 <div class="viewcode-block" id="check"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.check">[docs]</a><span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 
-    <span class="k">def</span> <span class="nf">std_check</span><span class="p">(</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">std_check</span><span class="p">(</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(.+?)(?:__(lt|gt|eq|ne|le|ge|in|nin))?$&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">matches</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -103,7 +212,8 @@
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">return</span> <span class="nb">all</span><span class="p">([</span>
-        <span class="n">std_check</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">condition</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="n">std_check</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">condition</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">LIBRARY_CONDITIONS</span>
     <span class="p">])</span></div>
 
@@ -136,11 +246,11 @@
     <span class="k">if</span> <span class="n">py</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="n">mapped</span> <span class="o">=</span> <span class="p">[</span><span class="n">params</span><span class="p">[</span><span class="n">mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">))]</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">params</span><span class="p">[</span><span class="n">iM</span><span class="p">]</span> <span class="k">for</span> <span class="n">iM</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">])</span>
 
     <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span>
         <span class="n">py</span><span class="p">,</span> <span class="nb">globals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">locals</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;_&#39;</span><span class="p">:</span> <span class="n">mapped</span><span class="p">,</span>
+            <span class="s1">&#39;_&#39;</span><span class="p">:</span> <span class="n">_</span><span class="p">,</span>
             <span class="s1">&#39;m&#39;</span><span class="p">:</span> <span class="n">msg</span>
         <span class="p">})</span>  <span class="c1"># Should be boolean expression in terms of _</span></div>
 
@@ -173,13 +283,26 @@
     <span class="k">return</span> <span class="n">mappings</span><span class="p">[</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mappings</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span></div>
 
 
+<div class="viewcode-block" id="analyze_text"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.analyze_text">[docs]</a><span class="k">def</span> <span class="nf">analyze_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">googleSessionId</span><span class="p">:</span> <span class="n">uuid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="n">intent</span> <span class="o">=</span> <span class="n">analyze_intent</span><span class="p">(</span><span class="n">PROJECT_ID</span><span class="p">,</span> <span class="n">googleSessionId</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+
+    <span class="n">intent</span><span class="o">.</span><span class="n">intent</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="n">intent</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;projects/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">PROJECT_ID</span><span class="p">)</span> <span class="o">+</span>
+                                            <span class="nb">len</span><span class="p">(</span><span class="s1">&#39;/agent/intents/&#39;</span><span class="p">):]</span>
+
+    <span class="n">sentiment</span> <span class="o">=</span> <span class="n">analyze_sentiment</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="n">analyze_categories</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;intent&#39;</span><span class="p">:</span> <span class="n">intent</span><span class="p">,</span> <span class="s1">&#39;sentiment&#39;</span><span class="p">:</span> <span class="n">sentiment</span><span class="p">,</span> <span class="s1">&#39;categories&#39;</span><span class="p">:</span> <span class="n">categories</span><span class="p">}</span></div>
+
+
 <div class="viewcode-block" id="AI"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI">[docs]</a><span class="k">class</span> <span class="nc">AI</span><span class="p">:</span>
 
 <div class="viewcode-block" id="AI.create_database"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI.create_database">[docs]</a>    <span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># TODO: Da implementare</span></div>
 
-<div class="viewcode-block" id="AI.get_action"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI.get_action">[docs]</a>    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span>
-                  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">Action</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+<div class="viewcode-block" id="AI.get_action"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI.get_action">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+                   <span class="n">ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">Rule</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
             <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -196,7 +319,8 @@
             <span class="p">]</span>
 
             <span class="c1"># Condition può restituire un singolo oggetto</span>
-            <span class="n">res</span> <span class="o">+=</span> <span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span> <span class="ow">in</span> <span class="n">conditions</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="p">[(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span> <span class="ow">in</span> <span class="n">conditions</span>
                     <span class="k">if</span> <span class="n">mapping</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
 
         <span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
@@ -208,126 +332,160 @@
             <span class="n">selection</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">bisect</span><span class="o">.</span><span class="n">bisect_right</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">],</span>
                                                     <span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">actions</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]))]</span>
 
-            <span class="k">return</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">action</span><span class="p">,</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="AI.get_message"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI.get_message">[docs]</a>    <span class="k">def</span> <span class="nf">get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">userId</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="AI.update_context"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI.update_context">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">update_context</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">action</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Action</span><span class="p">,</span>
+                       <span class="n">options</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+                       <span class="n">init_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="p">:</span>
+        <span class="n">new_ctx</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="o">**</span><span class="n">init_values</span><span class="p">)</span>
+
+        <span class="n">max_pr</span> <span class="o">=</span> <span class="n">new_ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">priority</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;_&#39;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">do</span> <span class="ow">in</span> <span class="n">action</span><span class="o">.</span><span class="n">operations</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">do</span><span class="p">[</span><span class="s1">&#39;op&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;exportName&#39;</span><span class="p">:</span>
+                <span class="c1"># Get old param values</span>
+                <span class="n">old_param</span> <span class="o">=</span> <span class="n">_</span><span class="p">[</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]]</span>
+
+                <span class="c1"># Create a new param object</span>
+                <span class="n">new_param</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">(</span>
+                    <span class="n">ofTopic</span><span class="o">=</span><span class="n">old_param</span><span class="o">.</span><span class="n">ofTopic</span><span class="p">,</span>
+                    <span class="n">values</span><span class="o">=</span><span class="n">old_param</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                    <span class="n">startTime</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+                    <span class="n">priority</span><span class="o">=</span><span class="n">old_param</span><span class="o">.</span><span class="n">priority</span><span class="p">)</span>
+
+                <span class="c1"># Change/add value using eval(no globals only locals)</span>
+                <span class="n">new_val</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">],</span> <span class="p">{},</span> <span class="n">options</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">new_val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">new_param</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_param</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">new_val</span>
+
+                <span class="c1"># Sobstitute old Param instance</span>
+                <span class="n">new_ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">mapping</span><span class="p">[</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">new_param</span>
+                <span class="n">_</span><span class="p">[</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">new_param</span>
+            <span class="k">elif</span> <span class="n">do</span><span class="p">[</span><span class="s1">&#39;op&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;push&#39;</span><span class="p">:</span>
+                <span class="n">max_pr</span> <span class="o">=</span> <span class="n">max_pr</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">new_param</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">(</span>
+                    <span class="n">ofTopic</span><span class="o">=</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;topic&#39;</span><span class="p">],</span>
+                    <span class="n">values</span><span class="o">=</span><span class="p">{},</span>
+                    <span class="n">startTime</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+                    <span class="n">priority</span><span class="o">=</span><span class="n">max_pr</span><span class="p">)</span>
+
+                <span class="n">new_ctx</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_param</span><span class="p">)</span>
+                <span class="n">_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_param</span><span class="p">)</span>
+                <span class="c1"># mapping.append(len(new_ctx.params) - 1)</span>
+            <span class="k">elif</span> <span class="n">do</span><span class="p">[</span><span class="s1">&#39;op&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;popUntil&#39;</span><span class="p">:</span>
+                <span class="n">new_ctx</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">new_ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[:</span><span class="n">mapping</span><span class="p">[</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">do</span><span class="p">[</span><span class="s1">&#39;op&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pop&#39;</span><span class="p">:</span>
+                <span class="n">new_ctx</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">new_ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">new_ctx</span></div>
+
+<div class="viewcode-block" id="AI.get_message"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI.get_message">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_message</span><span class="p">(</span><span class="n">userId</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="c1"># Se condition è fatto come una condizione mongodb allora posso</span>
         <span class="c1"># eseguirla e eventualmente decidere con cosa posso eseguire tale regola</span>
 
-        <span class="n">ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span>
+        <span class="n">old_ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">ctx</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span><span class="n">ofUser</span><span class="o">=</span><span class="n">userId</span><span class="p">,</span> <span class="n">endTimestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="n">contexts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="p">]</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
+                <span class="n">ofUser</span><span class="o">=</span><span class="n">userId</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-timestamp&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contexts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;0 contexts&quot;</span><span class="p">)</span>  <span class="c1"># TODO: Use logger</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">old_ctx</span> <span class="o">=</span> <span class="n">contexts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DoesNotExist</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-            <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="n">intent</span> <span class="o">=</span> <span class="n">analyze_intent</span><span class="p">(</span><span class="n">PROJECT_ID</span><span class="p">,</span> <span class="n">ctx</span><span class="o">.</span><span class="n">ofUser</span><span class="o">.</span><span class="n">googleSessionId</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span>
-                                <span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
-
-        <span class="n">intent</span><span class="o">.</span><span class="n">intent</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="n">intent</span><span class="o">.</span><span class="n">name</span><span class="p">[</span>
-            <span class="nb">len</span><span class="p">(</span><span class="s1">&#39;projects/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">PROJECT_ID</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="s1">&#39;/agent/intents/&#39;</span><span class="p">):]</span>
-
-        <span class="n">sentiment</span> <span class="o">=</span> <span class="n">analyze_sentiment</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
-        <span class="n">categories</span> <span class="o">=</span> <span class="n">analyze_categories</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
-
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;intent&#39;</span><span class="p">:</span> <span class="n">intent</span><span class="p">,</span>
-            <span class="s1">&#39;sentiment&#39;</span><span class="p">:</span> <span class="n">sentiment</span><span class="p">,</span>
-            <span class="s1">&#39;categories&#39;</span><span class="p">:</span> <span class="n">categories</span>
-        <span class="p">}</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">max_priority</span><span class="p">:</span> <span class="nb">int</span>
-        <span class="n">action</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Action</span>
+        <span class="n">rule</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Rule</span>
         <span class="n">mapping</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 
-        <span class="n">max_priority</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span>
+        <span class="n">max_priority</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="n">mapping</span> <span class="o">=</span> <span class="n">AI</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">old_ctx</span><span class="p">)</span>
 
-        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">action</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
 
-        <span class="n">db</span><span class="o">.</span><span class="n">BotMessage</span>
+        <span class="n">ord_param</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">old_ctx</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span>
+            <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">max_priority</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
 
-        <span class="n">ord_param</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">ord_param</span><span class="p">[</span><span class="n">mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mapping</span><span class="p">))]</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">ord_param</span><span class="p">[</span><span class="n">mpItem</span><span class="p">]</span> <span class="k">for</span> <span class="n">mpItem</span> <span class="ow">in</span> <span class="n">mapping</span><span class="p">]</span>
 
-        <span class="c1"># Non ci sono topic di cui fare il push nè nomi da esportare nè</span>
-        <span class="c1"># togliere argomenti</span>
-        <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">operations</span><span class="p">:</span>
-            <span class="n">ctx</span><span class="o">.</span><span class="n">endTimestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-            <span class="n">ctx</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;_&#39;</span><span class="p">:</span> <span class="n">_</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}</span>
 
+        <span class="n">new_ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">AI</span><span class="o">.</span><span class="n">update_context</span><span class="p">(</span>
+            <span class="n">mapping</span><span class="p">,</span> <span class="n">rule</span><span class="o">.</span><span class="n">action</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">ofUser</span><span class="o">=</span><span class="n">old_ctx</span><span class="o">.</span><span class="n">ofUser</span><span class="p">,</span>
+                <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+                <span class="n">params</span><span class="o">=</span><span class="n">ord_param</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">db</span><span class="o">.</span><span class="n">BotMessage</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">))))</span>
 
-            <span class="n">new_ctx</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
-                <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">to_mongo</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s1">&#39;_id&#39;</span><span class="p">})</span>
-            <span class="n">new_ctx</span><span class="o">.</span><span class="n">startTimestamp</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">endTimestamp</span>
+        <span class="n">new_ctx</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
-            <span class="n">changed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-
-            <span class="c1"># for do in action.operations:</span>
-            <span class="c1">#     if do.op == &#39;exportNames&#39;:</span>
-            <span class="c1">#         param: db.Params = _[do.index]</span>
-            <span class="c1">#         [do.name] = eval(</span>
-            <span class="c1">#                 do.val,</span>
-            <span class="c1">#                 globals={},</span>
-            <span class="c1">#                 locals={&#39;_&#39;: _, &#39;m&#39;: msg}</span>
-            <span class="c1">#         )</span>
-            <span class="c1">#     elif do.po == &#39;push&#39;:</span>
-
-        <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_</span><span class="o">=</span><span class="n">_</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">new_ctx</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span></div></div>
 </pre></div>
 
+           </div>
+           
           </div>
-          
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Enrico Soprana.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="../../../index.html">pyTirocinioAI</a></h1>
+
+    </section>
+
+  </div>
+  
 
 
+  
 
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
+  
 
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
 
-
-<h3>Navigation</h3>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../../../index.html">Documentation overview</a><ul>
-  <li><a href="../../index.html">Module code</a><ul>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2018, Enrico Soprana.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
-      
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>
