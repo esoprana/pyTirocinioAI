@@ -18,6 +18,5 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
-`Swagger <_static/swagger.json>`_
-`Swagger ui <http://petstore.swagger.io/?url=https://esoprana.github.io/pyTirocinioAI/_static/swagger.json>`_
+* `Swagger <_static/swagger.json>`_
+* `Swagger ui <http://petstore.swagger.io/?url=https://esoprana.github.io/pyTirocinioAI/_static/swagger.json>`_

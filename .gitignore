@@ -25,3 +25,11 @@ docs/build/
 docs/_build
 docs/_static/swagger.json
 !docs/_static
+
+docs/modules.rst
+docs/progTiroc.ai.rst
+docs/progTiroc.api.rst
+docs/progTiroc.db.rst
+docs/progTiroc.rst
+
+coverage.xml
