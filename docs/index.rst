@@ -19,4 +19,4 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-`Swagger <_static/swagger.json/>`_
+`Swagger <_static/swagger.json>`_
