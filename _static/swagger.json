@@ -1,0 +1,264 @@
+{
+    "basePath": "/api",
+    "consumes": [
+        "application/json"
+    ],
+    "definitions": {
+        "Message": {
+            "properties": {
+                "id": {
+                    "description": "The message unique identifier",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "text": {
+                    "description": "Message's text",
+                    "type": "string"
+                },
+                "timestamp": {
+                    "description": "The message's timestamp",
+                    "format": "date-time",
+                    "readOnly": true,
+                    "type": "string"
+                }
+            },
+            "required": [
+                "text"
+            ],
+            "type": "object"
+        },
+        "User": {
+            "properties": {
+                "id": {
+                    "description": "The user unique identifier",
+                    "readOnly": true,
+                    "type": "string"
+                },
+                "username": {
+                    "description": "The user displayed username",
+                    "readOnly": false,
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "info": {
+        "title": "Storygram API",
+        "version": "0.1"
+    },
+    "paths": {
+        "/message/{fr}/{to}": {
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "fr",
+                    "required": true,
+                    "type": "string"
+                },
+                {
+                    "in": "path",
+                    "name": "to",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "put": {
+                "operationId": "put_single_message",
+                "parameters": [
+                    {
+                        "description": "The id of the user/bot from that sends the message",
+                        "in": "path",
+                        "name": "fr",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "The id of the user that receives the message",
+                        "in": "path",
+                        "name": "to",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "The text of the message",
+                        "in": "body",
+                        "name": "text",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "An optional fields mask",
+                        "format": "mask",
+                        "in": "header",
+                        "name": "X-Fields",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/Message"
+                        }
+                    }
+                },
+                "tags": [
+                    "message"
+                ]
+            }
+        },
+        "/user": {
+            "get": {
+                "operationId": "get_user_list",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "summary": "List all users",
+                "tags": [
+                    "user"
+                ]
+            },
+            "put": {
+                "operationId": "put_user_list",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "payload",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    {
+                        "description": "An optional fields mask",
+                        "format": "mask",
+                        "in": "header",
+                        "name": "X-Fields",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                },
+                "summary": "Create a single user",
+                "tags": [
+                    "user"
+                ]
+            }
+        },
+        "/user/{oId}": {
+            "get": {
+                "operationId": "get_single_user",
+                "parameters": [
+                    {
+                        "description": "The id of the required user",
+                        "in": "path",
+                        "name": "oId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "An optional fields mask",
+                        "format": "mask",
+                        "in": "header",
+                        "name": "X-Fields",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                },
+                "summary": "Get existing user",
+                "tags": [
+                    "user"
+                ]
+            },
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "oId",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "post": {
+                "operationId": "post_single_user",
+                "parameters": [
+                    {
+                        "description": "The id of the required user",
+                        "in": "path",
+                        "name": "oId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "payload",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    },
+                    {
+                        "description": "An optional fields mask",
+                        "format": "mask",
+                        "in": "header",
+                        "name": "X-Fields",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                },
+                "summary": "Modify existing user",
+                "tags": [
+                    "user"
+                ]
+            }
+        }
+    },
+    "produces": [
+        "application/json"
+    ],
+    "responses": {
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        },
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        }
+    },
+    "swagger": "2.0",
+    "tags": [
+        {
+            "description": "Default namespace",
+            "name": "default"
+        },
+        {
+            "description": "User operations",
+            "name": "user"
+        },
+        {
+            "description": "Message operations",
+            "name": "message"
+        }
+    ]
+}
