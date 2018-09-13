@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>progTiroc.db.db &mdash; pyTirocinioAI 0.1 documentation</title>
+  <title>progTiroc.db._db &mdash; pyTirocinioAI 0.1 documentation</title>
   
 
   
@@ -123,7 +123,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>progTiroc.db.db</li>
+      <li>progTiroc.db._db</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -138,15 +138,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for progTiroc.db.db</h1><div class="highlight"><pre>
+  <h1>Source code for progTiroc.db._db</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">mongoengine</span>
 
 
-<div class="viewcode-block" id="mock_connect"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.mock_connect">[docs]</a><span class="k">def</span> <span class="nf">mock_connect</span><span class="p">():</span>
+<div class="viewcode-block" id="mock_connect"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.mock_connect">[docs]</a><span class="k">def</span> <span class="nf">mock_connect</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;db&#39;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;mongomock://localhost&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="connect"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.connect">[docs]</a><span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="n">database_host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<div class="viewcode-block" id="connect"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.connect">[docs]</a><span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="n">database_host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">database_user</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_pwd</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">database_port</span> <span class="o">&gt;=</span> <span class="mi">65535</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Enviroment variable DBPORT is non valid port&#39;</span><span class="p">)</span>
@@ -162,7 +162,7 @@
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="User"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.User">[docs]</a><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
+<div class="viewcode-block" id="User"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.User">[docs]</a><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :ivar str username:</span>
 <span class="sd">    :ivar uuid googleSessionId</span>
@@ -174,7 +174,7 @@
     <span class="n">externallyVisible</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;username&#39;</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
+<div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :ivar typing.List[str] text:</span>
 <span class="sd">    :ivar List[Dict] operations:</span>
@@ -189,7 +189,7 @@
     <span class="n">immediatlyNext</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Rule"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Rule">[docs]</a><span class="k">class</span> <span class="nc">Rule</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
+<div class="viewcode-block" id="Rule"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.Rule">[docs]</a><span class="k">class</span> <span class="nc">Rule</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :ivar Dict condition:</span>
 <span class="sd">    :ivar int score:</span>
@@ -201,7 +201,7 @@
         <span class="n">Action</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Topic"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Topic">[docs]</a><span class="k">class</span> <span class="nc">Topic</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
+<div class="viewcode-block" id="Topic"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.Topic">[docs]</a><span class="k">class</span> <span class="nc">Topic</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :ivar str name:</span>
 <span class="sd">    :ivar typing.List[Rule] rules:</span>
@@ -212,7 +212,7 @@
         <span class="n">mongoengine</span><span class="o">.</span><span class="n">ReferenceField</span><span class="p">(</span><span class="n">Rule</span><span class="p">),</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Params"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Params">[docs]</a><span class="k">class</span> <span class="nc">Params</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
+<div class="viewcode-block" id="Params"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.Params">[docs]</a><span class="k">class</span> <span class="nc">Params</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :ivar Topic ofTopic:</span>
 <span class="sd">    :ivar Dict values:</span>
@@ -227,7 +227,7 @@
     <span class="n">priority</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">IntField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Message"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Message">[docs]</a><span class="k">class</span> <span class="nc">Message</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
+<div class="viewcode-block" id="Message"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.Message">[docs]</a><span class="k">class</span> <span class="nc">Message</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">EmbeddedDocument</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :ivar str text:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -236,14 +236,14 @@
     <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;allow_inheritance&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="BotMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.BotMessage">[docs]</a><span class="k">class</span> <span class="nc">BotMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
+<div class="viewcode-block" id="BotMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.BotMessage">[docs]</a><span class="k">class</span> <span class="nc">BotMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :ivar Rule fromRule:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fromRule</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">ReferenceField</span><span class="p">(</span><span class="n">Rule</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="UserMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.UserMessage">[docs]</a><span class="k">class</span> <span class="nc">UserMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
+<div class="viewcode-block" id="UserMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.UserMessage">[docs]</a><span class="k">class</span> <span class="nc">UserMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :ivar Dict intent:</span>
 <span class="sd">    :ivar Dict photo:</span>
@@ -258,17 +258,17 @@
     <span class="n">googleTopic</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DictField</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="WozBotMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.WozBotMessage">[docs]</a><span class="k">class</span> <span class="nc">WozBotMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
+<div class="viewcode-block" id="WozBotMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.WozBotMessage">[docs]</a><span class="k">class</span> <span class="nc">WozBotMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="WozUserMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.WozUserMessage">[docs]</a><span class="k">class</span> <span class="nc">WozUserMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
+<div class="viewcode-block" id="WozUserMessage"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.WozUserMessage">[docs]</a><span class="k">class</span> <span class="nc">WozUserMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="Context"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.db.Context">[docs]</a><span class="k">class</span> <span class="nc">Context</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
+<div class="viewcode-block" id="Context"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.Context">[docs]</a><span class="k">class</span> <span class="nc">Context</span><span class="p">(</span><span class="n">mongoengine</span><span class="o">.</span><span class="n">Document</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :ivar User ofUser:</span>
 <span class="sd">    :ivar datetime timestamp:</span>

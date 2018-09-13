@@ -4,14 +4,6 @@ progTiroc.api package
 Submodules
 ----------
 
-progTiroc.api.index module
---------------------------
-
-.. automodule:: progTiroc.api.index
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 progTiroc.api.message module
 ----------------------------
 

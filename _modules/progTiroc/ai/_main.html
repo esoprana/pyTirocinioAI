@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>progTiroc.ai.main &mdash; pyTirocinioAI 0.1 documentation</title>
+  <title>progTiroc.ai._main &mdash; pyTirocinioAI 0.1 documentation</title>
   
 
   
@@ -123,7 +123,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>progTiroc.ai.main</li>
+      <li>progTiroc.ai._main</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -138,10 +138,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for progTiroc.ai.main</h1><div class="highlight"><pre>
+  <h1>Source code for progTiroc.ai._main</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">progTiroc.db</span> <span class="k">as</span> <span class="nn">db</span>
 
-<span class="kn">from</span> <span class="nn">.text_analysis</span> <span class="k">import</span> <span class="n">analyze_sentiment</span><span class="p">,</span> <span class="n">analyze_intent</span><span class="p">,</span> <span class="n">analyze_categories</span>
+<span class="kn">from</span> <span class="nn">._text_analysis</span> <span class="k">import</span> <span class="n">analyze_sentiment</span><span class="p">,</span> <span class="n">analyze_intent</span><span class="p">,</span> <span class="n">analyze_categories</span>
 
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">bisect</span>
@@ -168,7 +168,7 @@
 <span class="n">LIBRARY_CONDITIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;__type__&#39;</span><span class="p">,</span> <span class="s1">&#39;__has__&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="check"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.check">[docs]</a><span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="check"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.check">[docs]</a><span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">std_check</span><span class="p">(</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(.+?)(?:__(lt|gt|eq|ne|le|ge|in|nin))?$&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
@@ -221,7 +221,7 @@
 <span class="c1"># __type__ va controllato in inserimento</span>
 
 
-<div class="viewcode-block" id="possible"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.possible">[docs]</a><span class="k">def</span> <span class="nf">possible</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<div class="viewcode-block" id="possible"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.possible">[docs]</a><span class="k">def</span> <span class="nf">possible</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span> <span class="n">condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
     <span class="n">poss</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)):</span>
@@ -241,7 +241,7 @@
 
 
 <span class="c1"># (numero, nome, condizione python)</span>
-<div class="viewcode-block" id="verify_mapping"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.verify_mapping">[docs]</a><span class="k">def</span> <span class="nf">verify_mapping</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span>
+<div class="viewcode-block" id="verify_mapping"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.verify_mapping">[docs]</a><span class="k">def</span> <span class="nf">verify_mapping</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span>
                    <span class="n">mapping</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">py</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">py</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
@@ -256,7 +256,7 @@
 
 
 <span class="c1"># Returns the complete list of valid mappings</span>
-<div class="viewcode-block" id="get_multiple_mappings"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.get_multiple_mappings">[docs]</a><span class="k">def</span> <span class="nf">get_multiple_mappings</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">msg_condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<div class="viewcode-block" id="get_multiple_mappings"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.get_multiple_mappings">[docs]</a><span class="k">def</span> <span class="nf">get_multiple_mappings</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">msg_condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
                           <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span>
                           <span class="n">params_conditions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
                           <span class="n">py</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
@@ -271,7 +271,7 @@
                <span class="n">possibilities</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="get_mapping"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.get_mapping">[docs]</a><span class="k">def</span> <span class="nf">get_mapping</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">msg_condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<div class="viewcode-block" id="get_mapping"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.get_mapping">[docs]</a><span class="k">def</span> <span class="nf">get_mapping</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">msg_condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
                 <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span>
                 <span class="n">params_conditions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
                 <span class="n">py</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
@@ -283,7 +283,7 @@
     <span class="k">return</span> <span class="n">mappings</span><span class="p">[</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mappings</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span></div>
 
 
-<div class="viewcode-block" id="analyze_text"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.analyze_text">[docs]</a><span class="k">def</span> <span class="nf">analyze_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">googleSessionId</span><span class="p">:</span> <span class="n">uuid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<div class="viewcode-block" id="analyze_text"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.analyze_text">[docs]</a><span class="k">def</span> <span class="nf">analyze_text</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">googleSessionId</span><span class="p">:</span> <span class="n">uuid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">intent</span> <span class="o">=</span> <span class="n">analyze_intent</span><span class="p">(</span><span class="n">PROJECT_ID</span><span class="p">,</span> <span class="n">googleSessionId</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
 
     <span class="n">intent</span><span class="o">.</span><span class="n">intent</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">intent</span><span class="o">.</span><span class="n">intent</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;projects/&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">PROJECT_ID</span><span class="p">)</span> <span class="o">+</span>
@@ -295,12 +295,12 @@
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;intent&#39;</span><span class="p">:</span> <span class="n">intent</span><span class="p">,</span> <span class="s1">&#39;sentiment&#39;</span><span class="p">:</span> <span class="n">sentiment</span><span class="p">,</span> <span class="s1">&#39;categories&#39;</span><span class="p">:</span> <span class="n">categories</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="AI"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI">[docs]</a><span class="k">class</span> <span class="nc">AI</span><span class="p">:</span>
+<div class="viewcode-block" id="AI"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI">[docs]</a><span class="k">class</span> <span class="nc">AI</span><span class="p">:</span>
 
-<div class="viewcode-block" id="AI.create_database"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI.create_database">[docs]</a>    <span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AI.create_database"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI.create_database">[docs]</a>    <span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># TODO: Da implementare</span></div>
 
-<div class="viewcode-block" id="AI.get_action"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI.get_action">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="AI.get_action"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI.get_action">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
                    <span class="n">ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">Rule</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">Params</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
@@ -334,7 +334,7 @@
 
             <span class="k">return</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="AI.update_context"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI.update_context">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="AI.update_context"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI.update_context">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">update_context</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">action</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Action</span><span class="p">,</span>
                        <span class="n">options</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
                        <span class="n">init_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">db</span><span class="o">.</span><span class="n">Context</span><span class="p">:</span>
@@ -385,7 +385,7 @@
 
         <span class="k">return</span> <span class="n">new_ctx</span></div>
 
-<div class="viewcode-block" id="AI.get_message"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.main.AI.get_message">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="AI.get_message"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI.get_message">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_message</span><span class="p">(</span><span class="n">userId</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="c1"># Se condition è fatto come una condizione mongodb allora posso</span>
         <span class="c1"># eseguirla e eventualmente decidere con cosa posso eseguire tale regola</span>
