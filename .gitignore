@@ -24,3 +24,4 @@ tests/debug.log
 docs/build/
 docs/_build
 docs/_static/swagger.json
+!docs/_static
