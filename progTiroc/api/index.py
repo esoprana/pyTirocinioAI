@@ -18,4 +18,4 @@ def create_api() -> Blueprint:
     api.add_namespace(user_ns)
     api.add_namespace(message_ns)
 
-    return api
+    return blueprint

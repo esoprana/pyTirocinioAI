@@ -24,13 +24,19 @@ if __name__ == '__main__':
         print('Enviroment varible port is not valid port')
         sys.exit(4)
 
-    host: str = os.environ.get('DBHOST', '127.0.0.1')
-    port: int = os.environ.get('DBPORT', '27017')
-    name: str = os.environ.get('DBNAME', 'db')
-    user: str = os.environ.get('DBUSER', 'user')
-    pswd: str = os.environ.get('DBPSWD', 'example')
+    db_host: str = os.environ.get('DBHOST', '127.0.0.1')
+    db_port: int
+    db_name: str = os.environ.get('DBNAME', 'db')
+    db_user: str = os.environ.get('DBUSER', 'user')
+    db_pswd: str = os.environ.get('DBPSWD', 'example')
 
-    connect(host, port, name, user, pswd)
+    try:
+        db_port = int(os.environ.get('DBPORT', 27017))
+    except ValueError:
+        print('db varible port should be number')
+        sys.exit(5)
+
+    connect(db_host, db_port, db_name, db_user, db_pswd)
 
     app = Flask(__name__)
     app.register_blueprint(create_api())
