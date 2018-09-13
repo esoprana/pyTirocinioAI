@@ -21,7 +21,7 @@ def patch_datetime_now(monkeypatch):
             return MockedDatetime.FAKE_TIME
 
     with mock.patch('datetime.datetime', MockedDatetime), mock.patch(
-            'progTiroc.ai.main.datetime', MockedDatetime):
+            'progTiroc.ai._main.datetime', MockedDatetime):
         yield
 
 
@@ -269,7 +269,7 @@ def test_update4():
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2045, 1, 1)
 
-    new_ctx = ai.AI.update_context([1, 3, 4], rule4.action, {
+    new_ctx = ai.AI.update_context([1], rule4.action, {
         '_': [old_ctx.params[1]],
         'm': {}
     }, {
@@ -283,6 +283,141 @@ def test_update4():
 
     del old_ctx.params[1].values['test']
     old_ctx.params[1].startTime = datetime.datetime.now()
+    old_ctx.timestamp = datetime.datetime.now()
+    old_ctx.save()
+
+    assert remove_id(old_ctx) == remove_id(new_ctx)
+
+
+@pytest.mark.usefixtures('mongomock', 'patch_datetime_now')
+def test_update5():
+    action5 = db.Action(
+        text=['dsaa', 'dsab'],
+        operations=[{
+            'op': 'popUntil',
+            'index': 1,
+        }],
+        isQuestion=False,
+        immediatlyNext=False)
+
+    rule5 = db.Rule(condition={'a__eq': 1}, score=3, action=action5)
+    rule5.save()
+
+    user, topic, rule, firstParam = gen_standard()
+
+    old_ctx = db.Context(
+        ofUser=user,
+        timestamp=datetime.datetime.now(),
+        params=[
+            firstParam,
+            db.Params(
+                ofTopic=topic,
+                values={'test': 2},
+                startTime=datetime.datetime.now(),
+                priority=0),
+            db.Params(
+                ofTopic=topic,
+                values={'test': 5},
+                startTime=datetime.datetime.now(),
+                priority=-1),
+            db.Params(
+                ofTopic=topic,
+                values={'test': 95},
+                startTime=datetime.datetime.now(),
+                priority=-2),
+            db.Params(
+                ofTopic=topic,
+                values={'test': 25},
+                startTime=datetime.datetime.now(),
+                priority=-3)
+        ],
+        message=db.Message(text='aaa'))
+    old_ctx.save()
+
+    datetime.datetime.FAKE_TIME = datetime.datetime(2045, 1, 1)
+
+    mapp = [0, 1, 3]
+
+    new_ctx = ai.AI.update_context(mapp, rule5.action, {
+        '_': [old_ctx.params[i] for i in mapp],
+        'm': {}
+    }, {
+        'ofUser': user,
+        'params': old_ctx.params,
+        'timestamp': datetime.datetime.now(),
+        'message': db.Message(text='aaa')
+    })
+
+    new_ctx.save()
+
+    old_ctx.params = [old_ctx.params[0], old_ctx.params[1]]
+    old_ctx.timestamp = datetime.datetime.now()
+    old_ctx.save()
+
+    assert remove_id(old_ctx) == remove_id(new_ctx)
+
+
+@pytest.mark.usefixtures('mongomock', 'patch_datetime_now')
+def test_update6():
+    action5 = db.Action(
+        text=['dsaa', 'dsab'],
+        operations=[{
+            'op': 'pop',
+        }],
+        isQuestion=False,
+        immediatlyNext=False)
+
+    rule5 = db.Rule(condition={'a__eq': 1}, score=3, action=action5)
+    rule5.save()
+
+    user, topic, rule, firstParam = gen_standard()
+
+    old_ctx = db.Context(
+        ofUser=user,
+        timestamp=datetime.datetime.now(),
+        params=[
+            firstParam,
+            db.Params(
+                ofTopic=topic,
+                values={'test': 2},
+                startTime=datetime.datetime.now(),
+                priority=0),
+            db.Params(
+                ofTopic=topic,
+                values={'test': 5},
+                startTime=datetime.datetime.now(),
+                priority=-1),
+            db.Params(
+                ofTopic=topic,
+                values={'test': 95},
+                startTime=datetime.datetime.now(),
+                priority=-2),
+            db.Params(
+                ofTopic=topic,
+                values={'test': 25},
+                startTime=datetime.datetime.now(),
+                priority=-3)
+        ],
+        message=db.Message(text='aaa'))
+    old_ctx.save()
+
+    datetime.datetime.FAKE_TIME = datetime.datetime(2045, 1, 1)
+
+    mapp = [0, 1, 3]
+
+    new_ctx = ai.AI.update_context(mapp, rule5.action, {
+        '_': [old_ctx.params[i] for i in mapp],
+        'm': {}
+    }, {
+        'ofUser': user,
+        'params': old_ctx.params,
+        'timestamp': datetime.datetime.now(),
+        'message': db.Message(text='aaa')
+    })
+
+    new_ctx.save()
+
+    old_ctx.params = old_ctx.params[:-1]
     old_ctx.timestamp = datetime.datetime.now()
     old_ctx.save()
 

@@ -11,7 +11,7 @@ jobs:
           after_success:
             - 'python-codacy-coverage -r coverage.xml'
         - stage: sphinx
-          script: 'python get_swagger.py && make doc'
+          script: 'make doc'
           deploy:
               provider: pages
               skip-cleanup: true

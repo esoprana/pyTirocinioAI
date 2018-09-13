@@ -52,11 +52,13 @@ debugi:
 .sphinx_prep:
 	@cd docs; sphinx-apidoc -f -o . ../progTiroc/;
 
-doc: doc_html
+.swagger:
+	python get_swagger.py
 
-doc_html:
-	@echo ${@:4};
-	@cd docs; $(MAKE) -j4 html;
+doc: .sphinx_prep doc_html
+
+doc_html: .swagger
+	@cd docs && $(MAKE) -j4 html;
 
 # Test rules
 test:

@@ -1,6 +1,6 @@
 import progTiroc.db as db
 
-from .text_analysis import analyze_sentiment, analyze_intent, analyze_categories
+from ._text_analysis import analyze_sentiment, analyze_intent, analyze_categories
 
 import itertools
 import bisect

@@ -12,6 +12,7 @@ google-api-python-client = "*"
 dialogflow = "*"
 
 [dev-packages]
+codecov = "*"
 pytest = "*"
 sphinx = "*"
 sphinx-rtd-theme = "*"
@@ -21,7 +22,6 @@ pytest-ordering = "*"
 mock = "*"
 mongomock = "*"
 codacy-coverage = "*"
-codecov = "*"
 
 [requires]
 python_version = "3.7"
