@@ -20,3 +20,4 @@ Indices and tables
 * :ref:`search`
 
 `Swagger <_static/swagger.json>`_
+`Swagger ui <http://petstore.swagger.io/?url=https://esoprana.github.io/pyTirocinioAI/_static/swagger.json>`_
