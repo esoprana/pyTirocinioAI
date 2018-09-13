@@ -5,7 +5,7 @@ from .user import ns as user_ns
 from .message import ns as message_ns
 
 
-def create_api() -> Blueprint:
+def create_api() -> (Blueprint, Api):
     blueprint = Blueprint('api', __name__, url_prefix='/api')
     api = Api(
         blueprint,
@@ -18,4 +18,4 @@ def create_api() -> Blueprint:
     api.add_namespace(user_ns)
     api.add_namespace(message_ns)
 
-    return blueprint
+    return blueprint, api

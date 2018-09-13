@@ -38,6 +38,8 @@ if __name__ == '__main__':
 
     connect(db_host, db_port, db_name, db_user, db_pswd)
 
+    blue, api = create_api()
+
     app = Flask(__name__)
-    app.register_blueprint(create_api())
+    app.register_blueprint(blue)
     app.run(host='0.0.0.0', port=port, debug=debug)
