@@ -5,7 +5,7 @@ import datetime
 import uuid
 
 import progTiroc.ai as ai
-import progTiroc.db as db
+from progTiroc import db
 
 from mongoengine.base import BaseDocument
 
@@ -34,28 +34,27 @@ def remove_id(a):
         return a
 
 
-@pytest.fixture
-def mongomock():
+@pytest.fixture(scope='function')
+def db_ctx():
     # Use mongomock instead of real mongo
-    conn = db.mock_connect()
-    yield conn
-    conn.drop_database('db')
-    conn.close()
+    dbi = db.DBInstance('db', 'localhost', 27017, 'user', 'pwd', True)
+    with dbi.context() as db_ctx:
+        yield db_ctx
+
+    dbi.drop_db()
 
 
-def test_connection(mongomock):
-    assert mongomock
+def test_connection(db_ctx):
+    assert db_ctx
 
 
-@pytest.mark.usefixtures('mongomock')
-def test_user_save():
-    user = db.User(googleSessionId=uuid.uuid4(), username='username')
+def test_user_save(db_ctx):
+    user = db_ctx.User(googleSessionId=uuid.uuid4(), username='username')
     user.save()
 
 
-@pytest.mark.usefixtures('mongomock')
-def test_mongomock_clean():
-    assert len(db.User.objects) == 0
+def test_mongomock_clean(db_ctx):
+    assert len(db_ctx.User.objects) == 0
 
 
 @pytest.mark.usefixtures('patch_datetime_now')
@@ -63,11 +62,13 @@ def test_now():
     assert datetime.datetime.now() == datetime.datetime.FAKE_TIME
 
 
-def gen_standard() -> (db.User, db.Topic, db.Rule, db.Params):
-    user = db.User(googleSessionId=uuid.uuid4(), username='username')
+def gen_standard(
+        db_ctx
+) -> (db.types.User, db.types.Topic, db.types.Rule, db.types.Params):
+    user = db_ctx.User(googleSessionId=uuid.uuid4(), username='username')
     user.save()
 
-    action = db.Action(
+    action = db_ctx.Action(
         text=['dsaa', 'dsab'],
         operations=[{
             'op': 'push'
@@ -75,16 +76,16 @@ def gen_standard() -> (db.User, db.Topic, db.Rule, db.Params):
         isQuestion=False,
         immediatlyNext=False)
 
-    rule = db.Rule(condition={'a__eq': 1}, score=3, action=action)
+    rule = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action)
     rule.save()
 
-    topic = db.Topic(name='dsa', rules=[rule])
+    topic = db_ctx.Topic(name='dsa', rules=[rule])
     topic.save()
 
     action.operations[0]['topic'] = str(topic.id)
     rule.save()
 
-    firstParam = db.Params(
+    firstParam = db_ctx.Params(
         ofTopic=topic,
         values={'ada': 'dsa'},
         startTime=datetime.datetime(1999, 1, 1, 1, 1, 1, 1),
@@ -93,10 +94,10 @@ def gen_standard() -> (db.User, db.Topic, db.Rule, db.Params):
     return user, topic, rule, firstParam
 
 
-@pytest.mark.usefixtures('mongomock', 'patch_datetime_now')
-def test_update():
+@pytest.mark.usefixtures('patch_datetime_now')
+def test_update(db_ctx):
     # Prepare
-    user, topic, rule, firstParam = gen_standard()
+    user, topic, rule, firstParam = gen_standard(db_ctx)
 
     # True test
     new_ctx = ai.AI.update_context([1], rule.action, {
@@ -106,31 +107,31 @@ def test_update():
         'ofUser': user,
         'params': [firstParam],
         'timestamp': datetime.datetime.now(),
-        'message': db.Message(text='aaa')
+        'message': db_ctx.Message(text='aaa')
     })
     new_ctx.save()
 
-    test_ctx = db.Context(
+    test_ctx = db_ctx.Context(
         ofUser=user,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={},
                 startTime=datetime.datetime.now(),
                 priority=0)
         ],
-        message=db.Message(text='aaa'))
+        message=db_ctx.Message(text='aaa'))
 
     test_ctx.save()
     assert remove_id(test_ctx) == remove_id(new_ctx)
 
 
-@pytest.mark.usefixtures('mongomock', 'patch_datetime_now')
-def test_update2():
+@pytest.mark.usefixtures('patch_datetime_now')
+def test_update2(db_ctx):
     # Prepare
-    action2 = db.Action(
+    action2 = db_ctx.Action(
         text=['dsaa', 'dsab'],
         operations=[{
             'op': 'exportName',
@@ -141,23 +142,23 @@ def test_update2():
         isQuestion=False,
         immediatlyNext=False)
 
-    rule2 = db.Rule(condition={'a__eq': 1}, score=3, action=action2)
+    rule2 = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action2)
     rule2.save()
 
-    user, topic, rule, firstParam = gen_standard()
+    user, topic, rule, firstParam = gen_standard(db_ctx)
 
-    old_ctx = db.Context(
+    old_ctx = db_ctx.Context(
         ofUser=user,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={},
                 startTime=datetime.datetime.now(),
                 priority=0)
         ],
-        message=db.Message(text='aaa'))
+        message=db_ctx.Message(text='aaa'))
     old_ctx.save()
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2001, 1, 1)
@@ -169,7 +170,7 @@ def test_update2():
         'ofUser': user,
         'params': old_ctx.params,
         'timestamp': datetime.datetime.now(),
-        'message': db.Message(text='aaa')
+        'message': db_ctx.Message(text='aaa')
     })
     new_ctx.save()
 
@@ -181,9 +182,9 @@ def test_update2():
     assert remove_id(old_ctx) == remove_id(new_ctx)
 
 
-@pytest.mark.usefixtures('mongomock', 'patch_datetime_now')
-def test_update3():
-    action3 = db.Action(
+@pytest.mark.usefixtures('patch_datetime_now')
+def test_update3(db_ctx):
+    action3 = db_ctx.Action(
         text=['dsaa', 'dsab'],
         operations=[{
             'op': 'exportName',
@@ -194,23 +195,23 @@ def test_update3():
         isQuestion=False,
         immediatlyNext=False)
 
-    rule3 = db.Rule(condition={'a__eq': 1}, score=3, action=action3)
+    rule3 = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action3)
     rule3.save()
 
-    user, topic, rule, firstParam = gen_standard()
+    user, topic, rule, firstParam = gen_standard(db_ctx)
 
-    old_ctx = db.Context(
+    old_ctx = db_ctx.Context(
         ofUser=user,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={'test': 1},
                 startTime=datetime.datetime.now(),
                 priority=0)
         ],
-        message=db.Message(text='aaa'))
+        message=db_ctx.Message(text='aaa'))
     old_ctx.save()
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2041, 1, 1)
@@ -222,7 +223,7 @@ def test_update3():
         'ofUser': user,
         'params': old_ctx.params,
         'timestamp': datetime.datetime.now(),
-        'message': db.Message(text='aaa')
+        'message': db_ctx.Message(text='aaa')
     })
 
     new_ctx.save()
@@ -235,9 +236,9 @@ def test_update3():
     assert remove_id(old_ctx) == remove_id(new_ctx)
 
 
-@pytest.mark.usefixtures('mongomock', 'patch_datetime_now')
-def test_update4():
-    action4 = db.Action(
+@pytest.mark.usefixtures('patch_datetime_now')
+def test_update4(db_ctx):
+    action4 = db_ctx.Action(
         text=['dsaa', 'dsab'],
         operations=[{
             'op': 'exportName',
@@ -248,23 +249,23 @@ def test_update4():
         isQuestion=False,
         immediatlyNext=False)
 
-    rule4 = db.Rule(condition={'a__eq': 1}, score=3, action=action4)
+    rule4 = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action4)
     rule4.save()
 
-    user, topic, rule, firstParam = gen_standard()
+    user, topic, rule, firstParam = gen_standard(db_ctx)
 
-    old_ctx = db.Context(
+    old_ctx = db_ctx.Context(
         ofUser=user,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={'test': 2},
                 startTime=datetime.datetime.now(),
                 priority=0)
         ],
-        message=db.Message(text='aaa'))
+        message=db_ctx.Message(text='aaa'))
     old_ctx.save()
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2045, 1, 1)
@@ -276,7 +277,7 @@ def test_update4():
         'ofUser': user,
         'params': old_ctx.params,
         'timestamp': datetime.datetime.now(),
-        'message': db.Message(text='aaa')
+        'message': db_ctx.Message(text='aaa')
     })
 
     new_ctx.save()
@@ -289,9 +290,9 @@ def test_update4():
     assert remove_id(old_ctx) == remove_id(new_ctx)
 
 
-@pytest.mark.usefixtures('mongomock', 'patch_datetime_now')
-def test_update5():
-    action5 = db.Action(
+@pytest.mark.usefixtures('patch_datetime_now')
+def test_update5(db_ctx):
+    action5 = db_ctx.Action(
         text=['dsaa', 'dsab'],
         operations=[{
             'op': 'popUntil',
@@ -300,38 +301,38 @@ def test_update5():
         isQuestion=False,
         immediatlyNext=False)
 
-    rule5 = db.Rule(condition={'a__eq': 1}, score=3, action=action5)
+    rule5 = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action5)
     rule5.save()
 
-    user, topic, rule, firstParam = gen_standard()
+    user, topic, rule, firstParam = gen_standard(db_ctx)
 
-    old_ctx = db.Context(
+    old_ctx = db_ctx.Context(
         ofUser=user,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={'test': 2},
                 startTime=datetime.datetime.now(),
                 priority=0),
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={'test': 5},
                 startTime=datetime.datetime.now(),
                 priority=-1),
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={'test': 95},
                 startTime=datetime.datetime.now(),
                 priority=-2),
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={'test': 25},
                 startTime=datetime.datetime.now(),
                 priority=-3)
         ],
-        message=db.Message(text='aaa'))
+        message=db_ctx.Message(text='aaa'))
     old_ctx.save()
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2045, 1, 1)
@@ -345,7 +346,7 @@ def test_update5():
         'ofUser': user,
         'params': old_ctx.params,
         'timestamp': datetime.datetime.now(),
-        'message': db.Message(text='aaa')
+        'message': db_ctx.Message(text='aaa')
     })
 
     new_ctx.save()
@@ -357,9 +358,9 @@ def test_update5():
     assert remove_id(old_ctx) == remove_id(new_ctx)
 
 
-@pytest.mark.usefixtures('mongomock', 'patch_datetime_now')
-def test_update6():
-    action5 = db.Action(
+@pytest.mark.usefixtures('patch_datetime_now')
+def test_update6(db_ctx):
+    action5 = db_ctx.Action(
         text=['dsaa', 'dsab'],
         operations=[{
             'op': 'pop',
@@ -367,38 +368,38 @@ def test_update6():
         isQuestion=False,
         immediatlyNext=False)
 
-    rule5 = db.Rule(condition={'a__eq': 1}, score=3, action=action5)
+    rule5 = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action5)
     rule5.save()
 
-    user, topic, rule, firstParam = gen_standard()
+    user, topic, rule, firstParam = gen_standard(db_ctx)
 
-    old_ctx = db.Context(
+    old_ctx = db_ctx.Context(
         ofUser=user,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={'test': 2},
                 startTime=datetime.datetime.now(),
                 priority=0),
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={'test': 5},
                 startTime=datetime.datetime.now(),
                 priority=-1),
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={'test': 95},
                 startTime=datetime.datetime.now(),
                 priority=-2),
-            db.Params(
+            db_ctx.Params(
                 ofTopic=topic,
                 values={'test': 25},
                 startTime=datetime.datetime.now(),
                 priority=-3)
         ],
-        message=db.Message(text='aaa'))
+        message=db_ctx.Message(text='aaa'))
     old_ctx.save()
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2045, 1, 1)
@@ -412,7 +413,7 @@ def test_update6():
         'ofUser': user,
         'params': old_ctx.params,
         'timestamp': datetime.datetime.now(),
-        'message': db.Message(text='aaa')
+        'message': db_ctx.Message(text='aaa')
     })
 
     new_ctx.save()

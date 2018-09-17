@@ -1,18 +1,24 @@
 import mongoengine
+from uuid import uuid4
 
 
 def mock_connect():
     return mongoengine.connect('db', host='mongomock://localhost')
 
 
-def connect(database_host: str, database_port: int, database_name: str,
-            database_user: str, database_pwd: str):
+def connect(database_host: str,
+            database_port: int,
+            database_name: str,
+            database_user: str,
+            database_pwd: str,
+            isMock: bool = False):
     if (database_port >= 65535):
         raise Exception('Enviroment variable DBPORT is non valid port')
 
     try:
         return mongoengine.connect(
             database_name,
+            alias='MONGOENGINE_ALIAS_PYTIROCINIO_' + uuid4(),
             host=database_host,
             port=database_port,
             username=database_user,
@@ -138,58 +144,3 @@ class Context(mongoengine.Document):
     timestamp = mongoengine.DateTimeField(required=True, null=False)
     params = mongoengine.ListField(mongoengine.EmbeddedDocumentField(Params))
     message = mongoengine.EmbeddedDocumentField(Message)
-
-
-"""
-/* Data */
-/* Messages history */
-/* Context */
-
-export interface IContextModel extends mongoose.Model<IContext> {
-    getCurrentContextByUserId(userId: string): Promise< IContext | null | IError >;
-    getCurrentContextByUser(user: IUser): Promise< IContext | null | IError >;
-}
-
-function getCurrentContextByUserId(this: IContextModel, userId: string): Promise< IContext | null | IError > {
-    return this.findOne({
-        ofUser: userId,
-        endTimestamp: null,
-    }).sort({
-        startTimestamp: -1,
-    }).then(
-        (context) => Promise.resolve(context),
-        (err) => {
-            const e: IError = {
-                message: "Impossible ottenere il context richiesto",
-                level: "error",
-                original_error: err,
-            };
-
-            return Promise.reject(e);
-        },
-    );
-}
-
-function getCurrentContextByUser(this: IContextModel, user: IUser): Promise< IContext | null | IError > {
-    return this.findOne({
-        ofUser: user._id,
-        endTimestamp: null,
-    }).sort({
-        startTimestamp: -1,
-    }).then(
-        (context) => Promise.resolve(context),
-        (err) => {
-            const e: IError = {
-                message: "Impossible ottenere il context richiesto",
-                level: "error",
-                original_error: err,
-            };
-
-            return Promise.reject(e);
-        },
-    );
-}
-
-contextSchema.statics.getCurrentContextByUser = getCurrentContextByUser;
-contextSchema.statics.getCurrentContextByUserId = getCurrentContextByUserId;
-"""

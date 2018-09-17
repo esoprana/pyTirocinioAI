@@ -1,4 +1,4 @@
-import progTiroc.db as db
+from progTiroc import db
 
 from ._text_analysis import analyze_sentiment, analyze_intent, analyze_categories
 
@@ -7,7 +7,6 @@ import bisect
 from random import randint
 import re
 import logging
-import os
 from datetime import datetime
 import uuid
 
@@ -17,12 +16,6 @@ from typing import List, Tuple, Dict, Any, Optional
 
 logging.basicConfig(filename='debug.log', level=logging.INFO)
 log = logging.getLogger(__name__)
-
-PROJECT_ID: str = os.environ.get('PROJECT_ID')
-
-if PROJECT_ID is None:
-    log.fatal("PROJECT_ID is None")
-    exit(1)
 
 LIBRARY_CONDITIONS = ['__type__', '__has__']
 
@@ -80,17 +73,18 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
 # __type__ va controllato in inserimento
 
 
-def possible(params: List[db.Params], condition: Dict[str, Dict]) -> List[int]:
+def possible(params: List[db.types.Params],
+             condition: Dict[str, Dict]) -> List[int]:
     poss = []
 
-    for i in range(len(params)):
+    for i, p in enumerate(params):
         # Se il tipo non è corretto non considerare questo caso
-        if params[i].ofTopic != condition['__type__']:
+        if p.ofTopic != condition['__type__']:
             continue
 
         # Se qualche condizione(di quelle standard immediatamente controllabili) non è rispettata
         # non considerare questo caso
-        if not check(condition, params[i].values):
+        if not check(condition, p.values):
             continue
 
         # Se ha passato tutte le casistiche considera questo caso
@@ -100,7 +94,7 @@ def possible(params: List[db.Params], condition: Dict[str, Dict]) -> List[int]:
 
 
 # (numero, nome, condizione python)
-def verify_mapping(msg: Dict[str, Any], params: List[db.Params],
+def verify_mapping(msg: Dict[str, Any], params: List[db.types.Params],
                    mapping: List[int], py: Optional[str]) -> bool:
     if py is None:
         return True
@@ -116,7 +110,7 @@ def verify_mapping(msg: Dict[str, Any], params: List[db.Params],
 
 # Returns the complete list of valid mappings
 def get_multiple_mappings(msg: Dict[str, Any], msg_condition: Dict[str, Any],
-                          params: List[db.Params],
+                          params: List[db.types.Params],
                           params_conditions: List[Dict[str, Any]],
                           py: str) -> List[List[int]]:
     if check(msg_condition, msg):
@@ -131,7 +125,7 @@ def get_multiple_mappings(msg: Dict[str, Any], msg_condition: Dict[str, Any],
 
 
 def get_mapping(msg: Dict[str, Any], msg_condition: Dict[str, Any],
-                params: List[db.Params],
+                params: List[db.types.Params],
                 params_conditions: List[Dict[str, Any]],
                 py: str) -> Optional[List[int]]:
     mappings = get_multiple_mappings(msg, msg_condition, params,
@@ -142,35 +136,55 @@ def get_mapping(msg: Dict[str, Any], msg_condition: Dict[str, Any],
     return mappings[randint(0, len(mappings) - 1)]
 
 
-def analyze_text(text: str, googleSessionId: uuid) -> Dict[str, Any]:
-    intent = analyze_intent(PROJECT_ID, googleSessionId, text, 'en', log)
-
-    intent.intent.name = intent.intent.name[len('projects/') + len(PROJECT_ID) +
-                                            len('/agent/intents/'):]
-
-    sentiment = analyze_sentiment(text, log)
-    categories = analyze_categories(text, log)
-
-    return {'intent': intent, 'sentiment': sentiment, 'categories': categories}
-
-
 class AI:
+
+    def __init__(self, google_project_id: str, log: logging.Logger):
+        if google_project_id is None:
+            assert google_project_id, "google_project_id must be not null"
+
+        self._google_project_id = google_project_id
+
+    def __enter__(self):
+        return None
+
+    def analyze_text(self, text: str, googleSessionId: uuid) -> Dict[str, Any]:
+        intent = analyze_intent(self._google_project_id, googleSessionId, text,
+                                'en', log)
+
+        intent.intent.name = intent.intent.name[len('projects/') +
+                                                len(self._google_project_id) +
+                                                len('/agent/intents/'):]
+
+        sentiment = analyze_sentiment(text, log)
+        categories = analyze_categories(text, log)
+
+        return {
+            'intent': intent,
+            'sentiment': sentiment,
+            'categories': categories
+        }
+
+    #PROJECT_ID: str = os.environ.get('PROJECT_ID')
+
+    #if PROJECT_ID is None:
+    #    log.fatal("PROJECT_ID is None")
+    #    exit(1)
 
     def create_database(self):
         return None  # TODO: Da implementare
 
     @staticmethod
-    def get_action(msg: Dict[str, Any],
-                   ctx: db.Context) -> Optional[Tuple[int, db.Rule, List[int]]]:
-        params: List[db.Params] = sorted(
+    def get_action(msg: Dict[str, Any], ctx: db.types.Context
+                  ) -> Optional[Tuple[int, db.types.Rule, List[int]]]:
+        params: List[db.types.Params] = sorted(
             ctx.params, lambda p: p.priority, reverse=True)
 
-        res: List[Tuple[int, db.Rule, List[int]]] = []
+        res: List[Tuple[int, db.types.Rule, List[int]]] = []
 
         for i in range(len(params)):
             ps = params[:i + 1]
 
-            conditions: List[Tuple[db.Rule, Optional[List[int]]]] = [
+            conditions: List[Tuple[db.types.Rule, Optional[List[int]]]] = [
                 (rule,
                  get_mapping(msg, rule.condition.onMsg, params,
                              rule.condition.onParams, rule.condition.py))
@@ -194,10 +208,10 @@ class AI:
             return selection[1][0], selection[1][1], selection[1][2]
 
     @staticmethod
-    def update_context(mapping: List[int], action: db.Action,
+    def update_context(mapping: List[int], action: db.types.Action,
                        options: Dict[str, Any],
-                       init_values: Dict[str, Any]) -> db.Context:
-        new_ctx = db.Context(**init_values)
+                       init_values: Dict[str, Any]) -> db.types.Context:
+        new_ctx = db.types.Context(**init_values)
 
         max_pr = new_ctx.params[-1].priority
         _ = options['_']
@@ -209,7 +223,7 @@ class AI:
                 old_param = _[do['index']]
 
                 # Create a new param object
-                new_param = db.Params(
+                new_param = db.types.Params(
                     ofTopic=old_param.ofTopic,
                     values=old_param.values,
                     startTime=datetime.now(),
@@ -228,7 +242,7 @@ class AI:
                 _[do['index']] = new_param
             elif do['op'] == 'push':
                 max_pr = max_pr - 1
-                new_param = db.Params(
+                new_param = db.types.Params(
                     ofTopic=do['topic'],
                     values={},
                     startTime=datetime.now(),
@@ -249,9 +263,9 @@ class AI:
         # Se condition è fatto come una condizione mongodb allora posso
         # eseguirla e eventualmente decidere con cosa posso eseguire tale regola
 
-        old_ctx: db.Context
+        old_ctx: db.types.Context
         try:
-            contexts: List[db.Context] = db.Context.objects(
+            contexts: List[db.types.Context] = db.types.Context.objects(
                 ofUser=userId).order_by('-timestamp')
             if len(contexts) == 0:
                 log.error("0 contexts")  # TODO: Use logger
@@ -263,7 +277,7 @@ class AI:
             return None
 
         max_priority: int
-        rule: db.Rule
+        rule: db.types.Rule
         mapping: List[int]
 
         max_priority, rule, mapping = AI.get_action(msg, old_ctx)
@@ -278,13 +292,13 @@ class AI:
 
         options = {'_': _, 'm': msg}
 
-        new_ctx: db.Context = AI.update_context(
+        new_ctx: db.types.Context = AI.update_context(
             mapping, rule.action, options,
             dict(
                 ofUser=old_ctx.ofUser,
                 timestamp=datetime.now(),
                 params=ord_param,
-                message=db.BotMessage(text=text.format(**options))))
+                message=db.types.BotMessage(text=text.format(**options))))
 
         new_ctx.save()
 
