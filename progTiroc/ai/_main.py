@@ -208,10 +208,11 @@ class AI:
             return selection[1][0], selection[1][1], selection[1][2]
 
     @staticmethod
-    def update_context(mapping: List[int], action: db.types.Action,
-                       options: Dict[str, Any],
+    def update_context(db_ctx: db.DBContext, mapping: List[int],
+                       action: db.types.Action, options: Dict[str, Any],
                        init_values: Dict[str, Any]) -> db.types.Context:
-        new_ctx = db.types.Context(**init_values)
+        print(init_values)
+        new_ctx = db_ctx.Context(**init_values)
 
         max_pr = new_ctx.params[-1].priority
         _ = options['_']
@@ -223,7 +224,7 @@ class AI:
                 old_param = _[do['index']]
 
                 # Create a new param object
-                new_param = db.types.Params(
+                new_param = db_ctx.Params(
                     ofTopic=old_param.ofTopic,
                     values=old_param.values,
                     startTime=datetime.now(),
@@ -242,7 +243,7 @@ class AI:
                 _[do['index']] = new_param
             elif do['op'] == 'push':
                 max_pr = max_pr - 1
-                new_param = db.types.Params(
+                new_param = db_ctx.Params(
                     ofTopic=do['topic'],
                     values={},
                     startTime=datetime.now(),
@@ -259,13 +260,14 @@ class AI:
         return new_ctx
 
     @staticmethod
-    def get_message(userId: int, msg: Dict[str, Any]) -> Optional[str]:
+    def get_message(db_ctx: db.DBContext, userId: int,
+                    msg: Dict[str, Any]) -> Optional[str]:
         # Se condition è fatto come una condizione mongodb allora posso
         # eseguirla e eventualmente decidere con cosa posso eseguire tale regola
 
         old_ctx: db.types.Context
         try:
-            contexts: List[db.types.Context] = db.types.Context.objects(
+            contexts: List[db.types.Context] = db_ctx.Context.objects(
                 ofUser=userId).order_by('-timestamp')
             if len(contexts) == 0:
                 log.error("0 contexts")  # TODO: Use logger
@@ -295,11 +297,11 @@ class AI:
         new_ctx: db.types.Context = AI.update_context(
             mapping, rule.action, options,
             dict(
-                ofUser=old_ctx.ofUser,
+                ofUser=old_ctx.ofUser.id,
                 timestamp=datetime.now(),
                 params=ord_param,
-                message=db.types.BotMessage(text=text.format(**options))))
+                message=db_ctx.BotMessage(text=text.format(**options))))
 
-        new_ctx.save()
+        new_ctx.commit()
 
         return new_ctx.message.text

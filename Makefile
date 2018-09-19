@@ -9,7 +9,6 @@ help:
 	@echo 'clean          : clean whole project(documentation, __pycache, ....)'
 	@echo 'clean_doc      : clean documentation'
 	@echo 'clean_doc_html : clean html documentation'
-	@echo 'clean_doc_pdf  : clean pdf documentation'
 	@echo 'clean_pycache  : clean __pycache__'
 	@echo 'run            : run main.py'
 	@echo 'runi           : run main.py in interactive mode'
@@ -21,16 +20,21 @@ help:
 	@echo 'conf_git       : configure git hooks dir'
 
 # Clean rules
-clean: clean_doc clean_pycache
+clean: clean_doc clean_pycache clean_mypy_cache clean_pytest_cache
 
 clean_doc: clean_doc_html
 
 clean_doc_html:
-	@rm -Rf docs/build/html
+	@rm -Rf docs/_build/html
 
 clean_pycache:
 	@find . | grep -E "(__pycache__|\.pyc|\.pyo)" | xargs rm -rf
 
+clean_mypy_cache:
+	@find . | grep -E "(.mypy_cache)" | xargs rm -rf
+
+clean_pytest_cache:
+	@find . | grep -E "(.pytest_cache)" | xargs rm -rf
 
 # === Normal rules ===========================================================
 # Run rules

@@ -75,8 +75,13 @@ class SingleMessage(HTTPMethodView):
                 msg = db_ctx.WozUserMessage(text=data['text'])
 
             # Get the list of context of user in decresend order of timestamp
-            contextsOfUser = db_ctx.Context.objects(
-                ofUser=fr).order_by('-timestamp')
+
+            from bson import ObjectId
+            contextsOfUser = [
+                i async for i in db_ctx.Context.find({
+                    'ofUser': ObjectId(fr)
+                }).sort('timestamp', -1).limit(1)
+            ]
 
             # If no active context send error(at least one should be)
             if not contextsOfUser:
@@ -93,7 +98,7 @@ class SingleMessage(HTTPMethodView):
                 timestamp=datetime.now(),
                 params=old_context.params,
                 message=msg)
-            context.save()
+            await context.commit()
 
             return json({
                 'id': str(context.id),

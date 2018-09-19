@@ -37,8 +37,6 @@ if __name__ == '__main__':
         print('db varible port should be number')
         sys.exit(5)
 
-    db_instance = DBInstance(db_name, db_host, db_port, db_user, db_pswd)
-
     app = Sanic(__name__)
     api = create_api()
     api.url_prefix = '/api'
@@ -47,6 +45,9 @@ if __name__ == '__main__':
     app.blueprint(openapi_blueprint)  # For openapi files
     app.blueprint(swagger_blueprint)  # For swagger UI
 
-    app.dbi = db_instance  # Set db instance
+    @app.listener('before_server_start')
+    def init(sanic, loop):
+        app.dbi = DBInstance(db_name, db_host, db_port, db_user,
+                             db_pswd)  # Set db instance
 
     app.run(host='0.0.0.0', port=port, debug=debug)

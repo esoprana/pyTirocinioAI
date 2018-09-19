@@ -55,7 +55,7 @@ class UserList(HTTPMethodView):
     @doc.summary('Create a user')
     @doc.consumes(DocUserPut, location='body', required=True)
     @doc.produces(DocUserGet)
-    def put(self, request):
+    async def put(self, request):
         """ Create a single user """
 
         if request.json is None:
@@ -78,10 +78,10 @@ class UserList(HTTPMethodView):
             )
 
             try:
-                user.save()
+                await user.commit()
             except mongoengine.OperationError as oe:
                 print(oe)
-                return json({'message': 'Impossible to save changes'}, 500)
+                return json({'message': 'Impossible to commit changes'}, 500)
 
             context = db_ctx.Context(
                 ofUser=user,
@@ -90,10 +90,10 @@ class UserList(HTTPMethodView):
                 message=db_ctx.Message(text='Hi!'))
 
             try:
-                context.save(cascade=True)
+                await context.commit()
             except mongoengine.OperationError as oe:
                 print(oe)
-                return json({'message': 'Impossible to save changes'}, 500)
+                return json({'message': 'Impossible to commit changes'}, 500)
                 # TODO: Gestire caso in cui user è comunque salvato
 
             return json({
@@ -155,7 +155,7 @@ class SingleUser(HTTPMethodView):
 
             user.username = data['username']
 
-            user.save()
+            user.commit()
 
             return json({'id': str(user.id), 'username': user.username}, 200)
 

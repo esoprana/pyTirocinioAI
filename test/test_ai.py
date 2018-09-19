@@ -9,6 +9,8 @@ from progTiroc import db
 
 from mongoengine.base import BaseDocument
 
+from umongo import Reference
+
 
 @pytest.fixture
 def patch_datetime_now(monkeypatch):
@@ -48,13 +50,13 @@ def test_connection(db_ctx):
     assert db_ctx
 
 
-def test_user_save(db_ctx):
+async def test_user_save(db_ctx):
     user = db_ctx.User(googleSessionId=uuid.uuid4(), username='username')
-    user.save()
+    await user.commit()
 
 
-def test_mongomock_clean(db_ctx):
-    assert len(db_ctx.User.objects) == 0
+async def test_mongomock_clean(db_ctx):
+    assert not [i async for i in db_ctx.User.find().limit(1)]
 
 
 @pytest.mark.usefixtures('patch_datetime_now')
@@ -62,11 +64,11 @@ def test_now():
     assert datetime.datetime.now() == datetime.datetime.FAKE_TIME
 
 
-def gen_standard(
+async def gen_standard(
         db_ctx
 ) -> (db.types.User, db.types.Topic, db.types.Rule, db.types.Params):
     user = db_ctx.User(googleSessionId=uuid.uuid4(), username='username')
-    user.save()
+    await user.commit()
 
     action = db_ctx.Action(
         text=['dsaa', 'dsab'],
@@ -77,13 +79,14 @@ def gen_standard(
         immediatlyNext=False)
 
     rule = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action)
-    rule.save()
+    await rule.commit()
 
-    topic = db_ctx.Topic(name='dsa', rules=[rule])
-    topic.save()
+    print("QQQQQQQQQQQQQQQQQQ" + str(type(rule.id)) + "WWWWWWWWWWWWWWWWWWWWWW")
+    topic = db_ctx.Topic(name='dsa', rules=[rule.id])
+    await topic.commit()
 
     action.operations[0]['topic'] = str(topic.id)
-    rule.save()
+    await rule.commit()
 
     firstParam = db_ctx.Params(
         ofTopic=topic,
@@ -95,12 +98,12 @@ def gen_standard(
 
 
 @pytest.mark.usefixtures('patch_datetime_now')
-def test_update(db_ctx):
+async def test_update(db_ctx):
     # Prepare
-    user, topic, rule, firstParam = gen_standard(db_ctx)
+    user, topic, rule, firstParam = await gen_standard(db_ctx)
 
     # True test
-    new_ctx = ai.AI.update_context([1], rule.action, {
+    new_ctx = ai.AI.update_context(db_ctx, [1], rule.action, {
         '_': [],
         'm': {}
     }, {
@@ -109,10 +112,10 @@ def test_update(db_ctx):
         'timestamp': datetime.datetime.now(),
         'message': db_ctx.Message(text='aaa')
     })
-    new_ctx.save()
+    await new_ctx.commit()
 
     test_ctx = db_ctx.Context(
-        ofUser=user,
+        ofUser=user.id,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
@@ -124,12 +127,12 @@ def test_update(db_ctx):
         ],
         message=db_ctx.Message(text='aaa'))
 
-    test_ctx.save()
+    await test_ctx.commit()
     assert remove_id(test_ctx) == remove_id(new_ctx)
 
 
 @pytest.mark.usefixtures('patch_datetime_now')
-def test_update2(db_ctx):
+async def test_update2(db_ctx):
     # Prepare
     action2 = db_ctx.Action(
         text=['dsaa', 'dsab'],
@@ -143,12 +146,12 @@ def test_update2(db_ctx):
         immediatlyNext=False)
 
     rule2 = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action2)
-    rule2.save()
+    await rule2.commit()
 
-    user, topic, rule, firstParam = gen_standard(db_ctx)
+    user, topic, rule, firstParam = await gen_standard(db_ctx)
 
     old_ctx = db_ctx.Context(
-        ofUser=user,
+        ofUser=user.id,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
@@ -159,11 +162,11 @@ def test_update2(db_ctx):
                 priority=0)
         ],
         message=db_ctx.Message(text='aaa'))
-    old_ctx.save()
+    await old_ctx.commit()
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2001, 1, 1)
 
-    new_ctx = ai.AI.update_context([1], rule2.action, {
+    new_ctx = ai.AI.update_context(db_ctx, [1], rule2.action, {
         '_': [old_ctx.params[1]],
         'm': {}
     }, {
@@ -172,18 +175,18 @@ def test_update2(db_ctx):
         'timestamp': datetime.datetime.now(),
         'message': db_ctx.Message(text='aaa')
     })
-    new_ctx.save()
+    await new_ctx.commit()
 
     old_ctx.params[1].values['test'] = 1
     old_ctx.params[1].startTime = datetime.datetime.now()
     old_ctx.timestamp = datetime.datetime.now()
-    old_ctx.save()
+    await old_ctx.commit()
 
     assert remove_id(old_ctx) == remove_id(new_ctx)
 
 
 @pytest.mark.usefixtures('patch_datetime_now')
-def test_update3(db_ctx):
+async def test_update3(db_ctx):
     action3 = db_ctx.Action(
         text=['dsaa', 'dsab'],
         operations=[{
@@ -196,12 +199,12 @@ def test_update3(db_ctx):
         immediatlyNext=False)
 
     rule3 = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action3)
-    rule3.save()
+    await rule3.commit()
 
-    user, topic, rule, firstParam = gen_standard(db_ctx)
+    user, topic, rule, firstParam = await gen_standard(db_ctx)
 
     old_ctx = db_ctx.Context(
-        ofUser=user,
+        ofUser=user.id,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
@@ -212,11 +215,11 @@ def test_update3(db_ctx):
                 priority=0)
         ],
         message=db_ctx.Message(text='aaa'))
-    old_ctx.save()
+    await old_ctx.commit()
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2041, 1, 1)
 
-    new_ctx = ai.AI.update_context([1], rule3.action, {
+    new_ctx = ai.AI.update_context(db_ctx, [1], rule3.action, {
         '_': [old_ctx.params[1]],
         'm': {}
     }, {
@@ -226,18 +229,18 @@ def test_update3(db_ctx):
         'message': db_ctx.Message(text='aaa')
     })
 
-    new_ctx.save()
+    await new_ctx.commit()
 
     old_ctx.params[1].values['test'] = 2
     old_ctx.params[1].startTime = datetime.datetime.now()
     old_ctx.timestamp = datetime.datetime.now()
-    old_ctx.save()
+    await old_ctx.commit()
 
     assert remove_id(old_ctx) == remove_id(new_ctx)
 
 
 @pytest.mark.usefixtures('patch_datetime_now')
-def test_update4(db_ctx):
+async def test_update4(db_ctx):
     action4 = db_ctx.Action(
         text=['dsaa', 'dsab'],
         operations=[{
@@ -250,12 +253,12 @@ def test_update4(db_ctx):
         immediatlyNext=False)
 
     rule4 = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action4)
-    rule4.save()
+    await rule4.commit()
 
     user, topic, rule, firstParam = gen_standard(db_ctx)
 
     old_ctx = db_ctx.Context(
-        ofUser=user,
+        ofUser=user.id,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
@@ -266,11 +269,11 @@ def test_update4(db_ctx):
                 priority=0)
         ],
         message=db_ctx.Message(text='aaa'))
-    old_ctx.save()
+    await old_ctx.commit()
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2045, 1, 1)
 
-    new_ctx = ai.AI.update_context([1], rule4.action, {
+    new_ctx = ai.AI.update_context(db_ctx, [1], rule4.action, {
         '_': [old_ctx.params[1]],
         'm': {}
     }, {
@@ -280,18 +283,18 @@ def test_update4(db_ctx):
         'message': db_ctx.Message(text='aaa')
     })
 
-    new_ctx.save()
+    await new_ctx.commit()
 
     del old_ctx.params[1].values['test']
     old_ctx.params[1].startTime = datetime.datetime.now()
     old_ctx.timestamp = datetime.datetime.now()
-    old_ctx.save()
+    await old_ctx.commit()
 
     assert remove_id(old_ctx) == remove_id(new_ctx)
 
 
 @pytest.mark.usefixtures('patch_datetime_now')
-def test_update5(db_ctx):
+async def test_update5(db_ctx):
     action5 = db_ctx.Action(
         text=['dsaa', 'dsab'],
         operations=[{
@@ -302,12 +305,12 @@ def test_update5(db_ctx):
         immediatlyNext=False)
 
     rule5 = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action5)
-    rule5.save()
+    await rule5.commit()
 
-    user, topic, rule, firstParam = gen_standard(db_ctx)
+    user, topic, rule, firstParam = await gen_standard(db_ctx)
 
     old_ctx = db_ctx.Context(
-        ofUser=user,
+        ofUser=user.id,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
@@ -333,13 +336,13 @@ def test_update5(db_ctx):
                 priority=-3)
         ],
         message=db_ctx.Message(text='aaa'))
-    old_ctx.save()
+    await old_ctx.commit()
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2045, 1, 1)
 
     mapp = [0, 1, 3]
 
-    new_ctx = ai.AI.update_context(mapp, rule5.action, {
+    new_ctx = ai.AI.update_context(db_ctx, mapp, rule5.action, {
         '_': [old_ctx.params[i] for i in mapp],
         'm': {}
     }, {
@@ -349,17 +352,17 @@ def test_update5(db_ctx):
         'message': db_ctx.Message(text='aaa')
     })
 
-    new_ctx.save()
+    await new_ctx.commit()
 
     old_ctx.params = [old_ctx.params[0], old_ctx.params[1]]
     old_ctx.timestamp = datetime.datetime.now()
-    old_ctx.save()
+    await old_ctx.commit()
 
     assert remove_id(old_ctx) == remove_id(new_ctx)
 
 
 @pytest.mark.usefixtures('patch_datetime_now')
-def test_update6(db_ctx):
+async def test_update6(db_ctx):
     action5 = db_ctx.Action(
         text=['dsaa', 'dsab'],
         operations=[{
@@ -369,12 +372,12 @@ def test_update6(db_ctx):
         immediatlyNext=False)
 
     rule5 = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action5)
-    rule5.save()
+    await rule5.commit()
 
-    user, topic, rule, firstParam = gen_standard(db_ctx)
+    user, topic, rule, firstParam = await gen_standard(db_ctx)
 
     old_ctx = db_ctx.Context(
-        ofUser=user,
+        ofUser=user.id,
         timestamp=datetime.datetime.now(),
         params=[
             firstParam,
@@ -400,13 +403,13 @@ def test_update6(db_ctx):
                 priority=-3)
         ],
         message=db_ctx.Message(text='aaa'))
-    old_ctx.save()
+    await old_ctx.commit()
 
     datetime.datetime.FAKE_TIME = datetime.datetime(2045, 1, 1)
 
     mapp = [0, 1, 3]
 
-    new_ctx = ai.AI.update_context(mapp, rule5.action, {
+    new_ctx = ai.AI.update_context(db_ctx, mapp, rule5.action, {
         '_': [old_ctx.params[i] for i in mapp],
         'm': {}
     }, {
@@ -416,10 +419,10 @@ def test_update6(db_ctx):
         'message': db_ctx.Message(text='aaa')
     })
 
-    new_ctx.save()
+    await new_ctx.commit()
 
     old_ctx.params = old_ctx.params[:-1]
     old_ctx.timestamp = datetime.datetime.now()
-    old_ctx.save()
+    await old_ctx.commit()
 
     assert remove_id(old_ctx) == remove_id(new_ctx)

@@ -1,45 +1,22 @@
-import mongoengine
 from uuid import uuid4
 
-
-def mock_connect():
-    return mongoengine.connect('db', host='mongomock://localhost')
-
-
-def connect(database_host: str,
-            database_port: int,
-            database_name: str,
-            database_user: str,
-            database_pwd: str,
-            isMock: bool = False):
-    if (database_port >= 65535):
-        raise Exception('Enviroment variable DBPORT is non valid port')
-
-    try:
-        return mongoengine.connect(
-            database_name,
-            alias='MONGOENGINE_ALIAS_PYTIROCINIO_' + uuid4(),
-            host=database_host,
-            port=database_port,
-            username=database_user,
-            password=database_pwd)
-    except Exception as ex:
-        pass
+import motor.motor_asyncio
+from umongo import Instance, Document, fields, Document, EmbeddedDocument
 
 
-class User(mongoengine.Document):
+class User(Document):
     """
     :ivar str username:
     :ivar uuid googleSessionId
     """
 
-    username = mongoengine.StringField(required=True, null=False)
-    googleSessionId = mongoengine.UUIDField(required=True, null=False)
+    username = fields.StringField(required=True, null=False)
+    googleSessionId = fields.UUIDField(required=True, null=False)
 
     externallyVisible = ['id', 'username']
 
 
-class Action(mongoengine.EmbeddedDocument):
+class Action(EmbeddedDocument):
     """
     :ivar typing.List[str] text:
     :ivar List[Dict] operations:
@@ -47,37 +24,35 @@ class Action(mongoengine.EmbeddedDocument):
     :ivar immediatlyNext bool:
     """
 
-    text = mongoengine.ListField(
-        mongoengine.StringField(), required=True, null=False)
-    operations = mongoengine.ListField(mongoengine.DictField(), required=False)
-    isQuestion = mongoengine.BooleanField(required=True, null=False)
-    immediatlyNext = mongoengine.BooleanField(required=True, null=False)
+    text = fields.ListField(fields.StringField(), required=True, null=False)
+    operations = fields.ListField(fields.DictField(), required=False)
+    isQuestion = fields.BooleanField(required=True)
+    immediatlyNext = fields.BooleanField(required=True)
 
 
-class Rule(mongoengine.Document):
+class Rule(Document):
     """
     :ivar Dict condition:
     :ivar int score:
     :ivar Action action:
     """
-    condition = mongoengine.DictField(required=True, null=False)
-    score = mongoengine.IntField(required=True, null=False)
-    action = mongoengine.EmbeddedDocumentField(
-        Action, required=True, null=False)
+    condition = fields.DictField(required=True)
+    score = fields.IntField(required=True)
+    action = fields.EmbeddedField(Action, required=True)
 
 
-class Topic(mongoengine.Document):
+class Topic(Document):
     """
     :ivar str name:
     :ivar typing.List[Rule] rules:
     """
 
-    name = mongoengine.StringField(required=True, null=False)
-    rules = mongoengine.ListField(
-        mongoengine.ReferenceField(Rule), required=True, null=False)
+    name = fields.StringField(required=True)
+    rules = fields.ListField(
+        fields.ReferenceField(Rule, dbRef=True), required=True)
 
 
-class Params(mongoengine.EmbeddedDocument):
+class Params(EmbeddedDocument):
     """
     :ivar Topic ofTopic:
     :ivar Dict values:
@@ -85,27 +60,29 @@ class Params(mongoengine.EmbeddedDocument):
     :ivar int priority:
     """
 
-    ofTopic = mongoengine.ReferenceField(Topic, required=True, null=False)
-    values = mongoengine.DictField(
-        required=False, default=dict)  # TODO: Ricontrollare
-    startTime = mongoengine.DateTimeField(required=True, null=False)
-    priority = mongoengine.IntField(required=True, null=False)
+    ofTopic = fields.ReferenceField(Topic, dbRef=True, required=True)
+    values = fields.DictField(required=False)
+    startTime = fields.DateTimeField(required=True)
+    priority = fields.IntegerField(required=True)
 
 
-class Message(mongoengine.EmbeddedDocument):
+class Message(EmbeddedDocument):
     """
     :ivar str text:
     """
 
-    text = mongoengine.StringField(required=True, null=False)
-    meta = {'allow_inheritance': True}
+    text = fields.StringField(required=True)
+
+    class Meta:
+        allow_inheritance = True
+        abstract = False
 
 
 class BotMessage(Message):
     """
     :ivar Rule fromRule:
     """
-    fromRule = mongoengine.ReferenceField(Rule, required=True, null=False)
+    fromRule = fields.ReferenceField(Rule, dbRef=True, required=True)
 
 
 class UserMessage(Message):
@@ -117,10 +94,10 @@ class UserMessage(Message):
     """
 
     # All of them can be empty
-    intent = mongoengine.DictField(required=False)
-    photo = mongoengine.DictField(required=False)
-    sentiment = mongoengine.DictField(required=False)
-    googleTopic = mongoengine.DictField(required=False)
+    intent = fields.DictField(required=False)
+    photo = fields.DictField(required=False)
+    sentiment = fields.DictField(required=False)
+    googleTopic = fields.DictField(required=False)
 
 
 class WozBotMessage(Message):
@@ -133,14 +110,14 @@ class WozUserMessage(Message):
     """
 
 
-class Context(mongoengine.Document):
+class Context(Document):
     """
     :ivar User ofUser:
     :ivar datetime timestamp:
     :ivar typing.List[Params] params:
     :ivar Message message:
     """
-    ofUser = mongoengine.ReferenceField(User, required=True, null=False)
-    timestamp = mongoengine.DateTimeField(required=True, null=False)
-    params = mongoengine.ListField(mongoengine.EmbeddedDocumentField(Params))
-    message = mongoengine.EmbeddedDocumentField(Message)
+    ofUser = fields.ReferenceField(User, dbRef=True, required=True)
+    timestamp = fields.DateTimeField(required=True)
+    params = fields.ListField(fields.EmbeddedField(Params))
+    message = fields.EmbeddedField(Message)
