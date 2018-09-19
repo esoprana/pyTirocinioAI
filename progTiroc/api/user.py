@@ -1,92 +1,113 @@
-from flask_restplus import Namespace, Resource, fields, reqparse
-import mongoengine
+import uuid
+from datetime import datetime
+import typing
 
 from progTiroc import db
 
-import uuid
-from datetime import datetime
+import mongoengine
 
-ns = Namespace(name='user', description='User operations')
+from sanic import Blueprint
+from sanic.response import json
+from sanic.views import HTTPMethodView
+from sanic_swagger import doc
 
-user = ns.model(
-    'User', {
-        'id': fields.String(
-            readonly=True, description='The user unique identifier'),
-        'username': fields.String(
-            readonly=False, description='The user displayed username')
-    })
-
-userPutRQ = reqparse.RequestParser(bundle_errors=True)
-userPutRQ.add_argument(
-    'username',
-    type=str,
-    required=True,
-    help='The user\'s username',
-    location='json')
+import marshmallow
 
 
-@ns.route('')
-class UserList(Resource):
+class DocUserGet(doc.Model):
+    id: str = doc.field(description='The user unique identifier')
+    username: str = doc.field(description='The user displayed username')
+
+
+class DocUserPut(doc.Model):
+    username: str = doc.field(description='The user displayed username')
+
+
+class UserPutSchema(marshmallow.Schema):
+    username = marshmallow.fields.Str(attribute="username", required=True)
+
+    class Meta:
+        unknown = 'raise'
+        partial = False
+
+
+class UserList(HTTPMethodView):
     """ Show a list of all the users or insert user in list """
 
-    def get(self):
-        """ List all users """
-        try:
-            data = [{
-                'id': str(user.id),
-                'username': user.username
-            } for user in db.User.objects.only(*db.User.externallyVisible)]
-        except Exception as e:
-            print(e)
-            ns.abort(500, 'Impossible to get the data requested')
+    @doc.summary('List all users')
+    @doc.produces(doc.field(type=typing.List[DocUserGet]))
+    async def get(self, request):
+        with request.app.dbi.context() as db_ctx:
+            try:
+                data = [{
+                    'id': str(user.id),
+                    'username': user.username
+                } for user in db_ctx.User.objects.only(
+                    *db.types.User.externallyVisible)]
 
-        return data, 200
+                return json(data, 200)
+            except Exception as e:
+                print(e)
+                return json({
+                    'message': 'Impossible to get the data requested'
+                }, 500)
 
-    @ns.doc(body=user)
-    @ns.marshal_with(user)
-    def put(self):
+    @doc.summary('Create a user')
+    @doc.consumes(DocUserPut, location='body', required=True)
+    @doc.produces(DocUserGet)
+    def put(self, request):
         """ Create a single user """
 
-        args = userPutRQ.parse_args()
-
-        user = db.User(
-            username=args['username'],
-            googleSessionId=uuid.uuid4(),
-        )
+        if request.json is None:
+            return json({'message': 'invalid schema format(json)'}, 400)
 
         try:
-            user.save()
-        except mongoengine.OperationError as oe:
-            print(oe)
-            ns.abort(500, 'Impossible to save changes')
-            # TODO: Gestire caso in cui user è comunque salvato
+            data, errors = UserPutSchema().load(request.json)
+        except marshmallow.ValidationError as e:
+            e.messages['message'] = 'ValidationError'
+            return json(e.messages, 400)
 
-        context = db.Context(
-            ofUser=user,
-            timestamp=datetime.now(),
-            params=[],
-            message=db.Message(text='ciao'))
+        if errors:
+            errors['message'] = 'ValidationError'
+            return json(errors, 400)
 
-        try:
-            context.save(cascade=True)
-        except mongoengine.OperationError as oe:
-            print(oe)
-            ns.abort(500, 'Impossible to save changes')
-            # TODO: Gestire caso in cui user è comunque salvato
+        with request.app.dbi.context() as db_ctx:
+            user = db_ctx.User(
+                username=data['username'],
+                googleSessionId=uuid.uuid4(),
+            )
 
-        return {
-            'id': str(user.id),
-            'username': user.username,
-        }, 200
+            try:
+                user.save()
+            except mongoengine.OperationError as oe:
+                print(oe)
+                return json({'message': 'Impossible to save changes'}, 500)
+
+            context = db_ctx.Context(
+                ofUser=user,
+                timestamp=datetime.now(),
+                params=[],
+                message=db_ctx.Message(text='Hi!'))
+
+            try:
+                context.save(cascade=True)
+            except mongoengine.OperationError as oe:
+                print(oe)
+                return json({'message': 'Impossible to save changes'}, 500)
+                # TODO: Gestire caso in cui user è comunque salvato
+
+            return json({
+                'id': str(user.id),
+                'username': user.username,
+            }, 200)
 
 
-@ns.route('/<string:oId>')
-class SingleUser(Resource):
+class SingleUser(HTTPMethodView):
     """ Show single user """
 
-    @ns.marshal_with(user)
-    @ns.doc(params={'oId': 'The id of the required user'})
-    def get(self, oId: str):
+    @doc.summary('Get single user')
+    @doc.produces(DocUserGet)
+    async def get(self, oId: str):
         """ Get existing user """
 
         try:
@@ -100,27 +121,45 @@ class SingleUser(Resource):
 
         return {'id': str(user.id), 'username': user.username}, 200
 
-    @ns.marshal_with(user)
-    @ns.doc(params={'oId': 'The id of the required user'})
-    @ns.doc(body=user)
-    def post(self, oId: str):
+    @doc.summary('udpate info on existing user')
+    @doc.consumes(DocUserPut, location='body', required=True)
+    @doc.produces(DocUserGet)
+    def post(self, request, oId: str):
         """ Modify existing user """
 
+        if request.json is None:
+            return json({'message': 'invalid schema format(json)'}, 400)
+
         try:
-            user = db.User.objects(
-                id=oId).only(*db.User.externallyVisible).get()
-        except mongoengine.MultipleObjectsReturned as e:
-            print(e)
-            ns.abort(500,
-                     'There should be one user but more than one were found')
-        except mongoengine.DoesNotExist as e:
-            print(e)
-            ns.abort(400, 'Requested user not found')
+            data, errors = UserPutSchema().load(request.json)
+        except marshmallow.ValidationError as e:
+            e.messages['message'] = 'ValidationError'
+            return json(e.messages, 400)
 
-        args = userPutRQ.parse_args()
+        if errors:
+            errors['message'] = 'ValidationError'
+            return json(errors, 400)
 
-        user.username = args['username']
+        with request.app.dbi.context() as db_ctx:
+            try:
+                user = db_ctx.User.objects(
+                    id=oId).only(*db.User.externallyVisible).get()
+            except mongoengine.MultipleObjectsReturned as e:
+                print(e)
+                return json({
+                    'message': 'There should be one user but more than one were found'
+                }, 500)
+            except mongoengine.DoesNotExist as e:
+                print(e)
+                return json({'message': 'Requested user not found'}, 400)
 
-        user.save()
+            user.username = data['username']
 
-        return {'id': str(user.id), 'username': user.username}, 200
+            user.save()
+
+            return json({'id': str(user.id), 'username': user.username}, 200)
+
+
+ns = Blueprint('User')
+ns.add_route(UserList.as_view(), '/')
+ns.add_route(SingleUser.as_view(), '/<oId:string>')

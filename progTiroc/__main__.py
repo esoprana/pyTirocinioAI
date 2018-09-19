@@ -1,10 +1,11 @@
-from flask import Flask
-
-from progTiroc.api import create_api
-from progTiroc.db import connect
-
 import os
 import sys
+
+from progTiroc.db import DBInstance
+from progTiroc.api import create_api
+
+from sanic import Sanic
+from sanic_swagger import swagger_blueprint, openapi_blueprint
 
 if __name__ == '__main__':
     envDebug: str = os.environ.get('DEBUG')
@@ -36,10 +37,16 @@ if __name__ == '__main__':
         print('db varible port should be number')
         sys.exit(5)
 
-    connect(db_host, db_port, db_name, db_user, db_pswd)
+    db_instance = DBInstance(db_name, db_host, db_port, db_user, db_pswd)
 
-    blue, api = create_api()
+    app = Sanic(__name__)
+    api = create_api()
+    api.url_prefix = '/api'
 
-    app = Flask(__name__)
-    app.register_blueprint(blue)
+    app.blueprint(api)  # For api
+    app.blueprint(openapi_blueprint)  # For openapi files
+    app.blueprint(swagger_blueprint)  # For swagger UI
+
+    app.dbi = db_instance  # Set db instance
+
     app.run(host='0.0.0.0', port=port, debug=debug)

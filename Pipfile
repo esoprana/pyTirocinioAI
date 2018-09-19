@@ -4,12 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
 mongoengine = "*"
-flask-restplus = "*"
 google-cloud-language = "*"
 google-api-python-client = "*"
 dialogflow = "*"
+sanic = "*"
+marshmallow = "*"
+sanic-swagger = "*"
 
 [dev-packages]
 codecov = "*"
@@ -23,6 +24,7 @@ mock = "*"
 mongomock = "*"
 codacy-coverage = "*"
 yapf = "*"
+aiohttp = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"

@@ -1,18 +1,19 @@
-from flask import Flask
 import json
 
 from progTiroc.api import create_api
 
-blue, api = create_api()
+from sanic import Sanic
+from sanic_swagger import openapi_blueprint
 
-app = Flask(__name__)
-app.register_blueprint(blue)
+api = create_api()
 
-with app.test_request_context():
-    with open("docs/_static/swagger.json", "w") as f:
-        f.write(
-            json.dumps(
-                api.__schema__,
-                sort_keys=True,
-                indent=4,
-                separators=(',', ': ')))
+app = Sanic(__name__)
+app.register_blueprint(api)
+app.register_blueprint(openapi_blueprint)
+
+request, response = app.test_client.get('/openapi/spec.json')
+
+with open("docs/_static/swagger.json", "w") as f:
+    f.write(
+        json.dumps(
+            response.json, sort_keys=True, indent=4, separators=(',', ': ')))

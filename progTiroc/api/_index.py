@@ -1,21 +1,16 @@
-from flask import Blueprint
-from flask_restplus import Api
-
 from .user import ns as user_ns
 from .message import ns as message_ns
 
+from sanic import Blueprint
 
-def create_api() -> (Blueprint, Api):
-    blueprint = Blueprint('api', __name__, url_prefix='/api')
-    api = Api(
-        blueprint,
-        version='0.1',
-        title='Storygram API',
-        description='',
-        doc='/docs/',
-        ui=True)
 
-    api.add_namespace(user_ns)
-    api.add_namespace(message_ns)
+def create_api():
+    blueprint = Blueprint('Api')
 
-    return blueprint, api
+    user_ns.url_prefix = '/user'
+    user_ns.register(blueprint, {})
+
+    message_ns.url_prefix = '/message'
+    message_ns.register(blueprint, {})
+
+    return blueprint
