@@ -1,7 +1,4 @@
-from uuid import uuid4
-
-import motor.motor_asyncio
-from umongo import Instance, Document, fields, Document, EmbeddedDocument
+from umongo import Document, fields, EmbeddedDocument
 
 
 class User(Document):

@@ -3,76 +3,54 @@ from uuid import uuid4
 from . import _db as types
 
 from umongo import Instance
-import mongomock
 import motor.motor_asyncio
+
+import mongomock  # Used for MongoClient
+import umongo.document  # Used for MetaDocumentImplementation
 
 
 class DBContext:
     """
-    :ivar a User: user orm
-    :type User: mongoengine.base.metaclasses.TopLevelDocumentMetaclass:
-    :ivar Context: mongoengine.base.metaclasses.TopLevelDocumentMetaclass:
-    :ivar Rule: mongoengine.base.metaclasses.TopLevelDocumentMetaclass:
-    :ivar Topic: mongoengine.base.metaclasses.TopLevelDocumentMetaclass:
-
-    :ivar Action: mongoengine.base.metaclasses.DocumentMetaclass:
-    :ivar Message: mongoengine.base.metaclasses.DocumentMetaclass:
-    :ivar Params: mongoengine.base.metaclasses.DocumentMetaclass:
-    :ivar UserMessage: mongoengine.base.metaclasses.DocumentMetaclass:
-    :ivar BotMessage: mongoengine.base.metaclasses.DocumentMetaclass:
-    :ivar WozBotMessage: mongoengine.base.metaclasses.DocumentMetaclass:
+    :ivar User: umongo.document.MetaDocumentImplementation: User odm
+    :ivar Context: umongo.document.MetaDocumentImplementation: Context odm
+    :ivar Rule: umongo.document.MetaDocumentImplementation: Rule odm
+    :ivar Topic: umongo.document.MetaDocumentImplementation: Topic odm
+    :ivar Action: umongo.document.MetaDocumentImplementation: Action odm
+    :ivar Message: umongo.document.MetaDocumentImplementation: Message odm
+    :ivar Params: umongo.document.MetaDocumentImplementation: Params odm
+    :ivar UserMessage: umongo.document.MetaDocumentImplementation: UserMessage odm
+    :ivar BotMessage: umongo.document.MetaDocumentImplementation: BotMessage odm
+    :ivar WozBotMessage: umongo.document.MetaDocumentImplementation: WozBotMessage odm
     """
 
-    def __init__(self, instance):
+    def __init__(self, instance: 'progTiroc.db.DBInstance'):
         self._instance = instance
 
-        #self._user_context = mongoengine.context_managers.switch_db(
-        #    types.User, db_alias)
-        #self._context_context = mongoengine.context_managers.switch_db(
-        #    types.Context, db_alias)
-        #self._rule_context = mongoengine.context_managers.switch_db(
-        #    types.Rule, db_alias)
-        #self._topic_context = mongoengine.context_managers.switch_db(
-        #    types.Topic, db_alias)
-        pass
-
-    def __enter__(self) -> 'progTiroc.db.DBContext':
-        return self._instance
-        #self.User: mongoengine.base.metaclasses.TopLevelDocumentMetaclass = self._user_context.__enter__(
-        #)
-        #self.Context: mongoengine.base.metaclasses.TopLevelDocumentMetaclass = self._context_context.__enter__(
-        #)
-        #self.Rule: mongoengine.base.metaclasses.TopLevelDocumentMetaclass = self._rule_context.__enter__(
-        #)
-        #self.Topic: mongoengine.base.metaclasses.TopLevelDocumentMetaclass = self._topic_context.__enter__(
-        #)
-
-        #self.Action = types.Action  # type: mongoengine.base.metaclasses.DocumentMetaclass
-        #self.Message = types.Message  # type: mongoengine.base.metaclasses.DocumentMetaclass
-        #self.Params = types.Params  # type: mongoengine.base.metaclasses.DocumentMetaclass
-        #self.UserMessage = types.UserMessage  # type: mongoengine.base.metaclasses.DocumentMetaclass
-        #self.BotMessage = types.BotMessage  # type: mongoengine.base.metaclasses.DocumentMetaclass
-        #self.WozBotMessage = types.WozUserMessage  # type: mongoengine.base.metaclasses.DocumentMetaclass
+    def __enter__(self):
+        self.User: umongo.document.MetaDocumentImplementation = self._instance.User
+        self.Context: umongo.document.MetaDocumentImplementation = self._instance.Context
+        self.Rule: umongo.document.MetaDocumentImplementation = self._instance.Rule
+        self.Topic: umongo.document.MetaDocumentImplementation = self._instance.Topic
+        self.Action: umongo.document.MetaDocumentImplementation = self._instance.Action
+        self.Message: umongo.document.MetaDocumentImplementation = self._instance.Message
+        self.Params: umongo.document.MetaDocumentImplementation = self._instance.Params
+        self.UserMessage: umongo.document.MetaDocumentImplementation = self._instance.UserMessage
+        self.BotMessage: umongo.document.MetaDocumentImplementation = self._instance.BotMessage
+        self.WozBotMessage: umongo.document.MetaDocumentImplementation = self._instance.WozBotMessage
 
         return self
 
-    def __exit__(self, type, value, traceback):
-        #self._user_context.__exit__(type, value, traceback)
-        #self._context_context.__exit__(type, value, traceback)
-        #self._rule_context.__exit__(type, value, traceback)
-        #self._topic_context.__exit__(type, value, traceback)
-
-        #self.Action = None
-        #self.Message = None
-        #self.Params = None
-        #self.UserMessage = None
-        #self.BotMessage = None
-        #self.WozBotMessage = None
-        #self.User = None
-        #self.Context = None
-        #self.Rule = None
-        #self.Topic = None
-        pass
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.User = None
+        self.Context = None
+        self.Rule = None
+        self.Topic = None
+        self.Action = None
+        self.Message = None
+        self.Params = None
+        self.UserMessage = None
+        self.BotMessage = None
+        self.WozBotMessage = None
 
 
 class DBInstance:
@@ -94,8 +72,6 @@ class DBInstance:
             database_host = 'mongodb://' + database_host
 
         if isMock is True:
-            print('dsa')
-            import mongomock
             self._connection = mongomock.MongoClient(
                 db=database_name, host=database_host, port=database_port)
         else:
@@ -116,6 +92,7 @@ class DBInstance:
         self._instance.register(types.UserMessage)
         self._instance.register(types.BotMessage)
         self._instance.register(types.WozUserMessage)
+        self._instance.register(types.WozBotMessage)
         self._instance.register(types.Context)
 
     def context(self) -> DBContext:
@@ -124,6 +101,3 @@ class DBInstance:
     def drop_db(self):
         self._connection.drop_database(self._db_name)
         self._connection.close()
-
-
-#mongomock.MongoClient(host='mongodb://localhost:27017/db')
