@@ -139,27 +139,22 @@
            <div itemprop="articleBody">
             
   <h1>Source code for progTiroc.api._index</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="k">import</span> <span class="n">Blueprint</span>
-<span class="kn">from</span> <span class="nn">flask_restplus</span> <span class="k">import</span> <span class="n">Api</span>
-
-<span class="kn">from</span> <span class="nn">.user</span> <span class="k">import</span> <span class="n">ns</span> <span class="k">as</span> <span class="n">user_ns</span>
+<span></span><span class="kn">from</span> <span class="nn">.user</span> <span class="k">import</span> <span class="n">ns</span> <span class="k">as</span> <span class="n">user_ns</span>
 <span class="kn">from</span> <span class="nn">.message</span> <span class="k">import</span> <span class="n">ns</span> <span class="k">as</span> <span class="n">message_ns</span>
 
+<span class="kn">from</span> <span class="nn">sanic</span> <span class="k">import</span> <span class="n">Blueprint</span>
 
-<div class="viewcode-block" id="create_api"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.create_api">[docs]</a><span class="k">def</span> <span class="nf">create_api</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">Blueprint</span><span class="p">,</span> <span class="n">Api</span><span class="p">):</span>
-    <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;api&#39;</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">,</span> <span class="n">url_prefix</span><span class="o">=</span><span class="s1">&#39;/api&#39;</span><span class="p">)</span>
-    <span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span>
-        <span class="n">blueprint</span><span class="p">,</span>
-        <span class="n">version</span><span class="o">=</span><span class="s1">&#39;0.1&#39;</span><span class="p">,</span>
-        <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Storygram API&#39;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
-        <span class="n">doc</span><span class="o">=</span><span class="s1">&#39;/docs/&#39;</span><span class="p">,</span>
-        <span class="n">ui</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">api</span><span class="o">.</span><span class="n">add_namespace</span><span class="p">(</span><span class="n">user_ns</span><span class="p">)</span>
-    <span class="n">api</span><span class="o">.</span><span class="n">add_namespace</span><span class="p">(</span><span class="n">message_ns</span><span class="p">)</span>
+<div class="viewcode-block" id="create_api"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.create_api">[docs]</a><span class="k">def</span> <span class="nf">create_api</span><span class="p">():</span>
+    <span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;Api&#39;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">blueprint</span><span class="p">,</span> <span class="n">api</span></div>
+    <span class="n">user_ns</span><span class="o">.</span><span class="n">url_prefix</span> <span class="o">=</span> <span class="s1">&#39;/user&#39;</span>
+    <span class="n">user_ns</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">blueprint</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="n">message_ns</span><span class="o">.</span><span class="n">url_prefix</span> <span class="o">=</span> <span class="s1">&#39;/message&#39;</span>
+    <span class="n">message_ns</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">blueprint</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="k">return</span> <span class="n">blueprint</span></div>
 </pre></div>
 
            </div>

@@ -157,18 +157,52 @@
 <div class="section" id="module-progTiroc.api.message">
 <span id="progtiroc-api-message-module"></span><h2>progTiroc.api.message module<a class="headerlink" href="#module-progTiroc.api.message" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="progTiroc.api.message.SingleMessage">
-<em class="property">class </em><code class="descclassname">progTiroc.api.message.</code><code class="descname">SingleMessage</code><span class="sig-paren">(</span><em>api=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/message.html#SingleMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.message.SingleMessage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restplus.resource.Resource</span></code></p>
-<p>Save messages</p>
+<dt id="progTiroc.api.message.DocMessageGet">
+<em class="property">class </em><code class="descclassname">progTiroc.api.message.</code><code class="descname">DocMessageGet</code><span class="sig-paren">(</span><em>id: str</em>, <em>text: str</em>, <em>timestamp: datetime.datetime</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/message.html#DocMessageGet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.message.DocMessageGet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sanic_swagger.doc.Model</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.api.message.DocMessagePut">
+<em class="property">class </em><code class="descclassname">progTiroc.api.message.</code><code class="descname">DocMessagePut</code><span class="sig-paren">(</span><em>text: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/message.html#DocMessagePut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.message.DocMessagePut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sanic_swagger.doc.Model</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.api.message.MessagePut">
+<em class="property">class </em><code class="descclassname">progTiroc.api.message.</code><code class="descname">MessagePut</code><span class="sig-paren">(</span><em>extra=None</em>, <em>only=None</em>, <em>exclude=()</em>, <em>prefix=''</em>, <em>strict=None</em>, <em>many=False</em>, <em>context=None</em>, <em>load_only=()</em>, <em>dump_only=()</em>, <em>partial=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/message.html#MessagePut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.message.MessagePut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">marshmallow.schema.Schema</span></code></p>
+<dl class="class">
+<dt id="progTiroc.api.message.MessagePut.Meta">
+<em class="property">class </em><code class="descname">Meta</code><a class="reference internal" href="_modules/progTiroc/api/message.html#MessagePut.Meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.message.MessagePut.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="attribute">
-<dt id="progTiroc.api.message.SingleMessage.methods">
-<code class="descname">methods</code><em class="property"> = {'PUT'}</em><a class="headerlink" href="#progTiroc.api.message.SingleMessage.methods" title="Permalink to this definition">¶</a></dt>
+<dt id="progTiroc.api.message.MessagePut.Meta.partial">
+<code class="descname">partial</code><em class="property"> = False</em><a class="headerlink" href="#progTiroc.api.message.MessagePut.Meta.partial" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="progTiroc.api.message.MessagePut.Meta.unknown">
+<code class="descname">unknown</code><em class="property"> = 'raise'</em><a class="headerlink" href="#progTiroc.api.message.MessagePut.Meta.unknown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.api.message.MessagePut.opts">
+<code class="descname">opts</code><em class="property"> = &lt;marshmallow.schema.SchemaOpts object&gt;</em><a class="headerlink" href="#progTiroc.api.message.MessagePut.opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.api.message.SingleMessage">
+<em class="property">class </em><code class="descclassname">progTiroc.api.message.</code><code class="descname">SingleMessage</code><a class="reference internal" href="_modules/progTiroc/api/message.html#SingleMessage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.message.SingleMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sanic.views.HTTPMethodView</span></code></p>
+<p>Save messages</p>
 <dl class="method">
 <dt id="progTiroc.api.message.SingleMessage.put">
-<code class="descname">put</code><span class="sig-paren">(</span><em>fr: str</em>, <em>to: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/message.html#SingleMessage.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.message.SingleMessage.put" title="Permalink to this definition">¶</a></dt>
+<code class="descname">put</code><span class="sig-paren">(</span><em>request</em>, <em>fr: str</em>, <em>to: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/message.html#SingleMessage.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.message.SingleMessage.put" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -177,9 +211,21 @@
 <div class="section" id="module-progTiroc.api.user">
 <span id="progtiroc-api-user-module"></span><h2>progTiroc.api.user module<a class="headerlink" href="#module-progTiroc.api.user" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
+<dt id="progTiroc.api.user.DocUserGet">
+<em class="property">class </em><code class="descclassname">progTiroc.api.user.</code><code class="descname">DocUserGet</code><span class="sig-paren">(</span><em>id: str</em>, <em>username: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#DocUserGet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.DocUserGet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sanic_swagger.doc.Model</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.api.user.DocUserPut">
+<em class="property">class </em><code class="descclassname">progTiroc.api.user.</code><code class="descname">DocUserPut</code><span class="sig-paren">(</span><em>username: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#DocUserPut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.DocUserPut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sanic_swagger.doc.Model</span></code></p>
+</dd></dl>
+
+<dl class="class">
 <dt id="progTiroc.api.user.SingleUser">
-<em class="property">class </em><code class="descclassname">progTiroc.api.user.</code><code class="descname">SingleUser</code><span class="sig-paren">(</span><em>api=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#SingleUser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.SingleUser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restplus.resource.Resource</span></code></p>
+<em class="property">class </em><code class="descclassname">progTiroc.api.user.</code><code class="descname">SingleUser</code><a class="reference internal" href="_modules/progTiroc/api/user.html#SingleUser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.SingleUser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sanic.views.HTTPMethodView</span></code></p>
 <p>Show single user</p>
 <dl class="method">
 <dt id="progTiroc.api.user.SingleUser.get">
@@ -187,14 +233,9 @@
 <dd><p>Get existing user</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="progTiroc.api.user.SingleUser.methods">
-<code class="descname">methods</code><em class="property"> = {'GET', 'POST'}</em><a class="headerlink" href="#progTiroc.api.user.SingleUser.methods" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="progTiroc.api.user.SingleUser.post">
-<code class="descname">post</code><span class="sig-paren">(</span><em>oId: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#SingleUser.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.SingleUser.post" title="Permalink to this definition">¶</a></dt>
+<code class="descname">post</code><span class="sig-paren">(</span><em>request</em>, <em>oId: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#SingleUser.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.SingleUser.post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modify existing user</p>
 </dd></dl>
 
@@ -202,25 +243,46 @@
 
 <dl class="class">
 <dt id="progTiroc.api.user.UserList">
-<em class="property">class </em><code class="descclassname">progTiroc.api.user.</code><code class="descname">UserList</code><span class="sig-paren">(</span><em>api=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#UserList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.UserList" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">flask_restplus.resource.Resource</span></code></p>
+<em class="property">class </em><code class="descclassname">progTiroc.api.user.</code><code class="descname">UserList</code><a class="reference internal" href="_modules/progTiroc/api/user.html#UserList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.UserList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sanic.views.HTTPMethodView</span></code></p>
 <p>Show a list of all the users or insert user in list</p>
 <dl class="method">
 <dt id="progTiroc.api.user.UserList.get">
-<code class="descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#UserList.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.UserList.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>List all users</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="progTiroc.api.user.UserList.methods">
-<code class="descname">methods</code><em class="property"> = {'GET', 'PUT'}</em><a class="headerlink" href="#progTiroc.api.user.UserList.methods" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#UserList.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.UserList.get" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="progTiroc.api.user.UserList.put">
-<code class="descname">put</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#UserList.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.UserList.put" title="Permalink to this definition">¶</a></dt>
+<code class="descname">put</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#UserList.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.UserList.put" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a single user</p>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="progTiroc.api.user.UserPutSchema">
+<em class="property">class </em><code class="descclassname">progTiroc.api.user.</code><code class="descname">UserPutSchema</code><span class="sig-paren">(</span><em>extra=None</em>, <em>only=None</em>, <em>exclude=()</em>, <em>prefix=''</em>, <em>strict=None</em>, <em>many=False</em>, <em>context=None</em>, <em>load_only=()</em>, <em>dump_only=()</em>, <em>partial=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/user.html#UserPutSchema"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.UserPutSchema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">marshmallow.schema.Schema</span></code></p>
+<dl class="class">
+<dt id="progTiroc.api.user.UserPutSchema.Meta">
+<em class="property">class </em><code class="descname">Meta</code><a class="reference internal" href="_modules/progTiroc/api/user.html#UserPutSchema.Meta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.user.UserPutSchema.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="attribute">
+<dt id="progTiroc.api.user.UserPutSchema.Meta.partial">
+<code class="descname">partial</code><em class="property"> = False</em><a class="headerlink" href="#progTiroc.api.user.UserPutSchema.Meta.partial" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.api.user.UserPutSchema.Meta.unknown">
+<code class="descname">unknown</code><em class="property"> = 'raise'</em><a class="headerlink" href="#progTiroc.api.user.UserPutSchema.Meta.unknown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="progTiroc.api.user.UserPutSchema.opts">
+<code class="descname">opts</code><em class="property"> = &lt;marshmallow.schema.SchemaOpts object&gt;</em><a class="headerlink" href="#progTiroc.api.user.UserPutSchema.opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -229,7 +291,7 @@
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-progTiroc.api" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="progTiroc.api.create_api">
-<code class="descclassname">progTiroc.api.</code><code class="descname">create_api</code><span class="sig-paren">(</span><em>) -&gt; (&lt;class 'flask.blueprints.Blueprint'&gt;</em>, <em>&lt;class 'flask_restplus.api.Api'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/_index.html#create_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.create_api" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">progTiroc.api.</code><code class="descname">create_api</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/api/_index.html#create_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.api.create_api" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>

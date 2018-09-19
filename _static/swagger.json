@@ -1,14 +1,9 @@
 {
-    "basePath": "/api",
-    "consumes": [
-        "application/json"
-    ],
     "definitions": {
-        "Message": {
+        "DocMessageGet": {
             "properties": {
                 "id": {
                     "description": "The message unique identifier",
-                    "readOnly": true,
                     "type": "string"
                 },
                 "text": {
@@ -16,27 +11,39 @@
                     "type": "string"
                 },
                 "timestamp": {
-                    "description": "The message's timestamp",
+                    "description": "The message's timestmap",
                     "format": "date-time",
-                    "readOnly": true,
                     "type": "string"
                 }
             },
-            "required": [
-                "text"
-            ],
             "type": "object"
         },
-        "User": {
+        "DocMessagePut": {
+            "properties": {
+                "text": {
+                    "description": "The text of the message",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "DocUserGet": {
             "properties": {
                 "id": {
                     "description": "The user unique identifier",
-                    "readOnly": true,
                     "type": "string"
                 },
                 "username": {
                     "description": "The user displayed username",
-                    "readOnly": false,
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "DocUserPut": {
+            "properties": {
+                "username": {
+                    "description": "The user displayed username",
                     "type": "string"
                 }
             },
@@ -44,221 +51,391 @@
         }
     },
     "info": {
-        "title": "Storygram API",
-        "version": "0.1"
+        "contact": {
+            "email": null
+        },
+        "description": "",
+        "license": {
+            "name": null,
+            "url": null
+        },
+        "termsOfService": null,
+        "title": "API",
+        "version": "1.0.0"
     },
     "paths": {
         "/message/{fr}/{to}": {
-            "parameters": [
-                {
-                    "in": "path",
-                    "name": "fr",
-                    "required": true,
-                    "type": "string"
-                },
-                {
-                    "in": "path",
-                    "name": "to",
-                    "required": true,
-                    "type": "string"
-                }
-            ],
             "put": {
-                "operationId": "put_single_message",
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.SingleMessage",
                 "parameters": [
                     {
-                        "description": "The id of the user/bot from that sends the message",
                         "in": "path",
                         "name": "fr",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "description": "The id of the user that receives the message",
                         "in": "path",
                         "name": "to",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "description": "The text of the message",
+                        "format": null,
                         "in": "body",
-                        "name": "text",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "description": "An optional fields mask",
-                        "format": "mask",
-                        "in": "header",
-                        "name": "X-Fields",
-                        "type": "string"
+                        "name": "body",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/DocMessagePut"
+                        },
+                        "type": "object"
                     }
+                ],
+                "produces": [
+                    "application/json"
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "successful operation",
                         "schema": {
-                            "$ref": "#/definitions/Message"
+                            "$ref": "#/definitions/DocMessageGet",
+                            "type": "object"
                         }
                     }
                 },
                 "tags": [
-                    "message"
+                    "Api"
+                ]
+            }
+        },
+        "/message/{fr}/{to}/": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.SingleMessage",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "fr",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "to",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "format": null,
+                        "in": "body",
+                        "name": "body",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/DocMessagePut"
+                        },
+                        "type": "object"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/DocMessageGet",
+                            "type": "object"
+                        }
+                    }
+                },
+                "tags": [
+                    "Api"
                 ]
             }
         },
         "/user": {
             "get": {
-                "operationId": "get_user_list",
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.UserList",
+                "parameters": [],
+                "produces": [
+                    "application/json"
+                ],
                 "responses": {
                     "200": {
-                        "description": "Success"
+                        "description": "successful operation",
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/DocUserGet",
+                                "type": "object"
+                            },
+                            "type": "array"
+                        }
                     }
                 },
                 "summary": "List all users",
                 "tags": [
-                    "user"
+                    "Api"
                 ]
             },
             "put": {
-                "operationId": "put_user_list",
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.UserList",
                 "parameters": [
                     {
+                        "format": null,
                         "in": "body",
-                        "name": "payload",
+                        "name": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    },
-                    {
-                        "description": "An optional fields mask",
-                        "format": "mask",
-                        "in": "header",
-                        "name": "X-Fields",
-                        "type": "string"
+                            "$ref": "#/definitions/DocUserPut"
+                        },
+                        "type": "object"
                     }
+                ],
+                "produces": [
+                    "application/json"
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "successful operation",
                         "schema": {
-                            "$ref": "#/definitions/User"
+                            "$ref": "#/definitions/DocUserGet",
+                            "type": "object"
                         }
                     }
                 },
-                "summary": "Create a single user",
+                "summary": "Create a user",
                 "tags": [
-                    "user"
+                    "Api"
+                ]
+            }
+        },
+        "/user/": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.UserList",
+                "parameters": [],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/DocUserGet",
+                                "type": "object"
+                            },
+                            "type": "array"
+                        }
+                    }
+                },
+                "summary": "List all users",
+                "tags": [
+                    "Api"
+                ]
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.UserList",
+                "parameters": [
+                    {
+                        "format": null,
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DocUserPut"
+                        },
+                        "type": "object"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/DocUserGet",
+                            "type": "object"
+                        }
+                    }
+                },
+                "summary": "Create a user",
+                "tags": [
+                    "Api"
                 ]
             }
         },
         "/user/{oId}": {
             "get": {
-                "operationId": "get_single_user",
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.SingleUser",
                 "parameters": [
                     {
-                        "description": "The id of the required user",
                         "in": "path",
                         "name": "oId",
                         "required": true,
                         "type": "string"
-                    },
-                    {
-                        "description": "An optional fields mask",
-                        "format": "mask",
-                        "in": "header",
-                        "name": "X-Fields",
-                        "type": "string"
                     }
+                ],
+                "produces": [
+                    "application/json"
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "successful operation",
                         "schema": {
-                            "$ref": "#/definitions/User"
+                            "$ref": "#/definitions/DocUserGet",
+                            "type": "object"
                         }
                     }
                 },
-                "summary": "Get existing user",
+                "summary": "Get single user",
                 "tags": [
-                    "user"
+                    "Api"
                 ]
             },
-            "parameters": [
-                {
-                    "in": "path",
-                    "name": "oId",
-                    "required": true,
-                    "type": "string"
-                }
-            ],
             "post": {
-                "operationId": "post_single_user",
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.SingleUser",
                 "parameters": [
                     {
-                        "description": "The id of the required user",
                         "in": "path",
                         "name": "oId",
                         "required": true,
                         "type": "string"
                     },
                     {
+                        "format": null,
                         "in": "body",
-                        "name": "payload",
+                        "name": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    },
-                    {
-                        "description": "An optional fields mask",
-                        "format": "mask",
-                        "in": "header",
-                        "name": "X-Fields",
-                        "type": "string"
+                            "$ref": "#/definitions/DocUserPut"
+                        },
+                        "type": "object"
                     }
+                ],
+                "produces": [
+                    "application/json"
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "successful operation",
                         "schema": {
-                            "$ref": "#/definitions/User"
+                            "$ref": "#/definitions/DocUserGet",
+                            "type": "object"
                         }
                     }
                 },
-                "summary": "Modify existing user",
+                "summary": "udpate info on existing user",
                 "tags": [
-                    "user"
+                    "Api"
+                ]
+            }
+        },
+        "/user/{oId}/": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.SingleUser",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "oId",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/DocUserGet",
+                            "type": "object"
+                        }
+                    }
+                },
+                "summary": "Get single user",
+                "tags": [
+                    "Api"
+                ]
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.SingleUser",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "oId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "format": null,
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DocUserPut"
+                        },
+                        "type": "object"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/DocUserGet",
+                            "type": "object"
+                        }
+                    }
+                },
+                "summary": "udpate info on existing user",
+                "tags": [
+                    "Api"
                 ]
             }
         }
     },
-    "produces": [
-        "application/json"
+    "schemes": [
+        "http"
     ],
-    "responses": {
-        "MaskError": {
-            "description": "When any error occurs on mask"
-        },
-        "ParseError": {
-            "description": "When a mask can't be parsed"
-        }
-    },
+    "security": null,
+    "securityDefinitions": null,
     "swagger": "2.0",
     "tags": [
         {
-            "description": "Default namespace",
-            "name": "default"
-        },
-        {
-            "description": "User operations",
-            "name": "user"
-        },
-        {
-            "description": "Message operations",
-            "name": "message"
+            "name": "Api"
         }
     ]
 }
