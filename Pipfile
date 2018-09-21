@@ -12,6 +12,7 @@ sanic = "*"
 marshmallow = "*"
 sanic-swagger = "*"
 umongo = {version = "*", extras = ["motor"]}
+pyyaml = "*"
 
 [dev-packages]
 codecov = "*"
@@ -27,6 +28,7 @@ codacy-coverage = "*"
 yapf = "*"
 aiohttp = "*"
 ipython = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.6"

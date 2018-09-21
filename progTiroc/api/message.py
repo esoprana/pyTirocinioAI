@@ -1,14 +1,15 @@
 from datetime import datetime
 import marshmallow
 
-from progTiroc import db
-
-import mongoengine
-
 from sanic import Blueprint
 from sanic.response import json
+from sanic.request import Request
 from sanic.views import HTTPMethodView
 from sanic_swagger import doc
+
+from bson import ObjectId
+
+from progTiroc import db
 
 WOZ_BOT_ID = '000000000000000000000000'
 NWOZ_BOT_ID = '000000000000000000000001'
@@ -76,7 +77,6 @@ class SingleMessage(HTTPMethodView):
 
             # Get the list of context of user in decresend order of timestamp
 
-            from bson import ObjectId
             contextsOfUser = [
                 i async for i in db_ctx.Context.find({
                     'ofUser': ObjectId(fr)

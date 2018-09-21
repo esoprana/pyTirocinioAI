@@ -14,6 +14,8 @@ import mongoengine
 
 from typing import List, Tuple, Dict, Any, Optional
 
+from bson import ObjectId
+
 logging.basicConfig(filename='debug.log', level=logging.INFO)
 log = logging.getLogger(__name__)
 
@@ -267,8 +269,12 @@ class AI:
 
         old_ctx: db.types.Context
         try:
-            contexts: List[db.types.Context] = db_ctx.Context.objects(
-                ofUser=userId).order_by('-timestamp')
+            contexts: List[db.types.Context] = db_ctx.Context.find({
+                'ofUser': ObjectId(userId)
+            }).sort({
+                'timestamp': -1
+            })
+
             if len(contexts) == 0:
                 log.error("0 contexts")  # TODO: Use logger
                 return None

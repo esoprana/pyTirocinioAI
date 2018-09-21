@@ -1,29 +1,38 @@
+""" Module to define user rest endpoint, are defined '/' and '/{objectId}' """
+
 import uuid
 from datetime import datetime
 import typing
 
-from progTiroc import db
-
 import mongoengine
 
 from sanic import Blueprint
+from sanic.request import Request
 from sanic.response import json
 from sanic.views import HTTPMethodView
 from sanic_swagger import doc
+
+from bson import ObjectId
 
 import marshmallow
 
 
 class DocUserGet(doc.Model):
+    """ Model of User returned by the api """
+
     id: str = doc.field(description='The user unique identifier')
     username: str = doc.field(description='The user displayed username')
 
 
 class DocUserPut(doc.Model):
+    """ Model of User to send to the api """
+
     username: str = doc.field(description='The user displayed username')
 
 
 class UserPutSchema(marshmallow.Schema):
+    """ Model used to translate User to json in the api """
+
     username = marshmallow.fields.Str(attribute="username", required=True)
 
     class Meta:
@@ -36,28 +45,35 @@ class UserList(HTTPMethodView):
 
     @doc.summary('List all users')
     @doc.produces(doc.field(type=typing.List[DocUserGet]))
-    async def get(self, request):
+    async def get(self, request: Request):
+        """Endpoint for GET method (list all users)
+
+        :param request: request made
+        :type request: Request
+        """
         with request.app.dbi.context() as db_ctx:
             try:
                 data = [{
                     'id': str(user.id),
                     'username': user.username
-                } for user in db_ctx.User.objects.only(
-                    *db.types.User.externallyVisible)]
+                } async for user in db_ctx.User.find()]
 
                 return json(data, 200)
-            except Exception as e:
-                print(e)
+            except Exception as err:
+                print(err)
                 return json({
                     'message': 'Impossible to get the data requested'
                 }, 500)
 
-    @doc.summary('Create a user')
+    @doc.summary('Create a single user')
     @doc.consumes(DocUserPut, location='body', required=True)
     @doc.produces(DocUserGet)
-    async def put(self, request):
-        """ Create a single user """
+    async def put(self, request: Request):
+        """Endpoint for PUT method (creates a single user)
 
+        :param request: request made
+        :type request: Request
+        """
         if request.json is None:
             return json({'message': 'invalid schema format(json)'}, 400)
 
@@ -107,25 +123,49 @@ class SingleUser(HTTPMethodView):
 
     @doc.summary('Get single user')
     @doc.produces(DocUserGet)
-    async def get(self, oId: str):
-        """ Get existing user """
+    async def get(self, request: Request, oId: str):
+        """Endpoint of the GET method (get single user with specified oId)
 
-        try:
-            user = db.User.objects(
-                id=oId).only(*db.User.externallyVisible).get()
-        except mongoengine.MultipleObjectsReturned:
-            ns.abort(500,
-                     'There should be one user but more than one were found')
-        except mongoengine.DoesNotExist:
-            ns.abort(400, 'Requested user not found')
+        :param request: request made
+        :type request: Request
+        :param oId: path variable that rapresent the id of the user
+        :type oId: str
+        """
 
-        return {'id': str(user.id), 'username': user.username}, 200
+        with request.app.dbi.context() as db_ctx:
+            try:
+                matchingUsers = [
+                    i async for i in db_ctx.User.find({
+                        'id': ObjectId(oId)
+                    }).limit(2)
+                ]  # TODO: Check if possible get only some columns
 
-    @doc.summary('udpate info on existing user')
+                if len(matchingUsers) == 0:
+                    return json({'message': 'Requested user not found'}, 400)
+                elif len(matchingUsers) > 1:
+                    return json({
+                        'message': 'There should be one user but more than one were found'
+                    }, 500)
+
+                user = matchingUsers[0]
+                return json({
+                    'id': str(user.id),
+                    'username': user.username
+                }, 200)
+            except mongoengine.MultipleObjectsReturned:
+                pass  # TODO: tofix
+
+    @doc.summary('Udpate info on existing user')
     @doc.consumes(DocUserPut, location='body', required=True)
     @doc.produces(DocUserGet)
-    def post(self, request, oId: str):
-        """ Modify existing user """
+    async def post(self, request: Request, oId: str):
+        """Endpoint of the POST method (update info on existing user)
+
+        :param request: request made
+        :type request: Request
+        :param oId: path variable that rapresent the id of the user
+        :type oId: str
+        """
 
         if request.json is None:
             return json({'message': 'invalid schema format(json)'}, 400)
@@ -142,22 +182,31 @@ class SingleUser(HTTPMethodView):
 
         with request.app.dbi.context() as db_ctx:
             try:
-                user = db_ctx.User.objects(
-                    id=oId).only(*db.User.externallyVisible).get()
-            except mongoengine.MultipleObjectsReturned as e:
-                print(e)
+                matchingUsers = [
+                    i async for i in db_ctx.User.find({
+                        'id': ObjectId(oId)
+                    }).limit(2)
+                ]  # TODO: Check if possible get only some columns
+
+                if len(matchingUsers) == 0:
+                    return json({'message': 'Requested user not found'}, 400)
+                elif len(matchingUsers) > 1:
+                    return json({
+                        'message': 'There should be one user but more than one were found'
+                    }, 500)
+
+                user = matchingUsers[0]
+
+                user.username = data['username']
+                user.commit()
+
                 return json({
-                    'message': 'There should be one user but more than one were found'
-                }, 500)
-            except mongoengine.DoesNotExist as e:
+                    'id': str(user.id),
+                    'username': user.username
+                }, 200)
+            except Exception as e:
                 print(e)
-                return json({'message': 'Requested user not found'}, 400)
-
-            user.username = data['username']
-
-            user.commit()
-
-            return json({'id': str(user.id), 'username': user.username}, 200)
+                pass
 
 
 ns = Blueprint('User')
