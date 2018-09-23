@@ -43,9 +43,12 @@ class UserList(HTTPMethodView):
         """
         with request.app.dbi.context() as db_ctx:
             try:
+                users = [
+                    user async for user in db_ctx.User.find(
+                        projection=db_ctx.User.__dump_only__)
+                ]
 
-                data, error = request.app.dbi.user_schema.dump(
-                    [user async for user in db_ctx.User.find()], many=True)
+                data, error = request.app.dbi.user_schema.dump(users, many=True)
 
                 if error:
                     print(error)
@@ -130,21 +133,23 @@ class SingleUser(HTTPMethodView):
 
         with request.app.dbi.context() as db_ctx:
             try:
-                matchingUsers = [
-                    i async for i in db_ctx.User.find({
+                user = await db_ctx.User.find_one(
+                    {
                         'id': ObjectId(oId)
-                    }).limit(2)
-                ]  # TODO: Check if possible get only some columns
+                    }, projection=db_ctx.User.__dump_only__)
 
-                if len(matchingUsers) == 0:
+                if user is None:
                     return json({'message': 'Requested user not found'}, 400)
-                elif len(matchingUsers) > 1:
+
+                data, error = request.app.dbi.user_schema.dump(user)
+
+                if error:
+                    print(error)
                     return json({
-                        'message': 'There should be one user but more than one were found'
+                        'message': 'Impossible to serialize user'
                     }, 500)
 
-                user = matchingUsers[0]
-                return json(request.app.dbi.user_schema.dump(user), 200)
+                return json(data, 200)
             except mongoengine.MultipleObjectsReturned:
                 pass  # TODO: tofix
 
@@ -175,25 +180,23 @@ class SingleUser(HTTPMethodView):
 
         with request.app.dbi.context() as db_ctx:
             try:
-                matchingUsers = [
-                    i async for i in db_ctx.User.find({
-                        'id': ObjectId(oId)
-                    }).limit(2)
-                ]  # TODO: Check if possible get only some columns
+                user = await db_ctx.User.find_one({'id': ObjectId(oId)})
 
-                if len(matchingUsers) == 0:
+                if user is None:
                     return json({'message': 'Requested user not found'}, 400)
-                elif len(matchingUsers) > 1:
-                    return json({
-                        'message': 'There should be one user but more than one were found'
-                    }, 500)
-
-                user = matchingUsers[0]
 
                 user.username = data['username']
                 await user.commit()
 
-                return json(request.app.dbi.user_schema.dump(user), 200)
+                data, error = request.app.dbi.user_schema.dump(user)
+
+                if error:
+                    print(error)
+                    return json({
+                        'message': 'Impossible to serialize the user'
+                    }, 500)
+
+                return json(data, 200)
             except Exception as e:
                 print(e)
                 pass
