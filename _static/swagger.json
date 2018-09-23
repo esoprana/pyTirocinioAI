@@ -214,7 +214,7 @@
                         }
                     }
                 },
-                "summary": "Create a user",
+                "summary": "Create a single user",
                 "tags": [
                     "Api"
                 ]
@@ -276,7 +276,7 @@
                         }
                     }
                 },
-                "summary": "Create a user",
+                "summary": "Create a single user",
                 "tags": [
                     "Api"
                 ]
@@ -348,7 +348,7 @@
                         }
                     }
                 },
-                "summary": "udpate info on existing user",
+                "summary": "Udpate info on existing user",
                 "tags": [
                     "Api"
                 ]
@@ -420,7 +420,7 @@
                         }
                     }
                 },
-                "summary": "udpate info on existing user",
+                "summary": "Udpate info on existing user",
                 "tags": [
                     "Api"
                 ]

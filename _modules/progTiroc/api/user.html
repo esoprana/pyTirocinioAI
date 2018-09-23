@@ -139,37 +139,36 @@
            <div itemprop="articleBody">
             
   <h1>Source code for progTiroc.api.user</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">uuid</span>
+<span></span><span class="sd">&quot;&quot;&quot; Module to define user rest endpoint, are defined &#39;/&#39; and &#39;/{objectId}&#39; &quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">typing</span>
-
-<span class="kn">from</span> <span class="nn">progTiroc</span> <span class="k">import</span> <span class="n">db</span>
 
 <span class="kn">import</span> <span class="nn">mongoengine</span>
 
 <span class="kn">from</span> <span class="nn">sanic</span> <span class="k">import</span> <span class="n">Blueprint</span>
+<span class="kn">from</span> <span class="nn">sanic.request</span> <span class="k">import</span> <span class="n">Request</span>
 <span class="kn">from</span> <span class="nn">sanic.response</span> <span class="k">import</span> <span class="n">json</span>
 <span class="kn">from</span> <span class="nn">sanic.views</span> <span class="k">import</span> <span class="n">HTTPMethodView</span>
 <span class="kn">from</span> <span class="nn">sanic_swagger</span> <span class="k">import</span> <span class="n">doc</span>
+
+<span class="kn">from</span> <span class="nn">bson</span> <span class="k">import</span> <span class="n">ObjectId</span>
 
 <span class="kn">import</span> <span class="nn">marshmallow</span>
 
 
 <div class="viewcode-block" id="DocUserGet"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.DocUserGet">[docs]</a><span class="k">class</span> <span class="nc">DocUserGet</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Model of User returned by the api &quot;&quot;&quot;</span>
+
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The user unique identifier&#39;</span><span class="p">)</span>
     <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The user displayed username&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DocUserPut"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.DocUserPut">[docs]</a><span class="k">class</span> <span class="nc">DocUserPut</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Model of User to send to the api &quot;&quot;&quot;</span>
+
     <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The user displayed username&#39;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="UserPutSchema"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.UserPutSchema">[docs]</a><span class="k">class</span> <span class="nc">UserPutSchema</span><span class="p">(</span><span class="n">marshmallow</span><span class="o">.</span><span class="n">Schema</span><span class="p">):</span>
-    <span class="n">username</span> <span class="o">=</span> <span class="n">marshmallow</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">Str</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<div class="viewcode-block" id="UserPutSchema.Meta"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.UserPutSchema.Meta">[docs]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">unknown</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span>
-        <span class="n">partial</span> <span class="o">=</span> <span class="kc">False</span></div></div>
 
 
 <div class="viewcode-block" id="UserList"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.UserList">[docs]</a><span class="k">class</span> <span class="nc">UserList</span><span class="p">(</span><span class="n">HTTPMethodView</span><span class="p">):</span>
@@ -177,33 +176,45 @@
 
 <div class="viewcode-block" id="UserList.get"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.UserList.get">[docs]</a>    <span class="nd">@doc</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="s1">&#39;List all users&#39;</span><span class="p">)</span>
     <span class="nd">@doc</span><span class="o">.</span><span class="n">produces</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">DocUserGet</span><span class="p">]))</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Endpoint for GET method (list all users)</span>
+
+<span class="sd">        :param request: request made</span>
+<span class="sd">        :type request: Request</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">db_ctx</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="p">[{</span>
-                    <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
-                    <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span>
-                <span class="p">}</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
-                    <span class="o">*</span><span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">externallyVisible</span><span class="p">)]</span>
+
+                <span class="n">data</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">user_schema</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">user</span> <span class="k">async</span> <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">find</span><span class="p">()],</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
+                        <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Impossible to dump some data&#39;</span>
+                    <span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
 
                 <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
                     <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Impossible to get the data requested&#39;</span>
                 <span class="p">},</span> <span class="mi">500</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UserList.put"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.UserList.put">[docs]</a>    <span class="nd">@doc</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="s1">&#39;Create a user&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="UserList.put"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.UserList.put">[docs]</a>    <span class="nd">@doc</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="s1">&#39;Create a single user&#39;</span><span class="p">)</span>
     <span class="nd">@doc</span><span class="o">.</span><span class="n">consumes</span><span class="p">(</span><span class="n">DocUserPut</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;body&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="nd">@doc</span><span class="o">.</span><span class="n">produces</span><span class="p">(</span><span class="n">DocUserGet</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Create a single user &quot;&quot;&quot;</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Endpoint for PUT method (creates a single user)</span>
 
+<span class="sd">        :param request: request made</span>
+<span class="sd">        :type request: Request</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;invalid schema format(json)&#39;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">UserPutSchema</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">user_schema</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">marshmallow</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">e</span><span class="o">.</span><span class="n">messages</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ValidationError&#39;</span>
             <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">messages</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
@@ -213,16 +224,14 @@
             <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">db_ctx</span><span class="p">:</span>
-            <span class="n">user</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">User</span><span class="p">(</span>
-                <span class="n">username</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span>
-                <span class="n">googleSessionId</span><span class="o">=</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">(),</span>
-            <span class="p">)</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">User</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">user</span><span class="o">.</span><span class="n">googleSessionId</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="k">await</span> <span class="n">user</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
             <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">OperationError</span> <span class="k">as</span> <span class="n">oe</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">oe</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Impossible to save changes&#39;</span><span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Impossible to commit changes&#39;</span><span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
 
             <span class="n">context</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
                 <span class="n">ofUser</span><span class="o">=</span><span class="n">user</span><span class="p">,</span>
@@ -231,16 +240,19 @@
                 <span class="n">message</span><span class="o">=</span><span class="n">db_ctx</span><span class="o">.</span><span class="n">Message</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;Hi!&#39;</span><span class="p">))</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">context</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">cascade</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
             <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">OperationError</span> <span class="k">as</span> <span class="n">oe</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">oe</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Impossible to save changes&#39;</span><span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Impossible to commit changes&#39;</span><span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
                 <span class="c1"># TODO: Gestire caso in cui user è comunque salvato</span>
 
-            <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
-                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
-                <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
-            <span class="p">},</span> <span class="mi">200</span><span class="p">)</span></div></div>
+            <span class="n">data</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">user_schema</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Impossible to serialize user&#39;</span><span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SingleUser"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.SingleUser">[docs]</a><span class="k">class</span> <span class="nc">SingleUser</span><span class="p">(</span><span class="n">HTTPMethodView</span><span class="p">):</span>
@@ -248,31 +260,52 @@
 
 <div class="viewcode-block" id="SingleUser.get"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.SingleUser.get">[docs]</a>    <span class="nd">@doc</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="s1">&#39;Get single user&#39;</span><span class="p">)</span>
     <span class="nd">@doc</span><span class="o">.</span><span class="n">produces</span><span class="p">(</span><span class="n">DocUserGet</span><span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oId</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get existing user &quot;&quot;&quot;</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">oId</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Endpoint of the GET method (get single user with specified oId)</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
-                <span class="nb">id</span><span class="o">=</span><span class="n">oId</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="o">*</span><span class="n">db</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">externallyVisible</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">MultipleObjectsReturned</span><span class="p">:</span>
-            <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span>
-                     <span class="s1">&#39;There should be one user but more than one were found&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
-            <span class="n">ns</span><span class="o">.</span><span class="n">abort</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="s1">&#39;Requested user not found&#39;</span><span class="p">)</span>
+<span class="sd">        :param request: request made</span>
+<span class="sd">        :type request: Request</span>
+<span class="sd">        :param oId: path variable that rapresent the id of the user</span>
+<span class="sd">        :type oId: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span> <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">},</span> <span class="mi">200</span></div>
+        <span class="k">with</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">db_ctx</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">matchingUsers</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">i</span> <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">find</span><span class="p">({</span>
+                        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">ObjectId</span><span class="p">(</span><span class="n">oId</span><span class="p">)</span>
+                    <span class="p">})</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+                <span class="p">]</span>  <span class="c1"># TODO: Check if possible get only some columns</span>
 
-<div class="viewcode-block" id="SingleUser.post"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.SingleUser.post">[docs]</a>    <span class="nd">@doc</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="s1">&#39;udpate info on existing user&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matchingUsers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Requested user not found&#39;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">matchingUsers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
+                        <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;There should be one user but more than one were found&#39;</span>
+                    <span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
+
+                <span class="n">user</span> <span class="o">=</span> <span class="n">matchingUsers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">user_schema</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">user</span><span class="p">),</span> <span class="mi">200</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">MultipleObjectsReturned</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># TODO: tofix</span></div>
+
+<div class="viewcode-block" id="SingleUser.post"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.user.SingleUser.post">[docs]</a>    <span class="nd">@doc</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="s1">&#39;Udpate info on existing user&#39;</span><span class="p">)</span>
     <span class="nd">@doc</span><span class="o">.</span><span class="n">consumes</span><span class="p">(</span><span class="n">DocUserPut</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;body&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="nd">@doc</span><span class="o">.</span><span class="n">produces</span><span class="p">(</span><span class="n">DocUserGet</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">oId</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Modify existing user &quot;&quot;&quot;</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">oId</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Endpoint of the POST method (update info on existing user)</span>
+
+<span class="sd">        :param request: request made</span>
+<span class="sd">        :type request: Request</span>
+<span class="sd">        :param oId: path variable that rapresent the id of the user</span>
+<span class="sd">        :type oId: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;invalid schema format(json)&#39;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">UserPutSchema</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">user_schema</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">marshmallow</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">e</span><span class="o">.</span><span class="n">messages</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ValidationError&#39;</span>
             <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">messages</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
@@ -283,22 +316,28 @@
 
         <span class="k">with</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">db_ctx</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">user</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
-                    <span class="nb">id</span><span class="o">=</span><span class="n">oId</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="o">*</span><span class="n">db</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">externallyVisible</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-            <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">MultipleObjectsReturned</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">matchingUsers</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">i</span> <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">find</span><span class="p">({</span>
+                        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">ObjectId</span><span class="p">(</span><span class="n">oId</span><span class="p">)</span>
+                    <span class="p">})</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+                <span class="p">]</span>  <span class="c1"># TODO: Check if possible get only some columns</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matchingUsers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Requested user not found&#39;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">matchingUsers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
+                        <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;There should be one user but more than one were found&#39;</span>
+                    <span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
+
+                <span class="n">user</span> <span class="o">=</span> <span class="n">matchingUsers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">user</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
+                <span class="k">await</span> <span class="n">user</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+                <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">user_schema</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">user</span><span class="p">),</span> <span class="mi">200</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
-                    <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;There should be one user but more than one were found&#39;</span>
-                <span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DoesNotExist</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Requested user not found&#39;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
-
-            <span class="n">user</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">]</span>
-
-            <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-
-            <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span> <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">},</span> <span class="mi">200</span><span class="p">)</span></div></div>
+                <span class="k">pass</span></div></div>
 
 
 <span class="n">ns</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;User&#39;</span><span class="p">)</span>

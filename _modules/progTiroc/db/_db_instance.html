@@ -139,74 +139,102 @@
            <div itemprop="articleBody">
             
   <h1>Source code for progTiroc.db._db_instance</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">mongoengine</span>
-<span class="kn">from</span> <span class="nn">uuid</span> <span class="k">import</span> <span class="n">uuid4</span>
+<span></span><span class="kn">from</span> <span class="nn">uuid</span> <span class="k">import</span> <span class="n">uuid4</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">_db</span> <span class="k">as</span> <span class="n">types</span>
+
+<span class="kn">from</span> <span class="nn">umongo</span> <span class="k">import</span> <span class="n">Instance</span>
+<span class="kn">import</span> <span class="nn">motor.motor_asyncio</span>
+
+<span class="kn">import</span> <span class="nn">mongomock</span>  <span class="c1"># Used for MongoClient</span>
+<span class="kn">import</span> <span class="nn">umongo.document</span>  <span class="c1"># Used for MetaDocumentImplementation</span>
+
+<span class="kn">import</span> <span class="nn">typing</span>
 
 
 <div class="viewcode-block" id="DBContext"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.DBContext">[docs]</a><span class="k">class</span> <span class="nc">DBContext</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :ivar a User: user orm</span>
-<span class="sd">    :type User: mongoengine.base.metaclasses.TopLevelDocumentMetaclass</span>
-<span class="sd">    :ivar Context: mongoengine.base.metaclasses.TopLevelDocumentMetaclass</span>
-<span class="sd">    :ivar Rule: mongoengine.base.metaclasses.TopLevelDocumentMetaclass</span>
-<span class="sd">    :ivar Topic: mongoengine.base.metaclasses.TopLevelDocumentMetaclass</span>
-
-<span class="sd">    :ivar mongoengine.base.metaclasses.DocumentMetaclass Action:</span>
-<span class="sd">    :ivar mongoengine.base.metaclasses.DocumentMetaclass Message:</span>
-<span class="sd">    :ivar mongoengine.base.metaclasses.DocumentMetaclass Params:</span>
-<span class="sd">    :ivar mongoengine.base.metaclasses.DocumentMetaclass UserMessage:</span>
-<span class="sd">    :ivar mongoengine.base.metaclasses.DocumentMetaclass BotMessage:</span>
-<span class="sd">    :ivar mongoengine.base.metaclasses.DocumentMetaclass WozBotMessage:</span>
+<span class="sd">    :ivar User: umongo.document.MetaDocumentImplementation: User odm</span>
+<span class="sd">    :ivar Context: umongo.document.MetaDocumentImplementation: Context odm</span>
+<span class="sd">    :ivar Rule: umongo.document.MetaDocumentImplementation: Rule odm</span>
+<span class="sd">    :ivar Topic: umongo.document.MetaDocumentImplementation: Topic odm</span>
+<span class="sd">    :ivar Action: umongo.document.MetaDocumentImplementation: Action odm</span>
+<span class="sd">    :ivar Message: umongo.document.MetaDocumentImplementation: Message odm</span>
+<span class="sd">    :ivar Params: umongo.document.MetaDocumentImplementation: Params odm</span>
+<span class="sd">    :ivar UserMessage: umongo.document.MetaDocumentImplementation: UserMessage odm</span>
+<span class="sd">    :ivar BotMessage: umongo.document.MetaDocumentImplementation: BotMessage odm</span>
+<span class="sd">    :ivar WozBotMessage: umongo.document.MetaDocumentImplementation: WozBotMessage odm</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_alias</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="s1">&#39;progTiroc.db.DBInstance&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">instance</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_user_context</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">context_managers</span><span class="o">.</span><span class="n">switch_db</span><span class="p">(</span>
-            <span class="n">types</span><span class="o">.</span><span class="n">User</span><span class="p">,</span> <span class="n">db_alias</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_context_context</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">context_managers</span><span class="o">.</span><span class="n">switch_db</span><span class="p">(</span>
-            <span class="n">types</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">db_alias</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rule_context</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">context_managers</span><span class="o">.</span><span class="n">switch_db</span><span class="p">(</span>
-            <span class="n">types</span><span class="o">.</span><span class="n">Rule</span><span class="p">,</span> <span class="n">db_alias</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_topic_context</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">context_managers</span><span class="o">.</span><span class="n">switch_db</span><span class="p">(</span>
-            <span class="n">types</span><span class="o">.</span><span class="n">Topic</span><span class="p">,</span> <span class="n">db_alias</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;progTiroc.db.DBContext&#39;</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">User</span><span class="p">:</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">metaclasses</span><span class="o">.</span><span class="n">TopLevelDocumentMetaclass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_context</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">(</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Context</span><span class="p">:</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">metaclasses</span><span class="o">.</span><span class="n">TopLevelDocumentMetaclass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_context</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">(</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Rule</span><span class="p">:</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">metaclasses</span><span class="o">.</span><span class="n">TopLevelDocumentMetaclass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rule_context</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">(</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Topic</span><span class="p">:</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">metaclasses</span><span class="o">.</span><span class="n">TopLevelDocumentMetaclass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_topic_context</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">(</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">Action</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">Action</span>  <span class="c1"># type: mongoengine.base.metaclasses.DocumentMetaclass</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Message</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">Message</span>  <span class="c1"># type: mongoengine.base.metaclasses.DocumentMetaclass</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">Params</span>  <span class="c1"># type: mongoengine.base.metaclasses.DocumentMetaclass</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">UserMessage</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">UserMessage</span>  <span class="c1"># type: mongoengine.base.metaclasses.DocumentMetaclass</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">BotMessage</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">BotMessage</span>  <span class="c1"># type: mongoengine.base.metaclasses.DocumentMetaclass</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">WozBotMessage</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">WozUserMessage</span>  <span class="c1"># type: mongoengine.base.metaclasses.DocumentMetaclass</span>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">User</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">User</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Context</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Rule</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Rule</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Topic</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Topic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Action</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Message</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Params</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">UserMessage</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">UserMessage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BotMessage</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">BotMessage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">WozBotMessage</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">WozBotMessage</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_user_context</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_context_context</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rule_context</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_topic_context</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
-
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">User</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Rule</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Topic</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Action</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Message</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Params</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">UserMessage</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">BotMessage</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">WozBotMessage</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">User</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Rule</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Topic</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">WozBotMessage</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<span class="k">class</span> <span class="nc">WebSchema</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="bp">cls</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span><span class="p">,</span>
+                 <span class="n">load_only</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dump_only</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">load_only</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">load_only</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__load_only__</span>
+
+        <span class="k">if</span> <span class="n">load_only</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;load_only or cls.__load_only__ must be not null&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dump_only</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dump_only</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__dump_only__</span>
+
+        <span class="k">if</span> <span class="n">dump_only</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;dump_only or cls.__dump_only__ must be not null&#39;</span><span class="p">)</span>
+
+        <span class="n">user_schema</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">as_marshmallow_schema</span><span class="p">()</span>
+
+        <span class="k">class</span> <span class="nc">DumpSchema</span><span class="p">(</span><span class="n">user_schema</span><span class="p">):</span>
+
+            <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+                <span class="n">fields</span> <span class="o">=</span> <span class="n">dump_only</span>
+
+        <span class="k">class</span> <span class="nc">LoadSchema</span><span class="p">(</span><span class="n">user_schema</span><span class="p">):</span>
+
+            <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+                <span class="n">fields</span> <span class="o">=</span> <span class="n">load_only</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_out</span> <span class="o">=</span> <span class="n">DumpSchema</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_in</span> <span class="o">=</span> <span class="n">LoadSchema</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_in</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_out</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="DBInstance"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.DBInstance">[docs]</a><span class="k">class</span> <span class="nc">DBInstance</span><span class="p">:</span>
@@ -223,33 +251,42 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">database_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_db_alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;MONGOENGINE_ALIAS_PYTIROCINIO_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid4</span><span class="p">())</span>
+
         <span class="k">if</span> <span class="n">database_host</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;mongodb://&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">database_host</span> <span class="o">=</span> <span class="s1">&#39;mongodb://&#39;</span> <span class="o">+</span> <span class="n">database_host</span>
 
         <span class="k">if</span> <span class="n">isMock</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-                <span class="n">database_name</span><span class="p">,</span>
-                <span class="n">alias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_alias</span><span class="p">,</span>
-                <span class="n">host</span><span class="o">=</span><span class="n">database_host</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;mongodb&#39;</span><span class="p">,</span> <span class="s1">&#39;mongomock&#39;</span><span class="p">),</span>
-                <span class="n">port</span><span class="o">=</span><span class="n">database_port</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">mongomock</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span>
+                <span class="n">db</span><span class="o">=</span><span class="n">database_name</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">database_host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">database_port</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-                <span class="n">database_name</span><span class="p">,</span>
-                <span class="n">alias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_alias</span><span class="p">,</span>
-                <span class="n">host</span><span class="o">=</span><span class="n">database_host</span><span class="p">,</span>
-                <span class="n">port</span><span class="o">=</span><span class="n">database_port</span><span class="p">,</span>
-                <span class="n">username</span><span class="o">=</span><span class="n">database_user</span><span class="p">,</span>
-                <span class="n">password</span><span class="o">=</span><span class="n">database_pwd</span><span class="p">)</span>
+            <span class="n">DBUSER</span> <span class="o">=</span> <span class="s2">&quot;pheirei6choh0uephaug9Rooz0kooYungaeThaing2SheoBehoaG0xie4quie6Lu&quot;</span>
+            <span class="n">DBPSWD</span> <span class="o">=</span> <span class="s2">&quot;pev4yieyae8xeiP4AeLap6sain5fohsh1aheebie7eu4Aequiefo8aeSi9shiQu8&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">motor_asyncio</span><span class="o">.</span><span class="n">AsyncIOMotorClient</span><span class="p">(</span>
+                <span class="s1">&#39;mongodb://</span><span class="si">{DBUSER}</span><span class="s1">:</span><span class="si">{DBPSWD}</span><span class="s1">@localhost:27017/db&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">DBUSER</span><span class="o">=</span><span class="n">DBUSER</span><span class="p">,</span> <span class="n">DBPSWD</span><span class="o">=</span><span class="n">DBPSWD</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">User</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Action</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Rule</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Topic</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">UserMessage</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">BotMessage</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">WozUserMessage</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">WozBotMessage</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_schema</span> <span class="o">=</span> <span class="n">WebSchema</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">User</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DBInstance.context"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.DBInstance.context">[docs]</a>    <span class="k">def</span> <span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DBContext</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">DBContext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_alias</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">DBContext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DBInstance.drop_db"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.DBInstance.drop_db">[docs]</a>    <span class="k">def</span> <span class="nf">drop_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">drop_database</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
-
-
-<span class="n">mongoengine</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;db&#39;</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;mongomock://localhost&#39;</span><span class="p">)</span>
 </pre></div>
 
            </div>

@@ -155,6 +155,8 @@
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 
+<span class="kn">from</span> <span class="nn">bson</span> <span class="k">import</span> <span class="n">ObjectId</span>
+
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;debug.log&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -349,10 +351,11 @@
             <span class="k">return</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">selection</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="AI.update_context"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI.update_context">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">update_context</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">action</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Action</span><span class="p">,</span>
-                       <span class="n">options</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="k">def</span> <span class="nf">update_context</span><span class="p">(</span><span class="n">db_ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">DBContext</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+                       <span class="n">action</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Action</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
                        <span class="n">init_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span><span class="p">:</span>
-        <span class="n">new_ctx</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="o">**</span><span class="n">init_values</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">init_values</span><span class="p">)</span>
+        <span class="n">new_ctx</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="o">**</span><span class="n">init_values</span><span class="p">)</span>
 
         <span class="n">max_pr</span> <span class="o">=</span> <span class="n">new_ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">priority</span>
         <span class="n">_</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="s1">&#39;_&#39;</span><span class="p">]</span>
@@ -364,7 +367,7 @@
                 <span class="n">old_param</span> <span class="o">=</span> <span class="n">_</span><span class="p">[</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]]</span>
 
                 <span class="c1"># Create a new param object</span>
-                <span class="n">new_param</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Params</span><span class="p">(</span>
+                <span class="n">new_param</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Params</span><span class="p">(</span>
                     <span class="n">ofTopic</span><span class="o">=</span><span class="n">old_param</span><span class="o">.</span><span class="n">ofTopic</span><span class="p">,</span>
                     <span class="n">values</span><span class="o">=</span><span class="n">old_param</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
                     <span class="n">startTime</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
@@ -383,7 +386,7 @@
                 <span class="n">_</span><span class="p">[</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">new_param</span>
             <span class="k">elif</span> <span class="n">do</span><span class="p">[</span><span class="s1">&#39;op&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;push&#39;</span><span class="p">:</span>
                 <span class="n">max_pr</span> <span class="o">=</span> <span class="n">max_pr</span> <span class="o">-</span> <span class="mi">1</span>
-                <span class="n">new_param</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Params</span><span class="p">(</span>
+                <span class="n">new_param</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Params</span><span class="p">(</span>
                     <span class="n">ofTopic</span><span class="o">=</span><span class="n">do</span><span class="p">[</span><span class="s1">&#39;topic&#39;</span><span class="p">],</span>
                     <span class="n">values</span><span class="o">=</span><span class="p">{},</span>
                     <span class="n">startTime</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
@@ -400,14 +403,19 @@
         <span class="k">return</span> <span class="n">new_ctx</span></div>
 
 <div class="viewcode-block" id="AI.get_message"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI.get_message">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_message</span><span class="p">(</span><span class="n">userId</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">get_message</span><span class="p">(</span><span class="n">db_ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">DBContext</span><span class="p">,</span> <span class="n">userId</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                    <span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="c1"># Se condition è fatto come una condizione mongodb allora posso</span>
         <span class="c1"># eseguirla e eventualmente decidere con cosa posso eseguire tale regola</span>
 
         <span class="n">old_ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">contexts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span><span class="p">]</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">objects</span><span class="p">(</span>
-                <span class="n">ofUser</span><span class="o">=</span><span class="n">userId</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-timestamp&#39;</span><span class="p">)</span>
+            <span class="n">contexts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span><span class="p">]</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">find</span><span class="p">({</span>
+                <span class="s1">&#39;ofUser&#39;</span><span class="p">:</span> <span class="n">ObjectId</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span>
+            <span class="p">})</span><span class="o">.</span><span class="n">sort</span><span class="p">({</span>
+                <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="p">})</span>
+
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contexts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;0 contexts&quot;</span><span class="p">)</span>  <span class="c1"># TODO: Use logger</span>
                 <span class="k">return</span> <span class="kc">None</span>
@@ -436,12 +444,12 @@
         <span class="n">new_ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">AI</span><span class="o">.</span><span class="n">update_context</span><span class="p">(</span>
             <span class="n">mapping</span><span class="p">,</span> <span class="n">rule</span><span class="o">.</span><span class="n">action</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span>
             <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">ofUser</span><span class="o">=</span><span class="n">old_ctx</span><span class="o">.</span><span class="n">ofUser</span><span class="p">,</span>
+                <span class="n">ofUser</span><span class="o">=</span><span class="n">old_ctx</span><span class="o">.</span><span class="n">ofUser</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                 <span class="n">timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
                 <span class="n">params</span><span class="o">=</span><span class="n">ord_param</span><span class="p">,</span>
-                <span class="n">message</span><span class="o">=</span><span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">BotMessage</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">))))</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">db_ctx</span><span class="o">.</span><span class="n">BotMessage</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">))))</span>
 
-        <span class="n">new_ctx</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">new_ctx</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">new_ctx</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span></div></div>
 </pre></div>
