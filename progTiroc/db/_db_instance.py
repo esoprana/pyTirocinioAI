@@ -8,6 +8,8 @@ import motor.motor_asyncio
 import mongomock  # Used for MongoClient
 import umongo.document  # Used for MetaDocumentImplementation
 
+import typing
+
 
 class DBContext:
     """
@@ -53,6 +55,47 @@ class DBContext:
         self.WozBotMessage = None
 
 
+class WebSchema:
+
+    def __init__(self,
+                 cls: umongo.document.MetaDocumentImplementation,
+                 load_only: typing.Iterable[str] = None,
+                 dump_only: typing.Iterable[str] = None):
+
+        if load_only is None:
+            load_only = cls.__load_only__
+
+        if load_only is None:
+            raise Exception('load_only or cls.__load_only__ must be not null')
+
+        if dump_only is None:
+            dump_only = cls.__dump_only__
+
+        if dump_only is None:
+            raise Exception('dump_only or cls.__dump_only__ must be not null')
+
+        user_schema = cls.schema.as_marshmallow_schema()
+
+        class DumpSchema(user_schema):
+
+            class Meta:
+                fields = dump_only
+
+        class LoadSchema(user_schema):
+
+            class Meta:
+                fields = load_only
+
+        self._cls_out = DumpSchema()
+        self._cls_in = LoadSchema()
+
+    def load(self, *args, **kwargs) -> dict:
+        return self._cls_in.load(*args, **kwargs)
+
+    def dump(self, *args, **kwargs) -> dict:
+        return self._cls_out.dump(*args, **kwargs)
+
+
 class DBInstance:
 
     def __init__(self,
@@ -94,6 +137,8 @@ class DBInstance:
         self._instance.register(types.WozUserMessage)
         self._instance.register(types.WozBotMessage)
         self._instance.register(types.Context)
+
+        self.user_schema = WebSchema(self._instance.User)
 
     def context(self) -> DBContext:
         return DBContext(self._instance)

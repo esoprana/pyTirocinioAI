@@ -30,16 +30,6 @@ class DocUserPut(doc.Model):
     username: str = doc.field(description='The user displayed username')
 
 
-class UserPutSchema(marshmallow.Schema):
-    """ Model used to translate User to json in the api """
-
-    username = marshmallow.fields.Str(attribute="username", required=True)
-
-    class Meta:
-        unknown = 'raise'
-        partial = False
-
-
 class UserList(HTTPMethodView):
     """ Show a list of all the users or insert user in list """
 
@@ -53,10 +43,15 @@ class UserList(HTTPMethodView):
         """
         with request.app.dbi.context() as db_ctx:
             try:
-                data = [{
-                    'id': str(user.id),
-                    'username': user.username
-                } async for user in db_ctx.User.find()]
+
+                data, error = request.app.dbi.user_schema.dump(
+                    [user async for user in db_ctx.User.find()], many=True)
+
+                if error:
+                    print(error)
+                    return json({
+                        'message': 'Impossible to dump some data'
+                    }, 500)
 
                 return json(data, 200)
             except Exception as err:
@@ -78,7 +73,7 @@ class UserList(HTTPMethodView):
             return json({'message': 'invalid schema format(json)'}, 400)
 
         try:
-            data, errors = UserPutSchema().load(request.json)
+            data, errors = request.app.dbi.user_schema.load(request.json)
         except marshmallow.ValidationError as e:
             e.messages['message'] = 'ValidationError'
             return json(e.messages, 400)
@@ -88,10 +83,8 @@ class UserList(HTTPMethodView):
             return json(errors, 400)
 
         with request.app.dbi.context() as db_ctx:
-            user = db_ctx.User(
-                username=data['username'],
-                googleSessionId=uuid.uuid4(),
-            )
+            user = db_ctx.User(**data)
+            user.googleSessionId = uuid.uuid4()
 
             try:
                 await user.commit()
@@ -112,10 +105,13 @@ class UserList(HTTPMethodView):
                 return json({'message': 'Impossible to commit changes'}, 500)
                 # TODO: Gestire caso in cui user è comunque salvato
 
-            return json({
-                'id': str(user.id),
-                'username': user.username,
-            }, 200)
+            data, error = request.app.dbi.user_schema.dump(user)
+
+            if error:
+                print(error)
+                return json({'message': 'Impossible to serialize user'}, 500)
+
+            return json(data, 200)
 
 
 class SingleUser(HTTPMethodView):
@@ -148,10 +144,7 @@ class SingleUser(HTTPMethodView):
                     }, 500)
 
                 user = matchingUsers[0]
-                return json({
-                    'id': str(user.id),
-                    'username': user.username
-                }, 200)
+                return json(request.app.dbi.user_schema.dump(user), 200)
             except mongoengine.MultipleObjectsReturned:
                 pass  # TODO: tofix
 
@@ -171,7 +164,7 @@ class SingleUser(HTTPMethodView):
             return json({'message': 'invalid schema format(json)'}, 400)
 
         try:
-            data, errors = UserPutSchema().load(request.json)
+            data, errors = request.app.dbi.user_schema.load(request.json)
         except marshmallow.ValidationError as e:
             e.messages['message'] = 'ValidationError'
             return json(e.messages, 400)
@@ -198,12 +191,9 @@ class SingleUser(HTTPMethodView):
                 user = matchingUsers[0]
 
                 user.username = data['username']
-                user.commit()
+                await user.commit()
 
-                return json({
-                    'id': str(user.id),
-                    'username': user.username
-                }, 200)
+                return json(request.app.dbi.user_schema.dump(user), 200)
             except Exception as e:
                 print(e)
                 pass

@@ -10,7 +10,8 @@ class User(Document):
     username = fields.StringField(required=True, null=False)
     googleSessionId = fields.UUIDField(required=True, null=False)
 
-    externallyVisible = ['id', 'username']
+    __load_only__ = ('username',)
+    __dump_only__ = ('id', 'username')
 
 
 class Action(EmbeddedDocument):
