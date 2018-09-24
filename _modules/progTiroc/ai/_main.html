@@ -139,23 +139,21 @@
            <div itemprop="articleBody">
             
   <h1>Source code for progTiroc.ai._main</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">progTiroc</span> <span class="k">import</span> <span class="n">db</span>
-
-<span class="kn">from</span> <span class="nn">._text_analysis</span> <span class="k">import</span> <span class="n">analyze_sentiment</span><span class="p">,</span> <span class="n">analyze_intent</span><span class="p">,</span> <span class="n">analyze_categories</span>
-
-<span class="kn">import</span> <span class="nn">itertools</span>
+<span></span><span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">import</span> <span class="nn">bisect</span>
 <span class="kn">from</span> <span class="nn">random</span> <span class="k">import</span> <span class="n">randint</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">mongoengine</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
-
 <span class="kn">from</span> <span class="nn">bson</span> <span class="k">import</span> <span class="n">ObjectId</span>
+
+<span class="kn">from</span> <span class="nn">progTiroc</span> <span class="k">import</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">._text_analysis</span> <span class="k">import</span> <span class="n">analyze_sentiment</span><span class="p">,</span> <span class="n">analyze_intent</span><span class="p">,</span> <span class="n">analyze_categories</span>
 
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;debug.log&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -164,9 +162,11 @@
 
 
 <div class="viewcode-block" id="check"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.check">[docs]</a><span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Check whole dict given condition an dict to check &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">std_check</span><span class="p">(</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(.+?)(?:__(lt|gt|eq|ne|le|ge|in|nin))?$&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">std_check</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Check single value &quot;&quot;&quot;</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(.+?)(?:__(lt|gt|eq|ne|le|ge|in|nin))?$&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">matches</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Unrecognied action&#39;</span><span class="p">)</span>
@@ -194,7 +194,7 @@
                 <span class="k">return</span> <span class="n">to_check</span> <span class="o">&gt;=</span> <span class="n">v</span>
             <span class="k">elif</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">to_check</span> <span class="ow">in</span> <span class="n">v</span>
-            <span class="k">elif</span> <span class="n">suffix</span> <span class="o">==</span> <span class="s1">&#39;nin&#39;</span><span class="p">:</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># suffix == &#39;nin&#39;</span>
                 <span class="k">return</span> <span class="n">to_check</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">v</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
@@ -218,6 +218,7 @@
 
 <div class="viewcode-block" id="possible"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.possible">[docs]</a><span class="k">def</span> <span class="nf">possible</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span>
              <span class="n">condition</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot; Get all indexes of params that satisfies condition(only static one, __py__ ignored) &quot;&quot;&quot;</span>
     <span class="n">poss</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
@@ -239,6 +240,7 @@
 <span class="c1"># (numero, nome, condizione python)</span>
 <div class="viewcode-block" id="verify_mapping"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.verify_mapping">[docs]</a><span class="k">def</span> <span class="nf">verify_mapping</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span>
                    <span class="n">mapping</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">py</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Check if a mapping given associated params and msg satisfies py &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">py</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
 
@@ -256,6 +258,7 @@
                           <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span>
                           <span class="n">params_conditions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
                           <span class="n">py</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot; Get all possible mappings &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">check</span><span class="p">(</span><span class="n">msg_condition</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[]</span>
 
@@ -271,6 +274,7 @@
                 <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Params</span><span class="p">],</span>
                 <span class="n">params_conditions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
                 <span class="n">py</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot; Get a single mapping given data and conditions &quot;&quot;&quot;</span>
     <span class="n">mappings</span> <span class="o">=</span> <span class="n">get_multiple_mappings</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">msg_condition</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
                                      <span class="n">params_conditions</span><span class="p">,</span> <span class="n">py</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">mappings</span><span class="p">:</span>
@@ -287,10 +291,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_google_project_id</span> <span class="o">=</span> <span class="n">google_project_id</span>
 
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
 <div class="viewcode-block" id="AI.analyze_text"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI.analyze_text">[docs]</a>    <span class="k">def</span> <span class="nf">analyze_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">googleSessionId</span><span class="p">:</span> <span class="n">uuid</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Return intent, sentiment and categories from google apis given text and sessionid &quot;&quot;&quot;</span>
         <span class="n">intent</span> <span class="o">=</span> <span class="n">analyze_intent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_google_project_id</span><span class="p">,</span> <span class="n">googleSessionId</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span>
                                 <span class="s1">&#39;en&#39;</span><span class="p">,</span> <span class="n">log</span><span class="p">)</span>
 
@@ -314,11 +316,13 @@
     <span class="c1">#    exit(1)</span>
 
 <div class="viewcode-block" id="AI.create_database"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI.create_database">[docs]</a>    <span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; setup the database &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># TODO: Da implementare</span></div>
 
 <div class="viewcode-block" id="AI.get_action"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI.get_action">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span>
                   <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Rule</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+        <span class="sd">&quot;&quot;&quot; Get an action(if possible) -&gt; max_priority used, rule, mapping &quot;&quot;&quot;</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Params</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
             <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -342,7 +346,7 @@
         <span class="n">actions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="nb">zip</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">accumulate</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]),</span> <span class="n">res</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">actions</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">selection</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">bisect</span><span class="o">.</span><span class="n">bisect_right</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">],</span>
@@ -354,7 +358,10 @@
     <span class="k">def</span> <span class="nf">update_context</span><span class="p">(</span><span class="n">db_ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">DBContext</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
                        <span class="n">action</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Action</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
                        <span class="n">init_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">init_values</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update context given current db context, mapping to use, action,</span>
+<span class="sd">        options and values to initialize Context(previous values)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">new_ctx</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span><span class="o">**</span><span class="n">init_values</span><span class="p">)</span>
 
         <span class="n">max_pr</span> <span class="o">=</span> <span class="n">new_ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">priority</span>
@@ -405,22 +412,17 @@
 <div class="viewcode-block" id="AI.get_message"><a class="viewcode-back" href="../../../progTiroc.ai.html#progTiroc.ai.AI.get_message">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_message</span><span class="p">(</span><span class="n">db_ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">DBContext</span><span class="p">,</span> <span class="n">userId</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
                     <span class="n">msg</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="c1"># Se condition è fatto come una condizione mongodb allora posso</span>
-        <span class="c1"># eseguirla e eventualmente decidere con cosa posso eseguire tale regola</span>
-
-        <span class="n">old_ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span>
+        <span class="sd">&quot;&quot;&quot; Get response message given user&#39;s message(already analyzed), userId and db context &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">contexts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span><span class="p">]</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">find</span><span class="p">({</span>
-                <span class="s1">&#39;ofUser&#39;</span><span class="p">:</span> <span class="n">ObjectId</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span>
-            <span class="p">})</span><span class="o">.</span><span class="n">sort</span><span class="p">({</span>
-                <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="p">})</span>
+            <span class="n">old_ctx</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;ofUser&#39;</span><span class="p">:</span> <span class="n">ObjectId</span><span class="p">(</span><span class="n">userId</span><span class="p">)</span>
+                <span class="p">},</span> <span class="n">sort</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)])</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contexts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;0 contexts&quot;</span><span class="p">)</span>  <span class="c1"># TODO: Use logger</span>
+            <span class="k">if</span> <span class="n">old_ctx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;0 contexts&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">old_ctx</span> <span class="o">=</span> <span class="n">contexts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
         <span class="k">except</span> <span class="n">mongoengine</span><span class="o">.</span><span class="n">DoesNotExist</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>

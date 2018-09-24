@@ -64,6 +64,60 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/message/user/{oId}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.ListMessage",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "oId",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                },
+                "tags": [
+                    "Api"
+                ]
+            }
+        },
+        "/message/user/{oId}/": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "Api.ListMessage",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "oId",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                },
+                "tags": [
+                    "Api"
+                ]
+            }
+        },
         "/message/{fr}/{to}": {
             "put": {
                 "consumes": [

@@ -142,19 +142,20 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">distutils.util</span> <span class="k">import</span> <span class="n">strtobool</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">sanic</span> <span class="k">import</span> <span class="n">Sanic</span>
 <span class="kn">from</span> <span class="nn">sanic_swagger</span> <span class="k">import</span> <span class="n">swagger_blueprint</span><span class="p">,</span> <span class="n">openapi_blueprint</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
 
 <span class="kn">from</span> <span class="nn">progTiroc.db</span> <span class="k">import</span> <span class="n">DBInstance</span>
 <span class="kn">from</span> <span class="nn">progTiroc.api</span> <span class="k">import</span> <span class="n">create_api</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span>
-
 
 <span class="k">def</span> <span class="nf">conf_value</span><span class="p">(</span><span class="n">var_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">yml_cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
                <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Automate getting values from multiple resources with priority env -&gt; yml -&gt; default &quot;&quot;&quot;</span>
+
     <span class="n">names</span> <span class="o">=</span> <span class="n">var_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
 
     <span class="n">to_set</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -189,6 +190,7 @@
 
 
 <span class="k">def</span> <span class="nf">setup_app_config</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">Sanic</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Setup the sanic app configs &quot;&quot;&quot;</span>
 
     <span class="n">config_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CONFIG_FILE&#39;</span><span class="p">)</span>
     <span class="n">yml_cfg</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">config_file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">),</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">Loader</span><span class="p">)</span>
@@ -230,6 +232,8 @@
 
 
 <span class="k">def</span> <span class="nf">setup</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Sanic</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Setup the whole sanic app &quot;&quot;&quot;</span>
+
     <span class="n">app</span> <span class="o">=</span> <span class="n">Sanic</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
     <span class="n">setup_app_config</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
 

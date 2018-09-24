@@ -139,7 +139,13 @@
            <div itemprop="articleBody">
             
   <h1>Source code for progTiroc.api.message</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module to define message rest endpoint, are defined &#39;/&#39; and &#39;/{messageId}&#39;</span>
+
+<span class="sd">:exclude-members: DocMessageGet, DocMessagePut</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">marshmallow</span>
 
 <span class="kn">from</span> <span class="nn">sanic</span> <span class="k">import</span> <span class="n">Blueprint</span>
@@ -150,28 +156,66 @@
 
 <span class="kn">from</span> <span class="nn">bson</span> <span class="k">import</span> <span class="n">ObjectId</span>
 
-<span class="kn">from</span> <span class="nn">progTiroc</span> <span class="k">import</span> <span class="n">db</span>
+<span class="kn">import</span> <span class="nn">dateutil.parser</span>
 
 <span class="n">WOZ_BOT_ID</span> <span class="o">=</span> <span class="s1">&#39;000000000000000000000000&#39;</span>
 <span class="n">NWOZ_BOT_ID</span> <span class="o">=</span> <span class="s1">&#39;000000000000000000000001&#39;</span>
 
 
 <div class="viewcode-block" id="DocMessageGet"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.message.DocMessageGet">[docs]</a><span class="k">class</span> <span class="nc">DocMessageGet</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Model to show in generated swagger(for get) &quot;&quot;&quot;</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The message unique identifier&#39;</span><span class="p">)</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Message</span><span class="se">\&#39;</span><span class="s1">s text&#39;</span><span class="p">)</span>
     <span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The message</span><span class="se">\&#39;</span><span class="s1">s timestmap&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DocMessagePut"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.message.DocMessagePut">[docs]</a><span class="k">class</span> <span class="nc">DocMessagePut</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Model to show in generated swagger(for put) &quot;&quot;&quot;</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The text of the message&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="MessagePut"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.message.MessagePut">[docs]</a><span class="k">class</span> <span class="nc">MessagePut</span><span class="p">(</span><span class="n">marshmallow</span><span class="o">.</span><span class="n">Schema</span><span class="p">):</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">marshmallow</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">Str</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="ListMessage"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.message.ListMessage">[docs]</a><span class="k">class</span> <span class="nc">ListMessage</span><span class="p">(</span><span class="n">HTTPMethodView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Rappresents the whole of the messages of a user&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MessagePut.Meta"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.message.MessagePut.Meta">[docs]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">unknown</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span>
-        <span class="n">partial</span> <span class="o">=</span> <span class="kc">False</span></div></div>
+<div class="viewcode-block" id="ListMessage.get"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.message.ListMessage.get">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">oId</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get messages of a specific user &quot;&quot;&quot;</span>
+
+        <span class="n">find_filter</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ofUser&#39;</span><span class="p">:</span> <span class="n">ObjectId</span><span class="p">(</span><span class="n">oId</span><span class="p">)}</span>
+
+        <span class="n">after</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;after&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">find_filter</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;$gt&#39;</span><span class="p">:</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">isoparse</span><span class="p">(</span><span class="n">after</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
+                    <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;after field should be datetime in iso format&#39;</span>
+                <span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">db_ctx</span><span class="p">:</span>
+            <span class="n">contexts</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">context</span> <span class="k">async</span> <span class="k">for</span> <span class="n">context</span> <span class="ow">in</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">find</span><span class="p">(</span>
+                    <span class="n">find_filter</span><span class="p">,</span>
+                    <span class="n">sort</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)],</span>
+                    <span class="n">projection</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">message_schema</span><span class="o">.</span><span class="n">__mongodump__</span><span class="p">)</span>
+            <span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">contexts</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
+                    <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;No context found check the user</span><span class="se">\&#39;</span><span class="s1">s id sent&#39;</span>
+                <span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
+
+            <span class="n">data</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">message_schema</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+                <span class="n">contexts</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
+                    <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Impossible to serialize messages&#39;</span>
+                <span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SingleMessage"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.message.SingleMessage">[docs]</a><span class="k">class</span> <span class="nc">SingleMessage</span><span class="p">(</span><span class="n">HTTPMethodView</span><span class="p">):</span>
@@ -179,12 +223,12 @@
 
 <div class="viewcode-block" id="SingleMessage.put"><a class="viewcode-back" href="../../../progTiroc.api.html#progTiroc.api.message.SingleMessage.put">[docs]</a>    <span class="nd">@doc</span><span class="o">.</span><span class="n">consumes</span><span class="p">(</span><span class="n">DocMessagePut</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;body&#39;</span><span class="p">)</span>
     <span class="nd">@doc</span><span class="o">.</span><span class="n">produces</span><span class="p">(</span><span class="n">DocMessageGet</span><span class="p">)</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">fr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">fr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">to</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;invalid schema format(json)&#39;</span><span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">MessagePut</span><span class="p">()</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">message_schema</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">marshmallow</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">e</span><span class="o">.</span><span class="n">messages</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ValidationError&#39;</span>
             <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">messages</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
@@ -193,7 +237,7 @@
             <span class="n">errors</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ValidationError&#39;</span>
             <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
 
-        <span class="n">isWoz</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">fr</span> <span class="o">==</span> <span class="n">WOZ_BOT_ID</span> <span class="ow">or</span> <span class="n">to</span> <span class="o">==</span> <span class="n">WOZ_BOT_ID</span>
+        <span class="n">isWoz</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">WOZ_BOT_ID</span> <span class="ow">in</span> <span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">to</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">isWoz</span> <span class="ow">and</span> <span class="n">to</span> <span class="o">!=</span> <span class="n">NWOZ_BOT_ID</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
@@ -203,13 +247,12 @@
                 <span class="s1">&#39; user -&gt; 000000000000000000000001</span><span class="se">\n</span><span class="s1">&#39;</span>
             <span class="p">},</span> <span class="mi">400</span><span class="p">)</span>
 
-        <span class="n">msg</span><span class="p">:</span> <span class="n">db</span><span class="o">.</span><span class="n">Message</span> <span class="o">=</span> <span class="kc">None</span>
-
         <span class="k">with</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">context</span><span class="p">()</span> <span class="k">as</span> <span class="n">db_ctx</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">isWoz</span><span class="p">):</span>
-                <span class="c1"># TODO: Create vera risposta</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isWoz</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">UserMessage</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">fr</span> <span class="o">==</span> <span class="n">WOZ_BOT_ID</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="n">fr</span> <span class="o">==</span> <span class="n">WOZ_BOT_ID</span><span class="p">:</span>
                 <span class="p">(</span><span class="n">fr</span><span class="p">,</span> <span class="n">to</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">to</span><span class="p">,</span> <span class="n">fr</span><span class="p">)</span>
 
                 <span class="n">msg</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">WozBotMessage</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">])</span>
@@ -218,21 +261,17 @@
 
             <span class="c1"># Get the list of context of user in decresend order of timestamp</span>
 
-            <span class="n">contextsOfUser</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">i</span> <span class="k">async</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">find</span><span class="p">({</span>
+            <span class="n">old_context</span><span class="p">:</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="k">await</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span>
+                <span class="p">{</span>
                     <span class="s1">&#39;ofUser&#39;</span><span class="p">:</span> <span class="n">ObjectId</span><span class="p">(</span><span class="n">fr</span><span class="p">)</span>
-                <span class="p">})</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="p">]</span>
+                <span class="p">},</span> <span class="n">sort</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)])</span>
 
             <span class="c1"># If no active context send error(at least one should be)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">contextsOfUser</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">old_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
-                    <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Errore dovrebbe esserci un &#39;</span> <span class="o">+</span>
-                    <span class="s1">&#39;contesto attivo(0 al momento)</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
-                    <span class="s1">&#39;Controllare che l</span><span class="se">\&#39;</span><span class="s1">utente esista&#39;</span>
+                    <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Errore dovrebbe esserci un contesto attivo&#39;</span> <span class="o">+</span>
+                    <span class="s1">&#39;(0 al momento)</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;Controllare che l</span><span class="se">\&#39;</span><span class="s1">utente esista&#39;</span>
                 <span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
-
-            <span class="n">old_context</span><span class="p">:</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span> <span class="o">=</span> <span class="n">contextsOfUser</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
             <span class="n">context</span> <span class="o">=</span> <span class="n">db_ctx</span><span class="o">.</span><span class="n">Context</span><span class="p">(</span>
                 <span class="n">ofUser</span><span class="o">=</span><span class="n">old_context</span><span class="o">.</span><span class="n">ofUser</span><span class="p">,</span>
@@ -241,15 +280,17 @@
                 <span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-            <span class="k">return</span> <span class="n">json</span><span class="p">({</span>
-                <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
-                <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="n">context</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-                <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">context</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
-            <span class="p">},</span> <span class="mi">200</span><span class="p">)</span></div></div>
+            <span class="n">data</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">dbi</span><span class="o">.</span><span class="n">message_schema</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">json</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Impossible to serialize message&#39;</span><span class="p">},</span> <span class="mi">500</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span></div></div>
 
 
 <span class="n">ns</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s1">&#39;Message&#39;</span><span class="p">)</span>
 <span class="n">ns</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="n">SingleMessage</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="s1">&#39;/&lt;fr:string&gt;/&lt;to:string&gt;&#39;</span><span class="p">)</span>
+<span class="n">ns</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="n">ListMessage</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="s1">&#39;/user/&lt;oId:string&gt;&#39;</span><span class="p">)</span>
 </pre></div>
 
            </div>

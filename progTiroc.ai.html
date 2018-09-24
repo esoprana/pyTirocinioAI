@@ -150,6 +150,7 @@
 <h1>progTiroc.ai package<a class="headerlink" href="#progtiroc-ai-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-progTiroc.ai">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-progTiroc.ai" title="Permalink to this headline">¶</a></h2>
+<p>Utilities to make decisions based on data in the database</p>
 <dl class="class">
 <dt id="progTiroc.ai.AI">
 <em class="property">class </em><code class="descclassname">progTiroc.ai.</code><code class="descname">AI</code><span class="sig-paren">(</span><em>google_project_id: str</em>, <em>log: logging.Logger</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/ai/_main.html#AI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.AI" title="Permalink to this definition">¶</a></dt>
@@ -157,54 +158,65 @@
 <dl class="method">
 <dt id="progTiroc.ai.AI.analyze_text">
 <code class="descname">analyze_text</code><span class="sig-paren">(</span><em>text: str</em>, <em>googleSessionId: &lt;module 'uuid' from '/opt/python/3.6.3/lib/python3.6/uuid.py'&gt;</em><span class="sig-paren">)</span> &#x2192; Dict[str, Any]<a class="reference internal" href="_modules/progTiroc/ai/_main.html#AI.analyze_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.AI.analyze_text" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return intent, sentiment and categories from google apis given text and sessionid</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="progTiroc.ai.AI.create_database">
 <code class="descname">create_database</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/progTiroc/ai/_main.html#AI.create_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.AI.create_database" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>setup the database</p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="progTiroc.ai.AI.get_action">
 <em class="property">static </em><code class="descname">get_action</code><span class="sig-paren">(</span><em>msg: Dict[str, Any], ctx: progTiroc.db._db.Context</em><span class="sig-paren">)</span> &#x2192; Optional[Tuple[int, progTiroc.db._db.Rule, List[int]]]<a class="reference internal" href="_modules/progTiroc/ai/_main.html#AI.get_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.AI.get_action" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get an action(if possible) -&gt; max_priority used, rule, mapping</p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="progTiroc.ai.AI.get_message">
 <em class="property">static </em><code class="descname">get_message</code><span class="sig-paren">(</span><em>db_ctx: progTiroc.db._db_instance.DBContext, userId: int, msg: Dict[str, Any]</em><span class="sig-paren">)</span> &#x2192; Optional[str]<a class="reference internal" href="_modules/progTiroc/ai/_main.html#AI.get_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.AI.get_message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get response message given user’s message(already analyzed), userId and db context</p>
+</dd></dl>
 
 <dl class="staticmethod">
 <dt id="progTiroc.ai.AI.update_context">
 <em class="property">static </em><code class="descname">update_context</code><span class="sig-paren">(</span><em>db_ctx: progTiroc.db._db_instance.DBContext, mapping: List[int], action: progTiroc.db._db.Action, options: Dict[str, Any], init_values: Dict[str, Any]</em><span class="sig-paren">)</span> &#x2192; progTiroc.db._db.Context<a class="reference internal" href="_modules/progTiroc/ai/_main.html#AI.update_context"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.AI.update_context" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Update context given current db context, mapping to use, action,
+options and values to initialize Context(previous values)</p>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="function">
 <dt id="progTiroc.ai.check">
 <code class="descclassname">progTiroc.ai.</code><code class="descname">check</code><span class="sig-paren">(</span><em>condition: Dict[str, Any], value: Dict[str, Any]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/progTiroc/ai/_main.html#check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.check" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Check whole dict given condition an dict to check</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="progTiroc.ai.get_mapping">
 <code class="descclassname">progTiroc.ai.</code><code class="descname">get_mapping</code><span class="sig-paren">(</span><em>msg: Dict[str, Any], msg_condition: Dict[str, Any], params: List[progTiroc.db._db.Params], params_conditions: List[Dict[str, Any]], py: str</em><span class="sig-paren">)</span> &#x2192; Optional[List[int]]<a class="reference internal" href="_modules/progTiroc/ai/_main.html#get_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.get_mapping" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get a single mapping given data and conditions</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="progTiroc.ai.get_multiple_mappings">
 <code class="descclassname">progTiroc.ai.</code><code class="descname">get_multiple_mappings</code><span class="sig-paren">(</span><em>msg: Dict[str, Any], msg_condition: Dict[str, Any], params: List[progTiroc.db._db.Params], params_conditions: List[Dict[str, Any]], py: str</em><span class="sig-paren">)</span> &#x2192; List[List[int]]<a class="reference internal" href="_modules/progTiroc/ai/_main.html#get_multiple_mappings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.get_multiple_mappings" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get all possible mappings</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="progTiroc.ai.possible">
 <code class="descclassname">progTiroc.ai.</code><code class="descname">possible</code><span class="sig-paren">(</span><em>params: List[progTiroc.db._db.Params], condition: Dict[str, Dict]</em><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference internal" href="_modules/progTiroc/ai/_main.html#possible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.possible" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get all indexes of params that satisfies condition(only static one, __py__ ignored)</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="progTiroc.ai.verify_mapping">
 <code class="descclassname">progTiroc.ai.</code><code class="descname">verify_mapping</code><span class="sig-paren">(</span><em>msg: Dict[str, Any], params: List[progTiroc.db._db.Params], mapping: List[int], py: Optional[str]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/progTiroc/ai/_main.html#verify_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#progTiroc.ai.verify_mapping" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Check if a mapping given associated params and msg satisfies py</p>
+</dd></dl>
 
 </div>
 </div>
