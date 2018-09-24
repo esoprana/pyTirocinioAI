@@ -3,11 +3,13 @@ import typing
 from collections import namedtuple
 
 # 3rd party libs
-from umongo import Instance
+from umongo import (
+    Instance,
+    document  # Used for MetaDocumentImplementation
+)
 import motor.motor_asyncio
 
 import mongomock  # Used for MongoClient
-import umongo.document  # Used for MetaDocumentImplementation
 
 import marshmallow
 
@@ -67,12 +69,12 @@ def get_meta_fields(load: typing.Iterable[str], dump: typing.Iterable[str]):
     load = set(load)
     dump = set(dump)
 
-    un = load.union(dump)
+    load_or_dump = load.union(dump)
 
     return MetaFields(
-        fields=tuple(un),
-        load_only=tuple(un.difference(dump)),
-        dump_only=tuple(un.difference(load)),
+        fields=tuple(load_or_dump),
+        load_only=tuple(load_or_dump.difference(dump)),
+        dump_only=tuple(load_or_dump.difference(load)),
         load=load,
         dump=dump)
 
@@ -92,7 +94,7 @@ class DBInstance:
                  database_user: str,
                  database_pwd: str,
                  isMock: bool = False):
-        if (database_port >= 65535):
+        if database_port >= 65535:
             raise Exception('Enviroment variable DBPORT is non valid port')
 
         self._db_name: str = database_name
@@ -113,17 +115,12 @@ class DBInstance:
                     DBNAME=database_name))
 
         self._instance = Instance(self._connection['db'])
-        self._instance.register(types.User)
-        self._instance.register(types.Action)
-        self._instance.register(types.Rule)
-        self._instance.register(types.Topic)
-        self._instance.register(types.Params)
-        self._instance.register(types.Message)
-        self._instance.register(types.UserMessage)
-        self._instance.register(types.BotMessage)
-        self._instance.register(types.WozUserMessage)
-        self._instance.register(types.WozBotMessage)
-        self._instance.register(types.Context)
+        for odm_model in [
+                types.User, types.Action, types.Rule, types.Topic, types.Params,
+                types.Message, types.UserMessage, types.BotMessage,
+                types.WozUserMessage, types.WozBotMessage, types.Context
+        ]:
+            self._instance.register(odm_model)
 
         user_meta = get_meta_fields(load=('username',), dump=('id', 'username'))
 

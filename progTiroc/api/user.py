@@ -1,4 +1,8 @@
-""" Module to define user rest endpoint, are defined '/' and '/{objectId}' """
+"""
+Module to define user rest endpoint, are defined '/' and '/{objectId}'
+
+:exclude-members: DocUserGet, DocUserPut
+"""
 
 import uuid
 from datetime import datetime

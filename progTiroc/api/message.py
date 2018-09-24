@@ -1,3 +1,9 @@
+"""
+Module to define message rest endpoint, are defined '/' and '/{messageId}'
+
+:exclude-members: DocMessageGet, DocMessagePut
+"""
+
 from datetime import datetime
 import marshmallow
 
@@ -11,32 +17,34 @@ from bson import ObjectId
 
 import dateutil.parser
 
-from progTiroc import db
-
 WOZ_BOT_ID = '000000000000000000000000'
 NWOZ_BOT_ID = '000000000000000000000001'
 
 
 class DocMessageGet(doc.Model):
+    """ Model to show in generated swagger(for get) """
     id: str = doc.field(description='The message unique identifier')
     text: str = doc.field(description='Message\'s text')
     timestamp: datetime = doc.field(description='The message\'s timestmap')
 
 
 class DocMessagePut(doc.Model):
+    """ Model to show in generated swagger(for put) """
     text: str = doc.field(description='The text of the message')
 
 
 class ListMessage(HTTPMethodView):
-    """ Get messages of a user """
+    """ Rappresents the whole of the messages of a user"""
 
     async def get(self, request: Request, oId: str):
-        findFilter = {'ofUser': ObjectId(oId)}
+        """ Get messages of a specific user """
+
+        find_filter = {'ofUser': ObjectId(oId)}
 
         after = request.args.get('after')
         if after is not None:
             try:
-                findFilter['timestamp'] = {
+                find_filter['timestamp'] = {
                     '$gt': dateutil.parser.isoparse(after)
                 }
             except ValueError:
@@ -47,7 +55,7 @@ class ListMessage(HTTPMethodView):
         with request.app.dbi.context() as db_ctx:
             contexts = [
                 context async for context in db_ctx.Context.find(
-                    findFilter,
+                    find_filter,
                     sort=[('timestamp', -1)],
                     projection=request.app.dbi.message_schema.__mongodump__)
             ]
@@ -88,7 +96,7 @@ class SingleMessage(HTTPMethodView):
             errors['message'] = 'ValidationError'
             return json(errors, 400)
 
-        isWoz: bool = fr == WOZ_BOT_ID or to == WOZ_BOT_ID
+        isWoz: bool = WOZ_BOT_ID in (fr, to)
 
         if (not isWoz and to != NWOZ_BOT_ID):
             return json({
@@ -98,12 +106,12 @@ class SingleMessage(HTTPMethodView):
                 ' user -> 000000000000000000000001\n'
             }, 400)
 
-        msg: db.Message = None
-
         with request.app.dbi.context() as db_ctx:
-            if (not isWoz):
+            msg = None
+
+            if not isWoz:
                 msg = db_ctx.UserMessage(text=data['text'])
-            elif (fr == WOZ_BOT_ID):
+            elif fr == WOZ_BOT_ID:
                 (fr, to) = (to, fr)
 
                 msg = db_ctx.WozBotMessage(text=data['text'])
@@ -120,9 +128,8 @@ class SingleMessage(HTTPMethodView):
             # If no active context send error(at least one should be)
             if old_context is None:
                 return json({
-                    'message': 'Errore dovrebbe esserci un ' +
-                    'contesto attivo(0 al momento)\n' +
-                    'Controllare che l\'utente esista'
+                    'message': 'Errore dovrebbe esserci un contesto attivo' +
+                    '(0 al momento)\n' + 'Controllare che l\'utente esista'
                 }, 500)
 
             context = db_ctx.Context(

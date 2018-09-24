@@ -1,7 +1,3 @@
-from progTiroc import db
-
-from ._text_analysis import analyze_sentiment, analyze_intent, analyze_categories
-
 import itertools
 import bisect
 from random import randint
@@ -9,12 +5,14 @@ import re
 import logging
 from datetime import datetime
 import uuid
+from typing import List, Tuple, Dict, Any, Optional
 
 import mongoengine
 
-from typing import List, Tuple, Dict, Any, Optional
-
 from bson import ObjectId
+
+from progTiroc import db
+from ._text_analysis import analyze_sentiment, analyze_intent, analyze_categories
 
 logging.basicConfig(filename='debug.log', level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -23,9 +21,11 @@ LIBRARY_CONDITIONS = ['__type__', '__has__']
 
 
 def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
+    """ Check whole dict given condition an dict to check """
 
-    def std_check(k: str, v: Any, value: Dict[str, Any]) -> bool:
-        matches = re.match(r'^(.+?)(?:__(lt|gt|eq|ne|le|ge|in|nin))?$', k)
+    def std_check(key: str, v: Any, value: Dict[str, Any]) -> bool:
+        """ Check single value """
+        matches = re.match(r'^(.+?)(?:__(lt|gt|eq|ne|le|ge|in|nin))?$', key)
 
         if matches is None:
             print('Unrecognied action')
@@ -53,7 +53,7 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
                 return to_check >= v
             elif suffix == 'in':
                 return to_check in v
-            elif suffix == 'nin':
+            else:  # suffix == 'nin'
                 return to_check not in v
         except Exception as e:
             print(e)
@@ -77,6 +77,7 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
 
 def possible(params: List[db.types.Params],
              condition: Dict[str, Dict]) -> List[int]:
+    """ Get all indexes of params that satisfies condition(only static one, __py__ ignored) """
     poss = []
 
     for i, p in enumerate(params):
@@ -98,6 +99,7 @@ def possible(params: List[db.types.Params],
 # (numero, nome, condizione python)
 def verify_mapping(msg: Dict[str, Any], params: List[db.types.Params],
                    mapping: List[int], py: Optional[str]) -> bool:
+    """ Check if a mapping given associated params and msg satisfies py """
     if py is None:
         return True
 
@@ -115,6 +117,7 @@ def get_multiple_mappings(msg: Dict[str, Any], msg_condition: Dict[str, Any],
                           params: List[db.types.Params],
                           params_conditions: List[Dict[str, Any]],
                           py: str) -> List[List[int]]:
+    """ Get all possible mappings """
     if check(msg_condition, msg):
         return []
 
@@ -130,6 +133,7 @@ def get_mapping(msg: Dict[str, Any], msg_condition: Dict[str, Any],
                 params: List[db.types.Params],
                 params_conditions: List[Dict[str, Any]],
                 py: str) -> Optional[List[int]]:
+    """ Get a single mapping given data and conditions """
     mappings = get_multiple_mappings(msg, msg_condition, params,
                                      params_conditions, py)
     if not mappings:
@@ -146,10 +150,8 @@ class AI:
 
         self._google_project_id = google_project_id
 
-    def __enter__(self):
-        return None
-
     def analyze_text(self, text: str, googleSessionId: uuid) -> Dict[str, Any]:
+        """ Return intent, sentiment and categories from google apis given text and sessionid """
         intent = analyze_intent(self._google_project_id, googleSessionId, text,
                                 'en', log)
 
@@ -173,11 +175,13 @@ class AI:
     #    exit(1)
 
     def create_database(self):
+        """ setup the database """
         return None  # TODO: Da implementare
 
     @staticmethod
     def get_action(msg: Dict[str, Any], ctx: db.types.Context
                   ) -> Optional[Tuple[int, db.types.Rule, List[int]]]:
+        """ Get an action(if possible) -> max_priority used, rule, mapping """
         params: List[db.types.Params] = sorted(
             ctx.params, lambda p: p.priority, reverse=True)
 
@@ -201,7 +205,7 @@ class AI:
         actions = list(
             zip(itertools.accumulate([r[1].score for r in res]), res))
 
-        if len(actions) == 0:
+        if not actions:
             return None
         else:
             selection = actions[bisect.bisect_right([x[0] for x in actions],
@@ -213,7 +217,10 @@ class AI:
     def update_context(db_ctx: db.DBContext, mapping: List[int],
                        action: db.types.Action, options: Dict[str, Any],
                        init_values: Dict[str, Any]) -> db.types.Context:
-        print(init_values)
+        """
+        Update context given current db context, mapping to use, action,
+        options and values to initialize Context(previous values)
+        """
         new_ctx = db_ctx.Context(**init_values)
 
         max_pr = new_ctx.params[-1].priority
@@ -264,22 +271,17 @@ class AI:
     @staticmethod
     def get_message(db_ctx: db.DBContext, userId: int,
                     msg: Dict[str, Any]) -> Optional[str]:
-        # Se condition è fatto come una condizione mongodb allora posso
-        # eseguirla e eventualmente decidere con cosa posso eseguire tale regola
-
-        old_ctx: db.types.Context
+        """ Get response message given user's message(already analyzed), userId and db context """
         try:
-            contexts: List[db.types.Context] = db_ctx.Context.find({
-                'ofUser': ObjectId(userId)
-            }).sort({
-                'timestamp': -1
-            })
+            old_ctx: db.types.Context = db_ctx.Context.find_one(
+                {
+                    'ofUser': ObjectId(userId)
+                }, sort=[('timestamp', -1)])
 
-            if len(contexts) == 0:
-                log.error("0 contexts")  # TODO: Use logger
+            if old_ctx is None:
+                log.error("0 contexts")
                 return None
-            else:
-                old_ctx = contexts[0]
+
         except mongoengine.DoesNotExist as e:
             log.error(e)
             return None

@@ -1,19 +1,20 @@
 import os
 import sys
 from distutils.util import strtobool
-import yaml
+from typing import Any
 
 from sanic import Sanic
 from sanic_swagger import swagger_blueprint, openapi_blueprint
+import yaml
 
 from progTiroc.db import DBInstance
 from progTiroc.api import create_api
 
-from typing import Any
-
 
 def conf_value(var_name: str, cfg: dict, yml_cfg: dict,
                default: Any = None) -> Any:
+    """ Automate getting values from multiple resources with priority env -> yml -> default """
+
     names = var_name.split('_')
 
     to_set = os.environ.get(var_name, None)
@@ -48,6 +49,7 @@ def conf_value(var_name: str, cfg: dict, yml_cfg: dict,
 
 
 def setup_app_config(app: Sanic):
+    """ Setup the sanic app configs """
 
     config_file_path = os.environ.get('CONFIG_FILE')
     yml_cfg = yaml.load(open(config_file_path, 'r'), Loader=yaml.Loader)
@@ -89,6 +91,8 @@ def setup_app_config(app: Sanic):
 
 
 def setup() -> Sanic:
+    """ Setup the whole sanic app """
+
     app = Sanic(__name__)
     setup_app_config(app)
 
