@@ -17,19 +17,19 @@ from . import _db as types
 
 class DBContext:
     """
-    :ivar User: umongo.document.MetaDocumentImplementation: User odm
-    :ivar Context: umongo.document.MetaDocumentImplementation: Context odm
-    :ivar Rule: umongo.document.MetaDocumentImplementation: Rule odm
-    :ivar Topic: umongo.document.MetaDocumentImplementation: Topic odm
-    :ivar Action: umongo.document.MetaDocumentImplementation: Action odm
-    :ivar Message: umongo.document.MetaDocumentImplementation: Message odm
-    :ivar Params: umongo.document.MetaDocumentImplementation: Params odm
-    :ivar UserMessage: umongo.document.MetaDocumentImplementation: UserMessage odm
-    :ivar BotMessage: umongo.document.MetaDocumentImplementation: BotMessage odm
-    :ivar WozBotMessage: umongo.document.MetaDocumentImplementation: WozBotMessage odm
+    :ivar umongo.document.MetaDocumentImplementation User: User odm
+    :ivar umongo.document.MetaDocumentImplementation Context: Context odm
+    :ivar umongo.document.MetaDocumentImplementation Rule: Rule odm
+    :ivar umongo.document.MetaDocumentImplementation Topic: Topic odm
+    :ivar umongo.document.MetaDocumentImplementation Action: Action odm
+    :ivar umongo.document.MetaDocumentImplementation Message: Message odm
+    :ivar umongo.document.MetaDocumentImplementation Params: Params odm
+    :ivar umongo.document.MetaDocumentImplementation UserMessage: UserMessage odm
+    :ivar umongo.document.MetaDocumentImplementation BotMessage: BotMessage odm
+    :ivar umongo.document.MetaDocumentImplementation WozBotMessage: WozBotMessage odm
     """
 
-    def __init__(self, instance: 'progTiroc.db.DBInstance'):
+    def __init__(self, instance: 'DBInstance'):
         self._instance = instance
 
     def __enter__(self):
@@ -81,8 +81,8 @@ class DBInstance:
     """
     Rapresents an instance of the database and its rapresentations(User, Message, ...)
 
-    :ivar user_schema: marshmallow.Schema: marshmallow web schema for User
-    :ivar message_schema: marshmallow.Schema: marshmallow web schema for Message
+    :ivar marshmallow.Schema user_schema: marshmallow web schema for User
+    :ivar marshmallow.Schema message_schema: marshmallow web schema for Message
     """
 
     def __init__(self,
