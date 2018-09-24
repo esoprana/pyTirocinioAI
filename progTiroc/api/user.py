@@ -45,7 +45,7 @@ class UserList(HTTPMethodView):
             try:
                 users = [
                     user async for user in db_ctx.User.find(
-                        projection=db_ctx.User.__dump_only__)
+                        projection=request.app.dbi.user_schema.__mongoload__)
                 ]
 
                 data, error = request.app.dbi.user_schema.dump(users, many=True)
@@ -136,7 +136,8 @@ class SingleUser(HTTPMethodView):
                 user = await db_ctx.User.find_one(
                     {
                         'id': ObjectId(oId)
-                    }, projection=db_ctx.User.__dump_only__)
+                    },
+                    projection=request.app.dbi.user_schema.__mongoload__)
 
                 if user is None:
                     return json({'message': 'Requested user not found'}, 400)

@@ -9,6 +9,8 @@ from sanic_swagger import doc
 
 from bson import ObjectId
 
+import dateutil.parser
+
 from progTiroc import db
 
 WOZ_BOT_ID = '000000000000000000000000'
@@ -25,12 +27,46 @@ class DocMessagePut(doc.Model):
     text: str = doc.field(description='The text of the message')
 
 
-class MessagePut(marshmallow.Schema):
-    text = marshmallow.fields.Str(attribute="text", required=True)
+class ListMessage(HTTPMethodView):
+    """ Get messages of a user """
 
-    class Meta:
-        unknown = 'raise'
-        partial = False
+    async def get(self, request: Request, oId: str):
+        findFilter = {'ofUser': ObjectId(oId)}
+
+        after = request.args.get('after')
+        if after is not None:
+            try:
+                findFilter['timestamp'] = {
+                    '$gt': dateutil.parser.isoparse(after)
+                }
+            except ValueError:
+                return json({
+                    'message': 'after field should be datetime in iso format'
+                }, 400)
+
+        with request.app.dbi.context() as db_ctx:
+            contexts = [
+                context async for context in db_ctx.Context.find(
+                    findFilter,
+                    sort=[('timestamp', -1)],
+                    projection=request.app.dbi.message_schema.__mongodump__)
+            ]
+
+            if not contexts:
+                return json({
+                    'message': 'No context found check the user\'s id sent'
+                }, 400)
+
+            data, error = request.app.dbi.message_schema.dump(
+                contexts, many=True)
+
+            if error:
+                print(error)
+                return json({
+                    'message': 'Impossible to serialize messages'
+                }, 500)
+
+            return json(data, 200)
 
 
 class SingleMessage(HTTPMethodView):
@@ -38,12 +74,12 @@ class SingleMessage(HTTPMethodView):
 
     @doc.consumes(DocMessagePut, location='body')
     @doc.produces(DocMessageGet)
-    async def put(self, request, fr: str, to: str):
+    async def put(self, request: Request, fr: str, to: str):
         if request.json is None:
             return json({'message': 'invalid schema format(json)'}, 400)
 
         try:
-            data, errors = MessagePut().load(request.json)
+            data, errors = request.app.dbi.message_schema.load(request.json)
         except marshmallow.ValidationError as e:
             e.messages['message'] = 'ValidationError'
             return json(e.messages, 400)
@@ -66,7 +102,6 @@ class SingleMessage(HTTPMethodView):
 
         with request.app.dbi.context() as db_ctx:
             if (not isWoz):
-                # TODO: Create vera risposta
                 msg = db_ctx.UserMessage(text=data['text'])
             elif (fr == WOZ_BOT_ID):
                 (fr, to) = (to, fr)
@@ -77,21 +112,18 @@ class SingleMessage(HTTPMethodView):
 
             # Get the list of context of user in decresend order of timestamp
 
-            contextsOfUser = [
-                i async for i in db_ctx.Context.find({
+            old_context: db_ctx.Context = await db_ctx.Context.find_one(
+                {
                     'ofUser': ObjectId(fr)
-                }).sort('timestamp', -1).limit(1)
-            ]
+                }, sort=[('timestamp', -1)])
 
             # If no active context send error(at least one should be)
-            if not contextsOfUser:
+            if old_context is None:
                 return json({
                     'message': 'Errore dovrebbe esserci un ' +
                     'contesto attivo(0 al momento)\n' +
                     'Controllare che l\'utente esista'
                 }, 500)
-
-            old_context: db_ctx.Context = contextsOfUser[0]
 
             context = db_ctx.Context(
                 ofUser=old_context.ofUser,
@@ -100,12 +132,14 @@ class SingleMessage(HTTPMethodView):
                 message=msg)
             await context.commit()
 
-            return json({
-                'id': str(context.id),
-                'text': context.message.text,
-                'timestamp': context.timestamp.isoformat()
-            }, 200)
+            data, error = request.app.dbi.message_schema.dump(context)
+            if error:
+                print(error)
+                return json({'message': 'Impossible to serialize message'}, 500)
+
+            return json(data, 200)
 
 
 ns = Blueprint('Message')
 ns.add_route(SingleMessage.as_view(), '/<fr:string>/<to:string>')
+ns.add_route(ListMessage.as_view(), '/user/<oId:string>')

@@ -13,6 +13,7 @@ marshmallow = "*"
 sanic-swagger = "*"
 umongo = {version = "*", extras = ["motor"]}
 pyyaml = "*"
+python-dateutil = "*"
 
 [dev-packages]
 codecov = "*"

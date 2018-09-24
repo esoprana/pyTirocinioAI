@@ -9,6 +9,9 @@ import mongomock  # Used for MongoClient
 import umongo.document  # Used for MetaDocumentImplementation
 
 import typing
+from collections import namedtuple
+
+import marshmallow
 
 
 class DBContext:
@@ -55,45 +58,22 @@ class DBContext:
         self.WozBotMessage = None
 
 
-class WebSchema:
+MetaFields = namedtuple('MetaFields',
+                        ['fields', 'load_only', 'dump_only', 'load', 'dump'])
 
-    def __init__(self,
-                 cls: umongo.document.MetaDocumentImplementation,
-                 load_only: typing.Iterable[str] = None,
-                 dump_only: typing.Iterable[str] = None):
 
-        if load_only is None:
-            load_only = cls.__load_only__
+def get_meta_fields(load: typing.Iterable[str], dump: typing.Iterable[str]):
+    load = set(load)
+    dump = set(dump)
 
-        if load_only is None:
-            raise Exception('load_only or cls.__load_only__ must be not null')
+    un = load.union(dump)
 
-        if dump_only is None:
-            dump_only = cls.__dump_only__
-
-        if dump_only is None:
-            raise Exception('dump_only or cls.__dump_only__ must be not null')
-
-        user_schema = cls.schema.as_marshmallow_schema()
-
-        class DumpSchema(user_schema):
-
-            class Meta:
-                fields = dump_only
-
-        class LoadSchema(user_schema):
-
-            class Meta:
-                fields = load_only
-
-        self._cls_out = DumpSchema()
-        self._cls_in = LoadSchema()
-
-    def load(self, *args, **kwargs) -> dict:
-        return self._cls_in.load(*args, **kwargs)
-
-    def dump(self, *args, **kwargs) -> dict:
-        return self._cls_out.dump(*args, **kwargs)
+    return MetaFields(
+        fields=tuple(un),
+        load_only=tuple(un.difference(dump)),
+        dump_only=tuple(un.difference(load)),
+        load=load,
+        dump=dump)
 
 
 class DBInstance:
@@ -138,7 +118,37 @@ class DBInstance:
         self._instance.register(types.WozBotMessage)
         self._instance.register(types.Context)
 
-        self.user_schema = WebSchema(self._instance.User)
+        user_meta = get_meta_fields(load=('username',), dump=('id', 'username'))
+
+        message_meta = get_meta_fields(
+            load=('text',), dump=('id', 'text', 'timestamp'))
+
+        class UserWebSchema(self._instance.User.schema.as_marshmallow_schema()):
+            __mongoload__ = user_meta.load
+            __mongodump__ = user_meta.dump
+
+            class Meta:
+                fields = user_meta.fields
+                load_only = user_meta.load_only
+                dump_only = user_meta.dump_only
+
+        class MessageWebSchema(
+                self._instance.Context.schema.as_marshmallow_schema()):
+            __mongoload__ = message_meta.load
+            __mongodump__ = ('id', 'message.text', 'timestamp')
+
+            text = marshmallow.fields.Method('_get_text')
+
+            def _get_text(self, obj):
+                return obj.message.text
+
+            class Meta:
+                fields = message_meta.fields
+                load_only = message_meta.load_only
+                dump_only = message_meta.dump_only
+
+        self.user_schema = UserWebSchema()
+        self.message_schema = MessageWebSchema()
 
     def context(self) -> DBContext:
         return DBContext(self._instance)
