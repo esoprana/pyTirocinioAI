@@ -1,17 +1,18 @@
-from uuid import uuid4
+# Standard libs
+import typing
+from collections import namedtuple
 
-from . import _db as types
-
+# 3rd party libs
 from umongo import Instance
 import motor.motor_asyncio
 
 import mongomock  # Used for MongoClient
 import umongo.document  # Used for MetaDocumentImplementation
 
-import typing
-from collections import namedtuple
-
 import marshmallow
+
+# Custom libs
+from . import _db as types
 
 
 class DBContext:
@@ -77,6 +78,12 @@ def get_meta_fields(load: typing.Iterable[str], dump: typing.Iterable[str]):
 
 
 class DBInstance:
+    """
+    Rapresents an instance of the database and its rapresentations(User, Message, ...)
+
+    :ivar user_schema: marshmallow.Schema: marshmallow web schema for User
+    :ivar message_schema: marshmallow.Schema: marshmallow web schema for Message
+    """
 
     def __init__(self,
                  database_name: str,
@@ -89,7 +96,6 @@ class DBInstance:
             raise Exception('Enviroment variable DBPORT is non valid port')
 
         self._db_name: str = database_name
-        self._db_alias: str = 'MONGOENGINE_ALIAS_PYTIROCINIO_' + str(uuid4())
 
         if database_host.find('mongodb://') == -1:
             database_host = 'mongodb://' + database_host
@@ -98,12 +104,13 @@ class DBInstance:
             self._connection = mongomock.MongoClient(
                 db=database_name, host=database_host, port=database_port)
         else:
-            DBUSER = "pheirei6choh0uephaug9Rooz0kooYungaeThaing2SheoBehoaG0xie4quie6Lu"
-            DBPSWD = "pev4yieyae8xeiP4AeLap6sain5fohsh1aheebie7eu4Aequiefo8aeSi9shiQu8"
-
             self._connection = motor.motor_asyncio.AsyncIOMotorClient(
-                'mongodb://{DBUSER}:{DBPSWD}@localhost:27017/db'.format(
-                    DBUSER=DBUSER, DBPSWD=DBPSWD))
+                'mongodb://{DBUSER}:{DBPSWD}@{DBHOST}:{DBPORT}/{DBNAME}'.format(
+                    DBUSER=database_name,
+                    DBPSWD=database_pwd,
+                    DBHOST=database_host,
+                    DBPORT=database_port,
+                    DBNAME=database_name))
 
         self._instance = Instance(self._connection['db'])
         self._instance.register(types.User)
