@@ -63,23 +63,24 @@ def setup_app_config(app: Sanic):
         var_name='DB_NAME', cfg=app.config, yml_cfg=yml_cfg, default='db')
     conf_value(var_name='DB_USERNAME', cfg=app.config, yml_cfg=yml_cfg)
     conf_value(var_name='DB_PASSWORD', cfg=app.config, yml_cfg=yml_cfg)
+    conf_value(var_name='INTERFACE', cfg=app.config, yml_cfg=yml_cfg)
 
     try:
-        if type(app.config['DEBUG']) is not bool:
+        if not isinstance(app.config['DEBUG'], bool):
             app.config['DEBUG'] = strtobool(app.config['DEBUG'])
     except ValueError:
         print('Error converting DEBUG to boolean(true/false)')
         sys.exit(1)
 
     try:
-        if type(app.config['PORT']) is not int:
+        if not isinstance(app.config['PORT'], int):
             app.config['PORT'] = int(app.config['PORT'])
     except ValueError:
         print('Error converting PORT to int')
         sys.exit(1)
 
     try:
-        if type(app.config['DB']['PORT']) is not int:
+        if not isinstance(app.config['DB']['PORT'], int):
             app.config['DB']['PORT'] = int(app.config['DB']['PORT'])
     except ValueError:
         print('Error converting DB_PORT to int')
