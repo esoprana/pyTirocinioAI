@@ -1,3 +1,5 @@
+import asyncio
+
 from progTiroc import server_setup
 
 if __name__ == '__main__':

@@ -1,15 +1,13 @@
-import pytest
-import mock
-
 import datetime
 import uuid
 
-import progTiroc.ai as ai
-from progTiroc import db
+import pytest
+import mock
 
 from mongoengine.base import BaseDocument
 
-from umongo import Reference
+from progTiroc import ai
+from progTiroc import db
 
 
 @pytest.fixture

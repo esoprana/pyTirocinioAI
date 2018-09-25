@@ -8,7 +8,6 @@ import uuid
 from typing import List, Tuple, Dict, Any, Optional
 
 import mongoengine
-
 from bson import ObjectId
 
 from progTiroc import db
@@ -39,22 +38,23 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
             suffix: str = matches.group(2)
             if suffix is None:
                 return check(v, to_check)
-            elif suffix == 'lt':
+            if suffix == 'lt':
                 return to_check < v
-            elif suffix == 'gt':
+            if suffix == 'gt':
                 return to_check > v
-            elif suffix == 'eq':
+            if suffix == 'eq':
                 return to_check == v
-            elif suffix == 'ne':
+            if suffix == 'ne':
                 return to_check != v
-            elif suffix == 'le':
+            if suffix == 'le':
                 return to_check <= v
-            elif suffix == 'ge':
+            if suffix == 'ge':
                 return to_check >= v
-            elif suffix == 'in':
+            if suffix == 'in':
                 return to_check in v
-            else:  # suffix == 'nin'
-                return to_check not in v
+
+            # suffix == 'nin'
+            return to_check not in v
         except Exception as e:
             print(e)
             return False
@@ -151,7 +151,10 @@ class AI:
         self._google_project_id = google_project_id
 
     def analyze_text(self, text: str, googleSessionId: uuid) -> Dict[str, Any]:
-        """ Return intent, sentiment and categories from google apis given text and sessionid """
+        """
+        Return intent, sentiment and categories from google apis given text
+        and sessionid
+        """
         intent = analyze_intent(self._google_project_id, googleSessionId, text,
                                 'en', log)
 
@@ -303,7 +306,7 @@ class AI:
         options = {'_': _, 'm': msg}
 
         new_ctx: db.types.Context = AI.update_context(
-            mapping, rule.action, options,
+            db_ctx, mapping, rule.action, options,
             dict(
                 ofUser=old_ctx.ofUser.id,
                 timestamp=datetime.now(),

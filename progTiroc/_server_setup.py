@@ -52,7 +52,7 @@ def setup_app_config(app: Sanic):
     """ Setup the sanic app configs """
 
     config_file_path = os.environ.get('CONFIG_FILE')
-    yml_cfg = yaml.load(open(config_file_path, 'r'), Loader=yaml.Loader)
+    yml_cfg = yaml.safe_load(open(config_file_path, 'r'))
 
     conf_value(
         var_name='DEBUG', cfg=app.config, yml_cfg=yml_cfg, default='false')

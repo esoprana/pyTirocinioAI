@@ -19,32 +19,32 @@ from . import _db as types
 
 class DBContext:
     """
-    :ivar umongo.document.MetaDocumentImplementation User: User odm
-    :ivar umongo.document.MetaDocumentImplementation Context: Context odm
-    :ivar umongo.document.MetaDocumentImplementation Rule: Rule odm
-    :ivar umongo.document.MetaDocumentImplementation Topic: Topic odm
-    :ivar umongo.document.MetaDocumentImplementation Action: Action odm
-    :ivar umongo.document.MetaDocumentImplementation Message: Message odm
-    :ivar umongo.document.MetaDocumentImplementation Params: Params odm
-    :ivar umongo.document.MetaDocumentImplementation UserMessage: UserMessage odm
-    :ivar umongo.document.MetaDocumentImplementation BotMessage: BotMessage odm
-    :ivar umongo.document.MetaDocumentImplementation WozBotMessage: WozBotMessage odm
+    :ivar document.MetaDocumentImplementation User: User odm
+    :ivar document.MetaDocumentImplementation Context: Context odm
+    :ivar document.MetaDocumentImplementation Rule: Rule odm
+    :ivar document.MetaDocumentImplementation Topic: Topic odm
+    :ivar document.MetaDocumentImplementation Action: Action odm
+    :ivar document.MetaDocumentImplementation Message: Message odm
+    :ivar document.MetaDocumentImplementation Params: Params odm
+    :ivar document.MetaDocumentImplementation UserMessage: UserMessage odm
+    :ivar document.MetaDocumentImplementation BotMessage: BotMessage odm
+    :ivar document.MetaDocumentImplementation WozBotMessage: WozBotMessage odm
     """
 
     def __init__(self, instance: 'DBInstance'):
         self._instance = instance
 
     def __enter__(self):
-        self.User: umongo.document.MetaDocumentImplementation = self._instance.User
-        self.Context: umongo.document.MetaDocumentImplementation = self._instance.Context
-        self.Rule: umongo.document.MetaDocumentImplementation = self._instance.Rule
-        self.Topic: umongo.document.MetaDocumentImplementation = self._instance.Topic
-        self.Action: umongo.document.MetaDocumentImplementation = self._instance.Action
-        self.Message: umongo.document.MetaDocumentImplementation = self._instance.Message
-        self.Params: umongo.document.MetaDocumentImplementation = self._instance.Params
-        self.UserMessage: umongo.document.MetaDocumentImplementation = self._instance.UserMessage
-        self.BotMessage: umongo.document.MetaDocumentImplementation = self._instance.BotMessage
-        self.WozBotMessage: umongo.document.MetaDocumentImplementation = self._instance.WozBotMessage
+        self.User: document.MetaDocumentImplementation = self._instance.User
+        self.Context: document.MetaDocumentImplementation = self._instance.Context
+        self.Rule: document.MetaDocumentImplementation = self._instance.Rule
+        self.Topic: document.MetaDocumentImplementation = self._instance.Topic
+        self.Action: document.MetaDocumentImplementation = self._instance.Action
+        self.Message: document.MetaDocumentImplementation = self._instance.Message
+        self.Params: document.MetaDocumentImplementation = self._instance.Params
+        self.UserMessage: document.MetaDocumentImplementation = self._instance.UserMessage
+        self.BotMessage: document.MetaDocumentImplementation = self._instance.BotMessage
+        self.WozBotMessage: document.MetaDocumentImplementation = self._instance.WozBotMessage
 
         return self
 
@@ -99,20 +99,17 @@ class DBInstance:
 
         self._db_name: str = database_name
 
-        if database_host.find('mongodb://') == -1:
-            database_host = 'mongodb://' + database_host
-
         if isMock is True:
             self._connection = mongomock.MongoClient(
                 db=database_name, host=database_host, port=database_port)
         else:
-            self._connection = motor.motor_asyncio.AsyncIOMotorClient(
-                'mongodb://{DBUSER}:{DBPSWD}@{DBHOST}:{DBPORT}/{DBNAME}'.format(
-                    DBUSER=database_name,
-                    DBPSWD=database_pwd,
-                    DBHOST=database_host,
-                    DBPORT=database_port,
-                    DBNAME=database_name))
+            uri: str = 'mongodb://{DBUSER}:{DBPSWD}@{DBHOST}:{DBPORT}/{DBNAME}'.format(
+                DBUSER=database_user,
+                DBPSWD=database_pwd,
+                DBHOST=database_host,
+                DBPORT=database_port,
+                DBNAME=database_name)
+            self._connection = motor.motor_asyncio.AsyncIOMotorClient(uri)
 
         self._instance = Instance(self._connection['db'])
         for odm_model in [

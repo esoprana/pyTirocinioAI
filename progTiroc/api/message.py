@@ -5,13 +5,14 @@ Module to define message rest endpoint, are defined '/' and '/{messageId}'
 """
 
 from datetime import datetime
-import marshmallow
 
 from sanic import Blueprint
 from sanic.response import json
 from sanic.request import Request
 from sanic.views import HTTPMethodView
 from sanic_swagger import doc
+
+import marshmallow
 
 from bson import ObjectId
 
