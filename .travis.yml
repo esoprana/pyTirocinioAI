@@ -6,8 +6,10 @@ install:
   - 'pipenv install --dev'
 jobs:
     include:
-        - stage: sphinx
-          script: 'make doc'
+        - script: 'make test'
+          after_success:
+            - 'python-codacy-coverage -r coverage.xml'
+        - script: 'make doc'
           deploy:
               provider: pages
               skip-cleanup: true
@@ -16,7 +18,3 @@ jobs:
               local-dir: docs/_build/html/
               on:
                   branch: master
-        - stage: pytest
-          script: 'make test'
-          after_success:
-            - 'python-codacy-coverage -r coverage.xml'
