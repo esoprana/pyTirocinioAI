@@ -160,32 +160,32 @@
 
 <div class="viewcode-block" id="DBContext"><a class="viewcode-back" href="../../../progTiroc.db.html#progTiroc.db.DBContext">[docs]</a><span class="k">class</span> <span class="nc">DBContext</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :ivar umongo.document.MetaDocumentImplementation User: User odm</span>
-<span class="sd">    :ivar umongo.document.MetaDocumentImplementation Context: Context odm</span>
-<span class="sd">    :ivar umongo.document.MetaDocumentImplementation Rule: Rule odm</span>
-<span class="sd">    :ivar umongo.document.MetaDocumentImplementation Topic: Topic odm</span>
-<span class="sd">    :ivar umongo.document.MetaDocumentImplementation Action: Action odm</span>
-<span class="sd">    :ivar umongo.document.MetaDocumentImplementation Message: Message odm</span>
-<span class="sd">    :ivar umongo.document.MetaDocumentImplementation Params: Params odm</span>
-<span class="sd">    :ivar umongo.document.MetaDocumentImplementation UserMessage: UserMessage odm</span>
-<span class="sd">    :ivar umongo.document.MetaDocumentImplementation BotMessage: BotMessage odm</span>
-<span class="sd">    :ivar umongo.document.MetaDocumentImplementation WozBotMessage: WozBotMessage odm</span>
+<span class="sd">    :ivar document.MetaDocumentImplementation User: User odm</span>
+<span class="sd">    :ivar document.MetaDocumentImplementation Context: Context odm</span>
+<span class="sd">    :ivar document.MetaDocumentImplementation Rule: Rule odm</span>
+<span class="sd">    :ivar document.MetaDocumentImplementation Topic: Topic odm</span>
+<span class="sd">    :ivar document.MetaDocumentImplementation Action: Action odm</span>
+<span class="sd">    :ivar document.MetaDocumentImplementation Message: Message odm</span>
+<span class="sd">    :ivar document.MetaDocumentImplementation Params: Params odm</span>
+<span class="sd">    :ivar document.MetaDocumentImplementation UserMessage: UserMessage odm</span>
+<span class="sd">    :ivar document.MetaDocumentImplementation BotMessage: BotMessage odm</span>
+<span class="sd">    :ivar document.MetaDocumentImplementation WozBotMessage: WozBotMessage odm</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="s1">&#39;DBInstance&#39;</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">instance</span>
 
     <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">User</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">User</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Context</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Context</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Rule</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Rule</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Topic</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Topic</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Action</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Action</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Message</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Message</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Params</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Params</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">UserMessage</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">UserMessage</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">BotMessage</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">BotMessage</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">WozBotMessage</span><span class="p">:</span> <span class="n">umongo</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">WozBotMessage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">User</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">User</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Context</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Rule</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Rule</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Topic</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Topic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Action</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Message</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Params</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">Params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">UserMessage</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">UserMessage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">BotMessage</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">BotMessage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">WozBotMessage</span><span class="p">:</span> <span class="n">document</span><span class="o">.</span><span class="n">MetaDocumentImplementation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">WozBotMessage</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
@@ -240,20 +240,17 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_db_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">database_name</span>
 
-        <span class="k">if</span> <span class="n">database_host</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;mongodb://&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">database_host</span> <span class="o">=</span> <span class="s1">&#39;mongodb://&#39;</span> <span class="o">+</span> <span class="n">database_host</span>
-
         <span class="k">if</span> <span class="n">isMock</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">mongomock</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span>
                 <span class="n">db</span><span class="o">=</span><span class="n">database_name</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="n">database_host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">database_port</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">motor_asyncio</span><span class="o">.</span><span class="n">AsyncIOMotorClient</span><span class="p">(</span>
-                <span class="s1">&#39;mongodb://</span><span class="si">{DBUSER}</span><span class="s1">:</span><span class="si">{DBPSWD}</span><span class="s1">@</span><span class="si">{DBHOST}</span><span class="s1">:</span><span class="si">{DBPORT}</span><span class="s1">/</span><span class="si">{DBNAME}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">DBUSER</span><span class="o">=</span><span class="n">database_name</span><span class="p">,</span>
-                    <span class="n">DBPSWD</span><span class="o">=</span><span class="n">database_pwd</span><span class="p">,</span>
-                    <span class="n">DBHOST</span><span class="o">=</span><span class="n">database_host</span><span class="p">,</span>
-                    <span class="n">DBPORT</span><span class="o">=</span><span class="n">database_port</span><span class="p">,</span>
-                    <span class="n">DBNAME</span><span class="o">=</span><span class="n">database_name</span><span class="p">))</span>
+            <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mongodb://</span><span class="si">{DBUSER}</span><span class="s1">:</span><span class="si">{DBPSWD}</span><span class="s1">@</span><span class="si">{DBHOST}</span><span class="s1">:</span><span class="si">{DBPORT}</span><span class="s1">/</span><span class="si">{DBNAME}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">DBUSER</span><span class="o">=</span><span class="n">database_user</span><span class="p">,</span>
+                <span class="n">DBPSWD</span><span class="o">=</span><span class="n">database_pwd</span><span class="p">,</span>
+                <span class="n">DBHOST</span><span class="o">=</span><span class="n">database_host</span><span class="p">,</span>
+                <span class="n">DBPORT</span><span class="o">=</span><span class="n">database_port</span><span class="p">,</span>
+                <span class="n">DBNAME</span><span class="o">=</span><span class="n">database_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">motor</span><span class="o">.</span><span class="n">motor_asyncio</span><span class="o">.</span><span class="n">AsyncIOMotorClient</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">odm_model</span> <span class="ow">in</span> <span class="p">[</span>

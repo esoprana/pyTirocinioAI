@@ -79,6 +79,8 @@
               <!-- Local TOC -->
               <div class="local-toc"><ul>
 <li><a class="reference internal" href="#">Welcome to pyTirocinioAI’s documentation!</a></li>
+<li><a class="reference internal" href="#database-structure">Database structure</a></li>
+<li><a class="reference internal" href="#rules-structure">Rules structure</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 </div>
@@ -148,6 +150,123 @@
 <h1>Welcome to pyTirocinioAI’s documentation!<a class="headerlink" href="#welcome-to-pytirocinioai-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
+<a class="reference external image-reference" href="https://travis-ci.org/esoprana/pyTirocinioAI"><img alt="https://travis-ci.org/esoprana/pyTirocinioAI.svg?branch=master" src="https://travis-ci.org/esoprana/pyTirocinioAI.svg?branch=master" /></a>
+<a class="reference external image-reference" href="https://www.codacy.com/app/esoprana/pyTirocinioAI?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=esoprana/pyTirocinioAI&amp;amp;utm_campaign=Badge_Coverage"><img alt="https://api.codacy.com/project/badge/Coverage/9156448a3fd1471080b292fcea85361b" src="https://api.codacy.com/project/badge/Coverage/9156448a3fd1471080b292fcea85361b" /></a>
+<a class="reference external image-reference" href="https://www.codacy.com/app/esoprana/pyTirocinioAI?utm_source=github.com&amp;amp;utm_medium=referral&amp;amp;utm_content=esoprana/pyTirocinioAI&amp;amp;utm_campaign=Badge_Grade"><img alt="https://api.codacy.com/project/badge/Grade/9156448a3fd1471080b292fcea85361b" src="https://api.codacy.com/project/badge/Grade/9156448a3fd1471080b292fcea85361b" /></a>
+<a class="reference external image-reference" href="https://esoprana.github.io/pyTirocinioAI/"><img alt="https://travis-ci.org/esoprana/pyTirocinioAI.svg?branch=master" src="https://travis-ci.org/esoprana/pyTirocinioAI.svg?branch=master" /></a>
+</div>
+<div class="section" id="database-structure">
+<h1>Database structure<a class="headerlink" href="#database-structure" title="Permalink to this headline">¶</a></h1>
+<img alt="_images/db.svg" src="_images/db.svg" /></div>
+<div class="section" id="rules-structure">
+<h1>Rules structure<a class="headerlink" href="#rules-structure" title="Permalink to this headline">¶</a></h1>
+<p>This is an example of condition, in onParam and onMsg only “static” condition are permitted, instead in py is possible to use any valid python expression(during the execution of this “_” contains the list of Params and “m” contains all the information about the user message.</p>
+<div class="highlight-javascript notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="p">{</span>
+     <span class="s2">&quot;onParam&quot;</span><span class="o">:</span> <span class="p">[</span>
+         <span class="p">{</span>
+             <span class="s2">&quot;w__ne&quot;</span><span class="o">:</span> <span class="s2">&quot;k&quot;</span>
+         <span class="p">},</span>
+         <span class="p">{</span>
+             <span class="s2">&quot;d__ne&quot;</span><span class="o">:</span> <span class="s2">&quot;prova&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;c__eq&quot;</span><span class="o">:</span> <span class="s2">&quot;ciao&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;test1&quot;</span> <span class="o">:</span> <span class="p">{</span>
+                 <span class="s2">&quot;a__lt&quot;</span><span class="o">:</span> <span class="mi">1</span>
+                 <span class="s2">&quot;b__ge&quot;</span><span class="o">:</span> <span class="mi">2</span>
+                 <span class="s2">&quot;k__in&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+             <span class="p">},</span>
+
+             <span class="s2">&quot;__has__&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span>
+             <span class="s2">&quot;__type__&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">topic_id</span><span class="o">&gt;</span>
+         <span class="p">}</span>
+     <span class="p">],</span>
+     <span class="s2">&quot;onMsg&quot;</span><span class="o">:</span> <span class="p">{</span>
+         <span class="s2">&quot;intent&quot;</span><span class="o">:</span> <span class="p">{</span>
+             <span class="s2">&quot;name__in&quot;</span><span class="o">:</span> <span class="p">[</span><span class="o">&lt;</span><span class="nx">intent_name</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="nx">intent_name2</span><span class="o">&gt;</span><span class="p">]</span>
+         <span class="p">}</span>
+     <span class="p">}</span>
+     <span class="s2">&quot;py&quot;</span> <span class="o">:</span> <span class="s2">&quot;_[0].values[&#39;k&#39;]!=_[1].values[&#39;d&#39;] &amp;&amp; _[0].priority &lt; _[1].priority&quot;</span>
+ <span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>onMsg and onParam use the same type of schema to impose conditions.
+If an object is None all conditions are evaluated to true, to check that an object is not none is possible to use “__has__”.
+“__type__” is evalueted to true only when the Params to which is evaluated against has a specified &lt;topic_id&gt;</p>
+<p>In action.operations we can then use:</p>
+<div class="highlight-javascript notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;op&quot;</span><span class="o">:</span> <span class="s2">&quot;exportNames&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;index&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;val&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">any</span> <span class="nx">valid</span> <span class="nx">python</span> <span class="nx">expression</span> <span class="nx">using</span> <span class="nx">_</span> <span class="nx">or</span> <span class="nx">m</span><span class="o">&gt;</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;test&quot;</span>
+    <span class="p">},</span> <span class="cm">/* Writes in _[0].values[&#39;test&#39;] = &lt;result of valid python expression&gt; */</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;op&quot;</span><span class="o">:</span> <span class="s2">&quot;exportNames&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;index&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;val&quot;</span><span class="o">:</span> <span class="nx">None</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;test1&quot;</span>
+    <span class="p">},</span> <span class="cm">/* Deletes &#39;test1&#39; field from _[0].values */</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;op&quot;</span><span class="o">:</span> <span class="s2">&quot;popUntil&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;index&quot;</span><span class="o">:</span> <span class="mi">2</span>
+    <span class="p">},</span> <span class="cm">/* Deletes all Params with priority lower than _[2].priority */</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;op&quot;</span><span class="o">:</span> <span class="s2">&quot;pop&quot;</span>
+    <span class="p">},</span> <span class="cm">/* Deletes Params on top of stack */</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;op&quot;</span><span class="o">:</span> <span class="s2">&quot;push&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;topic&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">id_of_topic</span><span class="o">&gt;</span>
+    <span class="p">},</span> <span class="cm">/* Adds topic on top of stack(and last of _) */</span>
+<span class="p">]</span>
+</pre></div>
+</td></tr></table></div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
