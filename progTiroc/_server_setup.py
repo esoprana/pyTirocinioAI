@@ -63,6 +63,8 @@ def setup_app_config(app: Sanic):
         var_name='DB_NAME', cfg=app.config, yml_cfg=yml_cfg, default='db')
     conf_value(var_name='DB_USERNAME', cfg=app.config, yml_cfg=yml_cfg)
     conf_value(var_name='DB_PASSWORD', cfg=app.config, yml_cfg=yml_cfg)
+    conf_value(
+        var_name='DB_MOCK', cfg=app.config, yml_cfg=yml_cfg, default='false')
     conf_value(var_name='INTERFACE', cfg=app.config, yml_cfg=yml_cfg)
 
     try:
@@ -70,6 +72,13 @@ def setup_app_config(app: Sanic):
             app.config['DEBUG'] = strtobool(app.config['DEBUG'])
     except ValueError:
         print('Error converting DEBUG to boolean(true/false)')
+        sys.exit(1)
+
+    try:
+        if not isinstance(app.config['DEBUG'], bool):
+            app.config['DB']['MOCK'] = strtobool(app.config['DB']['MOCK'])
+    except ValueError:
+        print('Error converting DB_MOCK to boolean(true/false)')
         sys.exit(1)
 
     try:
@@ -111,6 +120,8 @@ def setup() -> Sanic:
             database_host=app.config['DB']['HOST'],
             database_port=app.config['DB']['PORT'],
             database_user=app.config['DB']['USERNAME'],
-            database_pwd=app.config['DB']['PASSWORD'])  # Set db instance
+            database_pwd=app.config['DB']['PASSWORD'],
+            isMock=app.config['DB']['MOCK'])  # Set db instance
+        print(app.config['DB']['MOCK'])
 
     return app

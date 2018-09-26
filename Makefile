@@ -66,7 +66,7 @@ doc_html: .swagger
 
 # Test rules
 test:
-	@pytest && python-codacy-coverage -r coverage.xml
+	@DB_MOCK=true pytest && python-codacy-coverage -r coverage.xml
 
 conf_git:
 	@git config core.hooksPath hooks

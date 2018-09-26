@@ -1,0 +1,82 @@
+@startuml
+
+skinparam class {
+	BackgroundColor White
+	ArrowColor Grey
+	BorderColor Black
+ 	BackgroundColor<<Embedded>> Grey
+        BorderColor<<Embedded>> Black
+}
+
+
+namespace AI {
+    class Topic {
+        name: str
+        rules: List[Rule]
+    }
+
+    class Rule {
+        condition: dict
+        score: int
+        action: Action
+    }
+
+    class Action <<Embedded>> {
+        text: List[str]
+        operations: List[dict]
+        isQuestion: bool
+        immediatlyNext: bool
+    }
+}
+
+namespace Data{
+    class User {
+         username: str
+         googleSessionId: UUID
+    }
+
+    class Context {
+         ofUser: Ref<User>
+         timestamp: datetime
+         params: List[Params]
+         message: Message
+    }
+
+    class Message <<Embedded >> {
+        text: str
+    }
+
+    class UserMessage <<Embedded>> {
+         intent: dict
+         photo: dict
+         sentiment: dict
+         google_topic: dict
+    }
+
+    class BotMessage <<Embedded>> {
+        fromRule: Ref<Rule>
+    }
+
+    class Params <<Embedded>>{
+        ofTopic: Ref<Topic>
+        values: dict
+        startTime: datetime
+        priority: int
+    }
+}
+
+Data.UserMessage -up-|> Data.Message
+Data.BotMessage -up-|> Data.Message
+
+Data.Context "1" -left-* "1+"  Data.Params : params
+Data.Context "1+" -right-* "1"  Data.User : ofUser
+Data.Context "1" --* "1"  Data.Message : message
+
+Data.Params "0+" --* "1" AI.Topic: ofTopic
+
+Data.BotMessage "1" --* "0+" AI.Rule
+AI.Topic "1" -right-* "0+" AI.Rule : rules
+
+AI.Rule "1" --* "1" AI.Action : action
+
+@enduml

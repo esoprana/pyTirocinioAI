@@ -79,7 +79,6 @@ async def gen_standard(
     rule = db_ctx.Rule(condition={'a__eq': 1}, score=3, action=action)
     await rule.commit()
 
-    print("QQQQQQQQQQQQQQQQQQ" + str(type(rule.id)) + "WWWWWWWWWWWWWWWWWWWWWW")
     topic = db_ctx.Topic(name='dsa', rules=[rule.id])
     await topic.commit()
 
