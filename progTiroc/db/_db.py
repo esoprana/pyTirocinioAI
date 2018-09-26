@@ -92,7 +92,7 @@ class UserMessage(Message):
     intent = fields.DictField(required=False)
     photo = fields.DictField(required=False)
     sentiment = fields.DictField(required=False)
-    googleTopic = fields.DictField(required=False)
+    googleTopic = fields.ListField(fields.DictField(), required=False)
 
 
 class WozBotMessage(Message):

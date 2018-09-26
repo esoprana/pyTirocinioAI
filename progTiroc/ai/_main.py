@@ -82,7 +82,7 @@ def possible(params: List[db.types.Params],
 
     for i, p in enumerate(params):
         # Se il tipo non è corretto non considerare questo caso
-        if p.ofTopic != condition['__type__']:
+        if p.ofTopic != condition['__type__']:  # TODO: Change to __type__
             continue
 
         # Se qualche condizione(di quelle standard immediatamente controllabili) non è rispettata
@@ -105,11 +105,10 @@ def verify_mapping(msg: Dict[str, Any], params: List[db.types.Params],
 
     _ = list([params[iM] for iM in mapping])
 
-    return eval(
-        py, globals=None, locals={
-            '_': _,
-            'm': msg
-        })  # Should be boolean expression in terms of _
+    return eval(py, None, {
+        '_': _,
+        'm': msg
+    })  # Should be boolean expression in terms of _
 
 
 # Returns the complete list of valid mappings
@@ -118,11 +117,13 @@ def get_multiple_mappings(msg: Dict[str, Any], msg_condition: Dict[str, Any],
                           params_conditions: List[Dict[str, Any]],
                           py: str) -> List[List[int]]:
     """ Get all possible mappings """
-    if check(msg_condition, msg):
+    if not check(msg_condition, msg):
         return []
 
     possibilities: List[List[int]] = itertools.product(
         *[possible(params, c) for c in params_conditions])
+
+    print(possibilities)
 
     return list(
         filter(lambda mapping: verify_mapping(msg, params, mapping, py),
@@ -136,6 +137,7 @@ def get_mapping(msg: Dict[str, Any], msg_condition: Dict[str, Any],
     """ Get a single mapping given data and conditions """
     mappings = get_multiple_mappings(msg, msg_condition, params,
                                      params_conditions, py)
+    print(mappings)
     if not mappings:
         return None
 
@@ -182,23 +184,27 @@ class AI:
         return None  # TODO: Da implementare
 
     @staticmethod
-    def get_action(msg: Dict[str, Any], ctx: db.types.Context
-                  ) -> Optional[Tuple[int, db.types.Rule, List[int]]]:
+    async def get_action(msg: Dict[str, Any], ctx: db.types.Context
+                        ) -> Optional[Tuple[int, db.types.Rule, List[int]]]:
         """ Get an action(if possible) -> max_priority used, rule, mapping """
         params: List[db.types.Params] = sorted(
-            ctx.params, lambda p: p.priority, reverse=True)
+            ctx.params, key=lambda p: p.priority, reverse=True)
 
         res: List[Tuple[int, db.types.Rule, List[int]]] = []
 
         for i in range(len(params)):
             ps = params[:i + 1]
 
+            psTopic = await ps[-1].ofTopic.fetch()
+
             conditions: List[Tuple[db.types.Rule, Optional[List[int]]]] = [
                 (rule,
-                 get_mapping(msg, rule.condition.onMsg, params,
-                             rule.condition.onParams, rule.condition.py))
-                for rule in ps[-1].ofTopic.rules
+                 get_mapping(msg, rule.condition['onMsg'], params,
+                             rule.condition['onParams'], rule.condition['py']))
+                for rule in [ await r.fetch() for r in psTopic.rules]
             ]
+
+            print(conditions)
 
             # Condition può restituire un singolo oggetto
             res += [(i + 1, rule, mapping)
@@ -207,6 +213,8 @@ class AI:
 
         actions = list(
             zip(itertools.accumulate([r[1].score for r in res]), res))
+
+        print(actions)
 
         if not actions:
             return None
@@ -272,11 +280,11 @@ class AI:
         return new_ctx
 
     @staticmethod
-    def get_message(db_ctx: db.DBContext, userId: int,
-                    msg: Dict[str, Any]) -> Optional[str]:
+    async def get_message(db_ctx: db.DBContext, userId: int,
+                          msg: Dict[str, Any]) -> Optional[db.types.Context]:
         """ Get response message given user's message(already analyzed), userId and db context """
         try:
-            old_ctx: db.types.Context = db_ctx.Context.find_one(
+            old_ctx: db.types.Context = await db_ctx.Context.find_one(
                 {
                     'ofUser': ObjectId(userId)
                 }, sort=[('timestamp', -1)])
@@ -293,12 +301,17 @@ class AI:
         rule: db.types.Rule
         mapping: List[int]
 
-        max_priority, rule, mapping = AI.get_action(msg, old_ctx)
+        res = await AI.get_action(msg, old_ctx)
+
+        if res is None:
+            return None
+
+        max_priority, rule, mapping = res
 
         text: str = rule.action.text[randint(0, len(rule.action.text) - 1)]
 
         ord_param = sorted(
-            old_ctx.params, lambda p: p.priority,
+            old_ctx.params, key=lambda p: p.priority,
             reverse=True)[:max_priority + 1]
 
         _ = [ord_param[mpItem] for mpItem in mapping]
@@ -308,11 +321,10 @@ class AI:
         new_ctx: db.types.Context = AI.update_context(
             db_ctx, mapping, rule.action, options,
             dict(
-                ofUser=old_ctx.ofUser.id,
+                ofUser=old_ctx.ofUser,
                 timestamp=datetime.now(),
                 params=ord_param,
-                message=db_ctx.BotMessage(text=text.format(**options))))
+                message=db_ctx.BotMessage(
+                    text=text.format(**options), fromRule=rule.id)))
 
-        new_ctx.commit()
-
-        return new_ctx.message.text
+        return new_ctx

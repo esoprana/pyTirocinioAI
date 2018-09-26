@@ -111,7 +111,23 @@ class SingleMessage(HTTPMethodView):
             msg = None
 
             if not isWoz:
-                msg = db_ctx.UserMessage(text=data['text'])
+                user = await db_ctx.User.find_one({'id': ObjectId(fr)})
+
+                if user is None:
+                    return json({'message': 'User not found'}, 404)
+
+                google_data = request.app.ai.analyze_text(
+                    data['text'], user.googleSessionId)
+
+                from google.protobuf.json_format import MessageToDict
+
+                r = {}
+                r['intent'] = MessageToDict(google_data['intent'])
+                r['sentiment'] = MessageToDict(google_data['sentiment'])
+                r['googleTopic'] = [] if not google_data[
+                    'categories'] else MessageToDict(google_data['categories'])
+                msg = db_ctx.UserMessage(text=data['text'], **r)
+
             elif fr == WOZ_BOT_ID:
                 (fr, to) = (to, fr)
 
@@ -144,6 +160,16 @@ class SingleMessage(HTTPMethodView):
             if error:
                 print(error)
                 return json({'message': 'Impossible to serialize message'}, 500)
+
+            if not isWoz:
+                response = await request.app.ai.get_message(
+                    db_ctx, user.id, google_data)
+
+                if response is not None:
+                    await response.commit()
+                    print(response.message.text)
+
+                    data['response'] = response.message.text
 
             return json(data, 200)
 

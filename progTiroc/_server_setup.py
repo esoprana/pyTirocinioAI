@@ -9,6 +9,7 @@ import yaml
 
 from progTiroc.db import DBInstance
 from progTiroc.api import create_api
+from progTiroc.ai import AI
 
 
 def conf_value(var_name: str, cfg: dict, yml_cfg: dict,
@@ -66,6 +67,7 @@ def setup_app_config(app: Sanic):
     conf_value(
         var_name='DB_MOCK', cfg=app.config, yml_cfg=yml_cfg, default='false')
     conf_value(var_name='INTERFACE', cfg=app.config, yml_cfg=yml_cfg)
+    conf_value(var_name='PROJECTID', cfg=app.config, yml_cfg=yml_cfg)
 
     try:
         if not isinstance(app.config['DEBUG'], bool):
@@ -122,6 +124,7 @@ def setup() -> Sanic:
             database_user=app.config['DB']['USERNAME'],
             database_pwd=app.config['DB']['PASSWORD'],
             isMock=app.config['DB']['MOCK'])  # Set db instance
-        print(app.config['DB']['MOCK'])
+
+        app.ai = AI(app.config['PROJECTID'], None)
 
     return app
