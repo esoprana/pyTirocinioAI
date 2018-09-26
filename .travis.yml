@@ -4,13 +4,12 @@ python:
 install:
   - 'pip install pipenv'
   - 'pipenv install --dev'
-jobs:
-    include:
-        - stage: pytest
+deploy:
+        - provider: script
           script: 'make test'
           after_success:
             - 'python-codacy-coverage -r coverage.xml'
-        - stage: sphinx
+        - provider: script
           script: 'make doc'
           deploy:
               provider: pages
