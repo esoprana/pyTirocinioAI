@@ -69,18 +69,13 @@ def setup_app_config(app: Sanic):
     conf_value(var_name='INTERFACE', cfg=app.config, yml_cfg=yml_cfg)
     conf_value(var_name='PROJECTID', cfg=app.config, yml_cfg=yml_cfg)
 
-    try:
-        if not isinstance(app.config['DEBUG'], bool):
-            app.config['DEBUG'] = strtobool(app.config['DEBUG'])
-    except ValueError:
-        print('Error converting DEBUG to boolean(true/false)')
-        sys.exit(1)
+    print(app.config['DB']['MOCK'])
 
     try:
         if not isinstance(app.config['DEBUG'], bool):
-            app.config['DB']['MOCK'] = strtobool(app.config['DB']['MOCK'])
+            app.config['DEBUG'] = bool(strtobool(app.config['DEBUG']))
     except ValueError:
-        print('Error converting DB_MOCK to boolean(true/false)')
+        print('Error converting DEBUG to boolean(true/false)')
         sys.exit(1)
 
     try:
@@ -123,7 +118,7 @@ def setup() -> Sanic:
             database_port=app.config['DB']['PORT'],
             database_user=app.config['DB']['USERNAME'],
             database_pwd=app.config['DB']['PASSWORD'],
-            isMock=app.config['DB']['MOCK'])  # Set db instance
+            loop=loop)  # Set db instance
 
         app.ai = AI(app.config['PROJECTID'], None)
 

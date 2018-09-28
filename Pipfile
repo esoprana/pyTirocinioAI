@@ -30,6 +30,9 @@ yapf = "*"
 aiohttp = "*"
 ipython = "*"
 pylint = "*"
+mypy = "*"
+mockupdb = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.6"

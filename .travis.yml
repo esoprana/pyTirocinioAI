@@ -12,7 +12,12 @@ install:
   - 'pipenv install --dev'
 jobs:
     include:
-        - script: 'make test'
+        - services:
+            - mongodb
+          before_script:
+            - sleep 15
+            -   - mongo db --eval 'db.createUser({user:"pheirei6choh0uephaug9Rooz0kooYungaeThaing2SheoBehoaG0xie4quie6Lu",pwd:"pev4yieyae8xeiP4AeLap6sain5fohsh1aheebie7eu4Aequiefo8aeSi9shiQu8",roles:["readWrite"]});'
+          script: 'make test'
           after_success:
             - 'python-codacy-coverage -r coverage.xml'
         - script: 'make doc'

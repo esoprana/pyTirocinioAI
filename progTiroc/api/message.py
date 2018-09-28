@@ -1,7 +1,5 @@
 """
 Module to define message rest endpoint, are defined '/' and '/{messageId}'
-
-:exclude-members: DocMessageGet, DocMessagePut
 """
 
 from datetime import datetime
@@ -12,9 +10,12 @@ from sanic.request import Request
 from sanic.views import HTTPMethodView
 from sanic_swagger import doc
 
+import attr
+
 import marshmallow
 
 from bson import ObjectId
+from google.protobuf.json_format import MessageToDict
 
 import dateutil.parser
 
@@ -34,9 +35,16 @@ class DocMessagePut(doc.Model):
     text: str = doc.field(description='The text of the message')
 
 
+class AfterFilter(doc.Model):
+    after: datetime = doc.field(
+        description='To filter all messages after a datetime in isoformat')
+
+
 class ListMessage(HTTPMethodView):
     """ Rappresents the whole of the messages of a user"""
 
+    @doc.summary('Get messages of a specific user')
+    @doc.consumes(AfterFilter, location='query', required=False)
     async def get(self, request: Request, oId: str):
         """ Get messages of a specific user """
 
@@ -79,11 +87,14 @@ class ListMessage(HTTPMethodView):
 
 
 class SingleMessage(HTTPMethodView):
-    """ Save messages """
+    """ Save messages sdds"""
 
+    @doc.summary('Create a message')
     @doc.consumes(DocMessagePut, location='body')
     @doc.produces(DocMessageGet)
     async def put(self, request: Request, fr: str, to: str):
+        """ Create a message """
+
         if request.json is None:
             return json({'message': 'invalid schema format(json)'}, 400)
 
@@ -118,8 +129,6 @@ class SingleMessage(HTTPMethodView):
 
                 google_data = request.app.ai.analyze_text(
                     data['text'], user.googleSessionId)
-
-                from google.protobuf.json_format import MessageToDict
 
                 r = {}
                 r['intent'] = MessageToDict(google_data['intent'])

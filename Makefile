@@ -53,20 +53,17 @@ debugi:
 
 # === Dev rules ==============================================================
 # Documentation rules
-.sphinx_prep:
-	@cd docs; sphinx-apidoc -f -o . ../progTiroc/;
-
 .swagger:
 	python get_swagger.py
 
-doc: .sphinx_prep doc_html
+doc: doc_html
 
 doc_html: .swagger
 	@cd docs && $(MAKE) -j4 html;
 
 # Test rules
 test:
-	@DB_MOCK=true pytest && python-codacy-coverage -r coverage.xml
+	@pytest && python-codacy-coverage -r coverage.xml
 
 conf_git:
 	@git config core.hooksPath hooks

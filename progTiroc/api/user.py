@@ -1,7 +1,5 @@
 """
 Module to define user rest endpoint, are defined '/' and '/{objectId}'
-
-:exclude-members: DocUserGet, DocUserPut
 """
 
 import uuid

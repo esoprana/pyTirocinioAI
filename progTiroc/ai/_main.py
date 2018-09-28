@@ -204,8 +204,6 @@ class AI:
                 for rule in [ await r.fetch() for r in psTopic.rules]
             ]
 
-            print(conditions)
-
             # Condition può restituire un singolo oggetto
             res += [(i + 1, rule, mapping)
                     for (rule, mapping) in conditions
@@ -213,8 +211,6 @@ class AI:
 
         actions = list(
             zip(itertools.accumulate([r[1].score for r in res]), res))
-
-        print(actions)
 
         if not actions:
             return None
@@ -232,6 +228,8 @@ class AI:
         Update context given current db context, mapping to use, action,
         options and values to initialize Context(previous values)
         """
+
+        print(type(init_values['ofUser']))
         new_ctx = db_ctx.Context(**init_values)
 
         max_pr = new_ctx.params[-1].priority

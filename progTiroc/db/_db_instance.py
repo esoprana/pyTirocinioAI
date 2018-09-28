@@ -9,8 +9,6 @@ from umongo import (
 )
 import motor.motor_asyncio
 
-import mongomock  # Used for MongoClient
-
 import marshmallow
 
 # Custom libs
@@ -93,25 +91,22 @@ class DBInstance:
                  database_port: int,
                  database_user: str,
                  database_pwd: str,
-                 isMock: bool = False):
+                 loop=None):
         if database_port >= 65535:
             raise Exception('Enviroment variable DBPORT is non valid port')
 
         self._db_name: str = database_name
 
-        if isMock is True:
-            self._connection = mongomock.MongoClient(
-                db=database_name, host=database_host, port=database_port)
-        else:
-            uri: str = 'mongodb://{DBUSER}:{DBPSWD}@{DBHOST}:{DBPORT}/{DBNAME}'.format(
-                DBUSER=database_user,
-                DBPSWD=database_pwd,
-                DBHOST=database_host,
-                DBPORT=database_port,
-                DBNAME=database_name)
-            self._connection = motor.motor_asyncio.AsyncIOMotorClient(uri)
+        uri: str = 'mongodb://{DBUSER}:{DBPSWD}@{DBHOST}:{DBPORT}/{DBNAME}'.format(
+            DBUSER=database_user,
+            DBPSWD=database_pwd,
+            DBHOST=database_host,
+            DBPORT=database_port,
+            DBNAME=database_name)
+        self._connection = motor.motor_asyncio.AsyncIOMotorClient(
+            uri, io_loop=loop)
+        self._instance = Instance(self._connection[database_name])
 
-        self._instance = Instance(self._connection['db'])
         for odm_model in [
                 types.User, types.Action, types.Rule, types.Topic, types.Params,
                 types.Message, types.UserMessage, types.BotMessage,
@@ -154,6 +149,6 @@ class DBInstance:
     def context(self) -> DBContext:
         return DBContext(self._instance)
 
-    def drop_db(self):
-        self._connection.drop_database(self._db_name)
+    async def drop_db(self):
+        await self._connection.drop_database(self._db_name)
         self._connection.close()
