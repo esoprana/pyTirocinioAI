@@ -1,0 +1,23 @@
+[
+	{
+		"tmpUUID": "1ac9d6b0-ab36-4c89-a9f0-7bfcd3137500",
+		"name": "Start",
+		"rules": ["5d7afeaa-88e0-435a-bebb-e552ddd79ac1"]
+	}, {
+		"tmpUUID": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411",
+		"name": "Family",
+		"rules": ["2a82a4e4-fb0b-43f9-bc2e-bdcd8f03078f"]
+	}, {
+		"tmpUUID": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987",
+		"name": "Ask how many children",
+		"rules": ["205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73", "c6e13f45-4bd8-4441-a426-92b48c686d85"]
+	}, {
+		"tmpUUID": "682b5253-459d-4ea3-b1b0-7fda75d28e08",
+		"name": "See offspring often",
+		"rules": ["6becfbde-89b3-42d3-ada5-f2c9815b9403"]
+	}, {
+		"tmpUUID": "205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73",
+		"name": "Ask offspring names",
+		"rules": ["56fec25c-909b-4966-a248-a357eee0e224"]
+	}
+]

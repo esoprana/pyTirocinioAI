@@ -1,0 +1,251 @@
+[
+	{
+		"tmpUUID": "1cadf893-0b60-4f81-9421-91a65b30b007",
+		"condition": {
+            "onMsg": {
+                "intent": {
+					"intent": {
+						"name__eq": "700dfe0e-ea76-44ce-8906-c4a47ec87183"
+					}
+                }
+            },
+            "onParams": [],
+            "py": "True"
+        },
+		"score": 1,
+		"action": {
+			"text": [
+				"I didn't get that. Can you say it again?",
+				"I missed what you said. Say it again?",
+				"Sorry, could you say that again?",
+				"Sorry, can you say that again?",
+				"Can you say that again?",
+				"Sorry, I didn't get that.",
+				"Sorry, what was that?",
+				"One more time?",
+				"What was that?",
+				"Say that again?",
+				"I didn't get that.",
+				"I missed that."
+			],
+			"operations": [],
+			"immediatlyNext": false,
+			"isQuestion": false
+		}
+	},
+	{
+		"tmpUUID": "5d7afeaa-88e0-435a-bebb-e552ddd79ac1",
+		"condition": {
+			"onParams": [
+				{
+					"tmpUUID__type__": "1ac9d6b0-ab36-4c89-a9f0-7bfcd3137500",
+					"__top__": true
+				}
+			],
+			"py": "True"
+		},
+		"score": 200,
+		"action": {
+			"text": ["Let's talk about family"],
+			"operations": [
+				{
+					"op": "push",
+					"tmpUUIDtopic": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411"
+				}
+			],
+			"immediatlyNext": true,
+			"isQuestion": false
+		}
+	}, {
+		"tmpUUID": "2a82a4e4-fb0b-43f9-bc2e-bdcd8f03078f",
+		"condition": {
+			"onParams": [
+				{
+					"tmpUUID__type__": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411",
+					"__nhas__": [
+						"num_children",
+						"num_daughter",
+						"num_son",
+						"num_granchildren",
+						"num_grandaughter",
+						"num_grandson",
+						"num_sons",
+						"num_daughters"
+					],
+					"__top__": true
+				}
+			],
+			"py": "True"
+		},
+		"score": 200,
+		"action": {
+			"text": ["How many children/grand-children do you have?"],
+			"operations": [
+				{
+					"op": "push",
+					"tmpUUIDtopic": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987"
+				}
+			],
+			"immediatlyNext": false,
+			"isQuestion": true
+		}
+	}, {
+        "tmpUUID": "205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73",
+        "condition": {
+            "onMsg": {
+                "intent": {
+					"intent": {
+						"name__eq": "efabce53-1fe3-4f74-84c7-a8a95d55647c"
+					},
+					"params": {
+						"__has__": ["num"]
+					}
+                }
+            },
+            "onParams": [
+                {
+                    "tmpUUID__type__": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987",
+					"__top__": true
+                }
+            ],
+            "py": "True"
+        },
+        "score": 200,
+        "action": {
+            "text": [
+                "How are they called?"
+            ],
+            "operations": [
+				{
+                    "op": "exportName",
+                    "index": 0,
+                    "name": "'num_' + m['intent']['parameters']['os']",
+                    "val": "m['intent']['parameters']['num']"
+                }, {
+					"op": "push",
+					"tmpUUIDtopic": "205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73"
+				}, {
+					"op": "exportName",
+					"index": 1,
+					"name": "'type'",
+					"val": "m['intent']['parameters']['os']"
+				}
+            ],
+            "immediatlyNext": false,
+            "isQuestion": true
+        }
+    }, {
+		"tmpUUID": "56fec25c-909b-4966-a248-a357eee0e224",
+		"condition": {
+			"onMsg": {
+				"intent": {
+					"intent": {
+						"name__eq": "4fc041ee-6a30-4a1c-821a-5b3dbfc88306"
+					}
+				}
+			},
+			"onParams": [
+                {
+					"tmpUUID__type__": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987"
+				}, {
+					"tmpUUID__type__": "205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73",
+					"__top__": true
+				}
+			],
+			"py": "True"
+		},
+		"score": 200,
+		"action": {
+			"text": ["They have great names!"],
+			"operations": [
+				{
+					"op": "pop"
+				}, {
+					"op": "exportName",
+					"index": 0,
+					"name": "_[1].values['type']",
+					"val": "m['intent']['parameters']['givenname']"
+				}
+			],
+            "immediatlyNext": true,
+            "isQuestion": false
+		}
+	}, {
+        "tmpUUID": "c6e13f45-4bd8-4441-a426-92b48c686d85",
+        "condition": {
+            "onParams": [
+                {
+                    "tmpUUID__type__": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987",
+					"__has_or__": [
+						"num_children",
+						"num_daughter",
+						"num_son",
+						"num_granchildren",
+						"num_grandaughter",
+						"num_grandson",
+						"num_sons",
+						"num_daughters"
+					],
+					"__nhas_and__": [
+						"often_visit"
+					]
+                }, {
+					"tmpUUID__type__": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411"
+				}
+            ],
+            "py": "True"
+        },
+        "score": 200,
+        "action": {
+            "text": [
+                "Do you see them often?"
+            ],
+            "operations": [
+				{
+					"op": "push",
+					"tmpUUIDtopic": "682b5253-459d-4ea3-b1b0-7fda75d28e08"
+				}, {
+					"op": "exportName",
+					"index": 0,
+					"name": "'often_visit'",
+					"val": true
+				}
+			],
+            "immediatlyNext": false,
+            "isQuestion": true
+        }
+	}, {
+		"tmpUUID": "6becfbde-89b3-42d3-ada5-f2c9815b9403",
+		"condition": {
+			"onMsg": {
+				"intent": {
+					"intent": {
+						"name__eq": "4a30ae5f-a5e6-474a-aa0d-808bd09ae851"
+					},
+					"parameters": {
+						"yesno__eq": "yes"
+					}
+				}
+			},
+			"onParams": [
+				{
+					"tmpUUID__type__": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411"
+				}, {
+					"tmpUUID__type__": "682b5253-459d-4ea3-b1b0-7fda75d28e08",
+					"__top__": true
+				}
+			],
+			"py": "True"
+		},
+		"score": 200,
+		"action": {
+			"text": ["They're good kids"],
+			"operations": [
+				{"op": "popUntil", "index": 1},
+				{"op": "pop"}
+			],
+            "immediatlyNext": true,
+            "isQuestion": false
+		}
+	}
+]
