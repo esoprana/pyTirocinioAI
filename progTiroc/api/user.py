@@ -97,14 +97,28 @@ class UserList(HTTPMethodView):
                 print(oe)
                 return json({'message': 'Impossible to commit changes'}, 500)
 
+            paramFirst = db_ctx.Params(
+                ofTopic=request.app.default_topic,
+                values={},
+                startTime=datetime.now(),
+                priority=0)
+
             context = db_ctx.Context(
                 ofUser=user,
                 timestamp=datetime.now(),
-                params=[],
+                params=[paramFirst],
                 message=db_ctx.Message(text='Hi!'))
 
             try:
                 await context.commit()
+
+                responses = await request.app.ai.get_message(
+                    db_ctx, user.id, None, request.app.fallback_rule)
+
+                if responses is not None:
+                    for r in responses:
+                        await r.commit()
+
             except mongoengine.OperationError as oe:
                 print(oe)
                 return json({'message': 'Impossible to commit changes'}, 500)

@@ -1,6 +1,8 @@
 import dialogflow_v2 as dialogflow
 import google.cloud.language
 
+from google.protobuf.json_format import MessageToDict
+
 
 def analyze_intent(project_id, session_id, text: str, language_code, log):
     """Returns the result of detect intent with texts as inputs.
@@ -20,7 +22,10 @@ def analyze_intent(project_id, session_id, text: str, language_code, log):
     response = session_client.detect_intent(
         session=session, query_input=query_input)
 
-    return response.query_result
+    response.query_result.intent.name = response.query_result.intent.name[
+        len('projects/') + len(project_id) + len('/agent/intents/'):]
+
+    return MessageToDict(response.query_result)
 
 
 def analyze_categories(text: str, log) -> list:
@@ -36,7 +41,7 @@ def analyze_categories(text: str, log) -> list:
         log.critical(ex)
         response = []
 
-    return response
+    return [] if not response else MessageToDict(response)
 
 
 def analyze_sentiment(text: str, log) -> dict:
@@ -55,4 +60,4 @@ def analyze_sentiment(text: str, log) -> dict:
         print(ex)
         sentiment = {'score': 0.0, 'magnitude': 0.0}
 
-    return sentiment
+    return MessageToDict(sentiment)

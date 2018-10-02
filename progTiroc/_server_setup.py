@@ -111,7 +111,7 @@ def setup() -> Sanic:
     app.blueprint(swagger_blueprint)  # For swagger UI
 
     @app.listener('before_server_start')
-    def init(sanic, loop):
+    async def init(sanic, loop):
         app.dbi = DBInstance(
             database_name=app.config['DB']['NAME'],
             database_host=app.config['DB']['HOST'],
@@ -121,5 +121,8 @@ def setup() -> Sanic:
             loop=loop)  # Set db instance
 
         app.ai = AI(app.config['PROJECTID'], None)
+        defaults = await app.ai.create_database(app.dbi, 'examples/family/')
+        app.default_topic = defaults[0]
+        app.fallback_rule = defaults[1]
 
     return app

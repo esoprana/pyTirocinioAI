@@ -9,12 +9,6 @@ import mock
 from mock import MagicMock
 import mongomock
 
-#p = mock.patch('motor.motor_asyncio.AsyncIOMotorClient.__delegate_class__', new=mongomock.MongoClient)
-#p1 = mock.patch('motor.motor_asyncio.AsyncIOMotorDatabase.__delegate_class__', new=MagicMock)
-#
-#p.start()
-#p1.start()
-
 
 def check_user(obj):
     assert isinstance(obj, dict)
@@ -76,7 +70,6 @@ def test_put_get_single_user(app):
     assert response4.status == 200
     check_message(response4.json)
     assert response4.json['text'] == 'message'
-    print(response4.json)
 
     request5, response5 = app.test_client.get('/api/message/user/{}'.format(
         response.json['id']))

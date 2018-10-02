@@ -6,9 +6,11 @@ import logging
 from datetime import datetime
 import uuid
 from typing import List, Tuple, Dict, Any, Optional
+import json
 
 import mongoengine
 from bson import ObjectId
+import umongo
 
 from progTiroc import db
 from ._text_analysis import analyze_sentiment, analyze_intent, analyze_categories
@@ -16,7 +18,7 @@ from ._text_analysis import analyze_sentiment, analyze_intent, analyze_categorie
 logging.basicConfig(filename='debug.log', level=logging.INFO)
 log = logging.getLogger(__name__)
 
-LIBRARY_CONDITIONS = ['__type__', '__has__']
+LIBRARY_CONDITIONS = ['__type__', '__has__', '__nhas__']
 
 
 def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
@@ -24,6 +26,7 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
 
     def std_check(key: str, v: Any, value: Dict[str, Any]) -> bool:
         """ Check single value """
+
         matches = re.match(r'^(.+?)(?:__(lt|gt|eq|ne|le|ge|in|nin))?$', key)
 
         if matches is None:
@@ -36,6 +39,7 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
 
         try:
             suffix: str = matches.group(2)
+            print(v, to_check)
             if suffix is None:
                 return check(v, to_check)
             if suffix == 'lt':
@@ -61,8 +65,23 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
 
     # Ottieni la lista dei campi obbligatori e se non
     # corrisponde a quelli reali non considerare questo caso
-    has_attr = condition.get('__has__')
+    has_attr = condition.get('__has__', condition.get('__has_and__'))
     if (has_attr is not None) and any([value.get(k) is None for k in has_attr]):
+        return False
+
+    nhas_attr = condition.get('__nhas__', condition.get('__nhas_or__'))
+    if (nhas_attr is not None) and any(
+        [value.get(k) is not None for k in nhas_attr]):
+        return False
+
+    has_attr_or = condition.get('__has_or__')
+    if (has_attr_or is not None) and all(
+        [value.get(k) is None for k in has_attr_or]):
+        return False
+
+    nhas_attr_all = condition.get('__nhas__', condition.get('__nhas_all__'))
+    if (nhas_attr_all is not None) and all(
+        [value.get(k) is not None for k in nhas_attr_all]):
         return False
 
     return all([
@@ -82,7 +101,9 @@ def possible(params: List[db.types.Params],
 
     for i, p in enumerate(params):
         # Se il tipo non è corretto non considerare questo caso
-        if p.ofTopic != condition['__type__']:  # TODO: Change to __type__
+
+        if str(p.ofTopic.pk) != str(
+                condition['__type__']):  # TODO: Change to __type__
             continue
 
         # Se qualche condizione(di quelle standard immediatamente controllabili) non è rispettata
@@ -117,17 +138,31 @@ def get_multiple_mappings(msg: Dict[str, Any], msg_condition: Dict[str, Any],
                           params_conditions: List[Dict[str, Any]],
                           py: str) -> List[List[int]]:
     """ Get all possible mappings """
-    if not check(msg_condition, msg):
+    if not ((msg is None and msg_condition is None) or
+            (msg is not None and msg_condition is not None and
+             check(msg_condition, msg))):
         return []
 
-    possibilities: List[List[int]] = itertools.product(
-        *[possible(params, c) for c in params_conditions])
+    m = [possible(params, c) for c in params_conditions]
 
-    print(possibilities)
+    tops = [
+        i for i, w in enumerate(params_conditions)
+        if w.get('__top__', False) is True
+    ]
+    if len(tops) > 1:
+        print('MULTIPLE TOPS')
+    elif len(tops) == 1:
+        if len(params) - 1 in m[tops[0]]:
+            m[tops[0]] = [len(params) - 1]
+        else:
+            m[tops[0]] = []  # TODO: return directly []
 
-    return list(
-        filter(lambda mapping: verify_mapping(msg, params, mapping, py),
-               possibilities))
+    possibilities: List[List[int]] = itertools.product(*m)
+
+    return [
+        mapping for mapping in possibilities
+        if verify_mapping(msg, params, mapping, py)
+    ]
 
 
 def get_mapping(msg: Dict[str, Any], msg_condition: Dict[str, Any],
@@ -137,7 +172,6 @@ def get_mapping(msg: Dict[str, Any], msg_condition: Dict[str, Any],
     """ Get a single mapping given data and conditions """
     mappings = get_multiple_mappings(msg, msg_condition, params,
                                      params_conditions, py)
-    print(mappings)
     if not mappings:
         return None
 
@@ -160,10 +194,6 @@ class AI:
         intent = analyze_intent(self._google_project_id, googleSessionId, text,
                                 'en', log)
 
-        intent.intent.name = intent.intent.name[len('projects/') +
-                                                len(self._google_project_id) +
-                                                len('/agent/intents/'):]
-
         sentiment = analyze_sentiment(text, log)
         categories = analyze_categories(text, log)
 
@@ -173,20 +203,110 @@ class AI:
             'categories': categories
         }
 
-    #PROJECT_ID: str = os.environ.get('PROJECT_ID')
+    async def create_database(self, dbi: 'progTiroc.db.DBInstance',
+                              path: str) -> Tuple[ObjectId, ObjectId]:
+        DATA_LOCK = 'data.lock'
 
-    #if PROJECT_ID is None:
-    #    log.fatal("PROJECT_ID is None")
-    #    exit(1)
+        res: Tuple[ObjectId, ObjectId]
 
-    def create_database(self):
+        import os
+        if os.path.isfile(DATA_LOCK):  # If database wasn't alredy initialized
+            print('DB ALREADY INITIALIZED')
+
+            with open(DATA_LOCK, 'r') as f:
+                default_topic = ObjectId(str(f.read(24)))
+                fallback_rule = ObjectId(str(f.read(24)))
+
+            res = (default_topic, fallback_rule)
+        else:
+            print('DB INITIALIZED NOW')
+            topics = json.load(open(os.path.join(path, 'topics.json'), 'r'))
+            rules = json.load(open(os.path.join(path, 'rules.json'), 'r'))
+
+            res = await self._init_database(dbi, topics, rules)
+
+            with open(DATA_LOCK, 'w') as f:
+                f.write(str(res[0]))
+                f.write(str(res[1]))
+        return res
+
+    async def _init_database(
+            self, dbi: 'progTiroc.db.DBInstance', topics: List[Dict[str, Any]],
+            rules: List[Dict[str, Any]]) -> Tuple[ObjectId, ObjectId]:
         """ setup the database """
-        return None  # TODO: Da implementare
+
+        with dbi.context() as db_ctx:
+            hmRules = dict()
+            hmTopic = dict()
+
+            firstTopic = topics[0]['tmpUUID']
+            fallbackRule = rules[0]['tmpUUID']
+
+            for topicJson in topics:
+                topic = db_ctx.Topic()
+
+                topic.name = topicJson['name']
+
+                await topic.commit()
+
+                hmTopic[topicJson['tmpUUID']] = (topic, topicJson['rules'])
+
+            for ruleJson in rules:
+                rule = db_ctx.Rule()
+                rule.condition = {
+                    "onMsg": ruleJson['condition']['onMsg']
+                    if 'onMsg' in ruleJson['condition'] else None,
+                    "py": ruleJson['condition']['py']
+                }
+
+                onParams = []
+
+                for condition in ruleJson['condition']['onParams']:
+                    new_condition = {
+                        k: v
+                        for k, v in condition.items()
+                        if k != 'tmpUUID__type__'
+                    }
+                    new_condition['__type__'] = hmTopic[
+                        condition['tmpUUID__type__']][0].id
+
+                    onParams.append(new_condition)
+
+                rule.condition['onParams'] = onParams
+
+                rule.score = ruleJson['score']
+                rule.action = {
+                    "text": ruleJson['action']['text'],
+                    "immediatlyNext": ruleJson['action']['immediatlyNext'],
+                    "isQuestion": ruleJson['action']['isQuestion'],
+                }
+
+                operations = []
+                for op in ruleJson['action']['operations']:
+                    if op['op'] == 'push':
+                        op['topic'] = str(hmTopic[op['tmpUUIDtopic']][0].id)
+                        del op['tmpUUIDtopic']
+
+                    operations.append(op)
+
+                rule.action.operations = operations
+                await rule.commit()
+
+                hmRules[ruleJson['tmpUUID']] = rule
+
+            for k, topic in hmTopic.items():
+                topic[0].rules = list(
+                    [ObjectId(hmRules[ruleId].id) for ruleId in topic[1]])
+                await topic[0].commit()
+
+            return hmTopic[firstTopic][0].id, hmRules[fallbackRule].id
 
     @staticmethod
     async def get_action(msg: Dict[str, Any], ctx: db.types.Context
                         ) -> Optional[Tuple[int, db.types.Rule, List[int]]]:
         """ Get an action(if possible) -> max_priority used, rule, mapping """
+        print(msg)
+
         params: List[db.types.Params] = sorted(
             ctx.params, key=lambda p: p.priority, reverse=True)
 
@@ -212,11 +332,14 @@ class AI:
         actions = list(
             zip(itertools.accumulate([r[1].score for r in res]), res))
 
+        print(actions)
+
         if not actions:
             return None
         else:
             selection = actions[bisect.bisect_right([x[0] for x in actions],
-                                                    randint(0, actions[-1][0]))]
+                                                    randint(
+                                                        0, actions[-1][0] - 1))]
 
             return selection[1][0], selection[1][1], selection[1][2]
 
@@ -228,12 +351,11 @@ class AI:
         Update context given current db context, mapping to use, action,
         options and values to initialize Context(previous values)
         """
-
-        print(type(init_values['ofUser']))
         new_ctx = db_ctx.Context(**init_values)
 
         max_pr = new_ctx.params[-1].priority
         _ = options['_']
+        mapping = list(mapping)
 
         for do in action.operations:
 
@@ -250,15 +372,16 @@ class AI:
 
                 # Change/add value using eval(no globals only locals)
                 new_val = eval(do['val'], {}, options)
+                name = eval(do['name'], {}, options)
 
                 if new_val is None:
-                    del new_param.values[do['name']]
+                    del new_param.values[name]
                 else:
-                    new_param.values[do['name']] = new_val
+                    new_param.values[name] = new_val
 
                 # Sobstitute old Param instance
-                new_ctx.params[mapping[do['index']]] = new_param
                 _[do['index']] = new_param
+                new_ctx.params[mapping[do['index']]] = new_param
             elif do['op'] == 'push':
                 max_pr = max_pr - 1
                 new_param = db_ctx.Params(
@@ -269,18 +392,22 @@ class AI:
 
                 new_ctx.params.append(new_param)
                 _.append(new_param)
-                # mapping.append(len(new_ctx.params) - 1)
+                mapping.append(len(new_ctx.params) - 1)
             elif do['op'] == 'popUntil':
                 new_ctx.params = new_ctx.params[:mapping[do['index']] + 1]
             elif do['op'] == 'pop':
                 new_ctx.params = new_ctx.params[:-1]
+            else:
+                print("Operation '{}' not recognized".format(do['op']))
 
         return new_ctx
 
     @staticmethod
     async def get_message(db_ctx: db.DBContext, userId: int,
-                          msg: Dict[str, Any]) -> Optional[db.types.Context]:
+                          msg: Optional[Dict[str, Any]],
+                          fallback_rule_id: ObjectId) -> List[db.types.Context]:
         """ Get response message given user's message(already analyzed), userId and db context """
+
         try:
             old_ctx: db.types.Context = await db_ctx.Context.find_one(
                 {
@@ -295,34 +422,75 @@ class AI:
             log.error(e)
             return None
 
-        max_priority: int
-        rule: db.types.Rule
-        mapping: List[int]
+        ctxs = []
+        rule_used = []
+        stop = False
 
-        res = await AI.get_action(msg, old_ctx)
+        repetitions: int = 0
 
-        if res is None:
-            return None
+        while not stop:
+            max_priority: int
+            rule: db.types.Rule
+            mapping: List[int]
 
-        max_priority, rule, mapping = res
+            res = await AI.get_action(msg, old_ctx)
 
-        text: str = rule.action.text[randint(0, len(rule.action.text) - 1)]
+            ord_param = sorted(
+                old_ctx.params, key=lambda p: p.priority, reverse=True)
 
-        ord_param = sorted(
-            old_ctx.params, key=lambda p: p.priority,
-            reverse=True)[:max_priority + 1]
+            # If no action found stop
+            if res is None:
+                if msg is not None:
+                    fallback_rule = await db_ctx.Rule.find_one({
+                        'id': fallback_rule_id
+                    })
 
-        _ = [ord_param[mpItem] for mpItem in mapping]
+                    no_und_ctx = db_ctx.Context(
+                        ofUser=old_ctx.ofUser,
+                        timestamp=datetime.now(),
+                        params=ord_param,
+                        message=db_ctx.BotMessage(
+                            text=fallback_rule.action.text[randint(
+                                0,
+                                len(fallback_rule.action.text) - 1)],
+                            fromRule=fallback_rule.id))
+                    ctxs.append(no_und_ctx)
 
-        options = {'_': _, 'm': msg}
+                break
 
-        new_ctx: db.types.Context = AI.update_context(
-            db_ctx, mapping, rule.action, options,
-            dict(
-                ofUser=old_ctx.ofUser,
-                timestamp=datetime.now(),
-                params=ord_param,
-                message=db_ctx.BotMessage(
-                    text=text.format(**options), fromRule=rule.id)))
+            max_priority, rule, mapping = res
 
-        return new_ctx
+            # If the rule doesn't require another immediate action after stop after this one
+            if rule.action.immediatlyNext is False:
+                stop = True
+
+            text: str = rule.action.text[randint(0, len(rule.action.text) - 1)]
+
+            ord_param = ord_param[:max_priority + 1]
+
+            _ = [ord_param[mpItem] for mpItem in mapping]
+
+            options = {'_': _, 'm': msg}
+
+            new_ctx: db.types.Context = AI.update_context(
+                db_ctx, mapping, rule.action, options,
+                dict(
+                    ofUser=old_ctx.ofUser,
+                    timestamp=datetime.now(),
+                    params=ord_param,
+                    message=db_ctx.BotMessage(
+                        text=text.format(**options), fromRule=rule.id)))
+
+            if str(rule.id) in rule_used:
+                repetitions = repetitions + 1
+
+                if repetitions == 5:
+                    stop = True
+            else:
+                ctxs.append(new_ctx)
+                old_ctx = new_ctx
+                rule_used.append(str(rule.id))
+
+            msg = None
+
+        return ctxs

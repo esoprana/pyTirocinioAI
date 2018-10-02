@@ -131,10 +131,10 @@ class SingleMessage(HTTPMethodView):
                     data['text'], user.googleSessionId)
 
                 r = {}
-                r['intent'] = MessageToDict(google_data['intent'])
-                r['sentiment'] = MessageToDict(google_data['sentiment'])
-                r['googleTopic'] = [] if not google_data[
-                    'categories'] else MessageToDict(google_data['categories'])
+                r['intent'] = google_data['intent']
+                r['sentiment'] = google_data['sentiment']
+                r['googleTopic'] = google_data['categories']
+
                 msg = db_ctx.UserMessage(text=data['text'], **r)
 
             elif fr == WOZ_BOT_ID:
@@ -145,7 +145,6 @@ class SingleMessage(HTTPMethodView):
                 msg = db_ctx.WozUserMessage(text=data['text'])
 
             # Get the list of context of user in decresend order of timestamp
-
             old_context: db_ctx.Context = await db_ctx.Context.find_one(
                 {
                     'ofUser': ObjectId(fr)
@@ -171,14 +170,15 @@ class SingleMessage(HTTPMethodView):
                 return json({'message': 'Impossible to serialize message'}, 500)
 
             if not isWoz:
-                response = await request.app.ai.get_message(
-                    db_ctx, user.id, google_data)
+                responses = await request.app.ai.get_message(
+                    db_ctx, user.id, google_data, request.app.fallback_rule)
 
-                if response is not None:
-                    await response.commit()
-                    print(response.message.text)
+                if responses is not None:
+                    for r in responses:
+                        await r.commit()
 
-                    data['response'] = response.message.text
+                    data['response'] = "\n".join(
+                        [r.message.text for r in responses])
 
             return json(data, 200)
 
