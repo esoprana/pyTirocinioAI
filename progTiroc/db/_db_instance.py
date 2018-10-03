@@ -117,7 +117,10 @@ class DBInstance:
         user_meta = get_meta_fields(load=('username',), dump=('id', 'username'))
 
         message_meta = get_meta_fields(
-            load=('text',), dump=('id', 'text', 'timestamp'))
+            load=('text',), dump=('id', 'text', 'timestamp', 'bot'))
+
+        um = self._instance.UserMessage
+        uwm = self._instance.WozUserMessage
 
         class UserWebSchema(self._instance.User.schema.as_marshmallow_schema()):
             __mongoload__ = user_meta.load
@@ -131,12 +134,16 @@ class DBInstance:
         class MessageWebSchema(
                 self._instance.Context.schema.as_marshmallow_schema()):
             __mongoload__ = message_meta.load
-            __mongodump__ = ('id', 'message.text', 'timestamp')
+            __mongodump__ = ('id', 'message.text', 'message._cls', 'timestamp')
 
             text = marshmallow.fields.Method('_get_text')
+            bot = marshmallow.fields.Method('_get_bot')
 
             def _get_text(self, obj):
                 return obj.message.text
+
+            def _get_bot(self, obj):
+                return not isinstance(obj.message, (um, uwm))
 
             class Meta:
                 fields = message_meta.fields
