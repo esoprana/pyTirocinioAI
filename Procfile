@@ -1,1 +1,1 @@
-web: python -m progTiroc
+web: make run

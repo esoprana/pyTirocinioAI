@@ -207,9 +207,15 @@ class AI:
         DATA_LOCK = 'data.lock'
 
         res: Tuple[ObjectId, ObjectId]
-
         import os
-        if os.path.isfile(DATA_LOCK):  # If database wasn't alredy initialized
+
+        print(os.environ)
+        if 'FIRST_TIME' in os.environ and 'FALLBACK_RULE' in os.environ:
+            default_topic = ObjectId(os.environ['DEFAULT_TOPIC'])
+            fallback_rule = ObjectId(os.environ['FALLBACK_RULE'])
+
+            res = (default_topic, fallback_rule)
+        elif os.path.isfile(DATA_LOCK):  # If database wasn't alredy initialized
             print('DB ALREADY INITIALIZED')
 
             with open(DATA_LOCK, 'r') as f:

@@ -1,7 +1,15 @@
+import json
+import os
+
 import dialogflow_v2 as dialogflow
 import google.cloud.language
 
 from google.protobuf.json_format import MessageToDict
+
+from google.oauth2 import service_account
+
+credential = service_account.Credentials.from_service_account_info(
+    json.loads(os.environ['GOOGLE_APPLICATION_CREDENTIALS_RAW']))
 
 
 def analyze_intent(project_id, session_id, text: str, language_code, log):
@@ -9,7 +17,7 @@ def analyze_intent(project_id, session_id, text: str, language_code, log):
 
     Using the same `session_id` between requests allows continuation
     of the conversaion."""
-    session_client = dialogflow.SessionsClient()
+    session_client = dialogflow.SessionsClient(credentials=credential)
 
     session = session_client.session_path(project_id, session_id)
     log.info('Session path: {}\n'.format(session))
@@ -29,7 +37,8 @@ def analyze_intent(project_id, session_id, text: str, language_code, log):
 
 
 def analyze_categories(text: str, log) -> list:
-    client = google.cloud.language.LanguageServiceClient()
+    client = google.cloud.language.LanguageServiceClient(credentials=credential)
+
     document = google.cloud.language.types.Document(
         content=text,
         type=google.cloud.language.enums.Document.Type.PLAIN_TEXT,
@@ -45,7 +54,7 @@ def analyze_categories(text: str, log) -> list:
 
 
 def analyze_sentiment(text: str, log) -> dict:
-    client = google.cloud.language.LanguageServiceClient()
+    client = google.cloud.language.LanguageServiceClient(credentials=credential)
     document = google.cloud.language.types.Document(
         content=text,
         type=google.cloud.language.enums.Document.Type.PLAIN_TEXT,
