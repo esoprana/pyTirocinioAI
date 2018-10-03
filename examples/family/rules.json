@@ -32,8 +32,7 @@
 			"immediatlyNext": false,
 			"isQuestion": false
 		}
-	},
-	{
+	}, {
 		"tmpUUID": "5d7afeaa-88e0-435a-bebb-e552ddd79ac1",
 		"condition": {
 			"onParams": [
@@ -96,14 +95,13 @@
                 "intent": {
 					"intent": {
 						"name__eq": "efabce53-1fe3-4f74-84c7-a8a95d55647c"
-					},
-					"params": {
-						"__has__": ["num"]
 					}
                 }
             },
             "onParams": [
-                {
+				{
+					"tmpUUID__type__": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411"
+				}, {
                     "tmpUUID__type__": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987",
 					"__top__": true
                 }
@@ -112,9 +110,7 @@
         },
         "score": 200,
         "action": {
-            "text": [
-                "How are they called?"
-            ],
+            "text": [""],
             "operations": [
 				{
                     "op": "exportName",
@@ -122,15 +118,39 @@
                     "name": "'num_' + m['intent']['parameters']['os']",
                     "val": "m['intent']['parameters']['num']"
                 }, {
-					"op": "push",
-					"tmpUUIDtopic": "205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73"
-				}, {
 					"op": "exportName",
 					"index": 1,
 					"name": "'type'",
 					"val": "m['intent']['parameters']['os']"
 				}
             ],
+            "immediatlyNext": true,
+            "isQuestion": true
+        }
+    }, {
+        "tmpUUID": "4f3dd511-5800-4c98-9a1a-7c0976f344cd",
+        "condition": {
+            "onParams": [
+				{
+					"tmpUUID__type__": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411"
+				}, {
+                    "tmpUUID__type__": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987",
+					"__top__": true
+                }
+            ],
+            "py": "_[1].values['type'] not in _[0].values"
+        },
+        "score": 200,
+        "action": {
+            "text": [
+                "How are your {_[1].values[type]} called?"
+            ],
+            "operations": [
+				{
+					"op": "push",
+					"tmpUUIDtopic": "205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73"
+				}
+			],
             "immediatlyNext": false,
             "isQuestion": true
         }
@@ -146,7 +166,10 @@
 			},
 			"onParams": [
                 {
-					"tmpUUID__type__": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987"
+					"tmpUUID__type__": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411"
+				}, {
+					"tmpUUID__type__": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987",
+					"__has__": ["type"]
 				}, {
 					"tmpUUID__type__": "205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73",
 					"__top__": true
@@ -175,7 +198,7 @@
         "condition": {
             "onParams": [
                 {
-                    "tmpUUID__type__": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987",
+                    "tmpUUID__type__": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411",
 					"__has_or__": [
 						"num_children",
 						"num_daughter",
@@ -189,10 +212,8 @@
 					"__nhas_and__": [
 						"often_visit"
 					]
-                }, {
-					"tmpUUID__type__": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411"
-				}
-            ],
+                }
+			],
             "py": "True"
         },
         "score": 200,
@@ -204,11 +225,6 @@
 				{
 					"op": "push",
 					"tmpUUIDtopic": "682b5253-459d-4ea3-b1b0-7fda75d28e08"
-				}, {
-					"op": "exportName",
-					"index": 0,
-					"name": "'often_visit'",
-					"val": true
 				}
 			],
             "immediatlyNext": false,
@@ -229,6 +245,9 @@
 			},
 			"onParams": [
 				{
+					"tmpUUID__type__": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987"
+				},
+				{
 					"tmpUUID__type__": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411"
 				}, {
 					"tmpUUID__type__": "682b5253-459d-4ea3-b1b0-7fda75d28e08",
@@ -241,7 +260,8 @@
 		"action": {
 			"text": ["They're good kids"],
 			"operations": [
-				{"op": "popUntil", "index": 1},
+				{"op": "exportName", "index": 1, "name":"'often_visit'", "val": "True" },
+				{"op": "popUntil", "index": 2},
 				{"op": "pop"}
 			],
             "immediatlyNext": true,

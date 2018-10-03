@@ -6,11 +6,11 @@
 	}, {
 		"tmpUUID": "9e104f97-fd3e-4526-bab3-e4d4a1f4c411",
 		"name": "Family",
-		"rules": ["2a82a4e4-fb0b-43f9-bc2e-bdcd8f03078f"]
+		"rules": ["2a82a4e4-fb0b-43f9-bc2e-bdcd8f03078f", "c6e13f45-4bd8-4441-a426-92b48c686d85"]
 	}, {
 		"tmpUUID": "ef4d0c81-3b70-4ea6-a299-9ac135e0c987",
 		"name": "Ask how many children",
-		"rules": ["205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73", "c6e13f45-4bd8-4441-a426-92b48c686d85"]
+		"rules": ["205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73", "4f3dd511-5800-4c98-9a1a-7c0976f344cd"]
 	}, {
 		"tmpUUID": "682b5253-459d-4ea3-b1b0-7fda75d28e08",
 		"name": "See offspring often",
@@ -18,6 +18,6 @@
 	}, {
 		"tmpUUID": "205ef21e-eb53-4e65-a9eb-2eb9a5ec7c73",
 		"name": "Ask offspring names",
-		"rules": ["56fec25c-909b-4966-a248-a357eee0e224"]
+		"rules": ["56fec25c-909b-4966-a248-a357eee0e224", "56fec25c-909b-4966-a248-a357eee0e224"]
 	}
 ]
