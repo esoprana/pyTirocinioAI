@@ -39,7 +39,6 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
 
         try:
             suffix: str = matches.group(2)
-            print(v, to_check)
             if suffix is None:
                 return check(v, to_check)
             if suffix == 'lt':
@@ -70,7 +69,7 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
         return False
 
     nhas_attr = condition.get('__nhas__', condition.get('__nhas_or__'))
-    if (nhas_attr is not None) and any(
+    if (nhas_attr is not None) and all(
         [value.get(k) is not None for k in nhas_attr]):
         return False
 
@@ -79,8 +78,8 @@ def check(condition: Dict[str, Any], value: Dict[str, Any]) -> bool:
         [value.get(k) is None for k in has_attr_or]):
         return False
 
-    nhas_attr_all = condition.get('__nhas__', condition.get('__nhas_all__'))
-    if (nhas_attr_all is not None) and all(
+    nhas_attr_all = condition.get('__nhas_and__')
+    if (nhas_attr_all is not None) and any(
         [value.get(k) is not None for k in nhas_attr_all]):
         return False
 
@@ -102,13 +101,13 @@ def possible(params: List[db.types.Params],
     for i, p in enumerate(params):
         # Se il tipo non è corretto non considerare questo caso
 
-        if str(p.ofTopic.pk) != str(
-                condition['__type__']):  # TODO: Change to __type__
+        if str(p.ofTopic.pk) != str(condition['__type__']):
             continue
 
         # Se qualche condizione(di quelle standard immediatamente controllabili) non è rispettata
         # non considerare questo caso
-        if not check(condition, p.values):
+        c = check(condition, p.values)
+        if not c:
             continue
 
         # Se ha passato tutte le casistiche considera questo caso
