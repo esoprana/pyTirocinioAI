@@ -210,7 +210,8 @@ class AI:
         import os
 
         print(os.environ)
-        if 'FIRST_TIME' in os.environ and 'FALLBACK_RULE' in os.environ:
+        if 'DEFAULT_TOPIC' in os.environ and 'FALLBACK_RULE' in os.environ:
+            print('USE ENV VARS FOR DB')
             default_topic = ObjectId(os.environ['DEFAULT_TOPIC'])
             fallback_rule = ObjectId(os.environ['FALLBACK_RULE'])
 
