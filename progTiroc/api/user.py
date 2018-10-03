@@ -99,7 +99,7 @@ class UserList(HTTPMethodView):
 
             paramFirst = db_ctx.Params(
                 ofTopic=request.app.default_topic,
-                values={},
+                values=request.json,
                 startTime=datetime.now(),
                 priority=0)
 

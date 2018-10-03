@@ -121,7 +121,7 @@ def setup() -> Sanic:
             loop=loop)  # Set db instance
 
         app.ai = AI(app.config['PROJECTID'], None)
-        defaults = await app.ai.create_database(app.dbi, 'examples/family/')
+        defaults = await app.ai.create_database(app.dbi, 'data')
         app.default_topic = defaults[0]
         app.fallback_rule = defaults[1]
 
