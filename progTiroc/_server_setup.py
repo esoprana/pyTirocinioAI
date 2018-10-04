@@ -109,7 +109,9 @@ def setup() -> Sanic:
     app.blueprint(api)  # For api
     app.blueprint(openapi_blueprint)  # For openapi files
     app.blueprint(swagger_blueprint)  # For swagger UI
-    app.static('index.html', 'ui/index.html')
+
+    app.static('/', 'ui/index.html')
+    app.static('/index.html', 'ui/index.html')
 
     @app.listener('before_server_start')
     async def init(sanic, loop):

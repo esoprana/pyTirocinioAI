@@ -61,6 +61,17 @@
 						</div>
 					</v-container>
 
+					  <v-layout row justify-center>
+						<v-dialog v-model="dialog" persistent max-width="290">
+						  <v-card>
+							<v-card-title class="headline">Please wait</v-card-title>
+							<v-card-text>Wait until the request is complete</v-card-text>
+							<v-progress-linear :indeterminate="true"></v-progress-linear>
+						  </v-card>
+						</v-dialog>
+					  </v-layout>
+
+
 					<v-form @submit.prevent="sendMessage">
 						<v-container>
 							<v-layout row wrap>
@@ -83,8 +94,10 @@
 		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
 		<script>
+			const baseUrl = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+
 			function updateMessages(userId, after) {
-				url = 'http://localhost:5000/api/message/user/' + userId
+				url = baseUrl + '/api/message/user/' + userId
 				if (after != undefined) {
 					url+='?after='+encodeURIComponent(after)
 				}
@@ -99,7 +112,7 @@
 			}
 
 			function updateUsers(){
-				fetch('http://localhost:5000/api/user').then(x => x.json()).then(x => {
+				fetch(baseUrl + '/api/user').then(x => x.json()).then(x => {
 					app.users = x
 				}).catch(w => alert('Errore:' + w))
 			}
@@ -107,7 +120,8 @@
 			function sendMessage(e){
 				e.preventDefault()
 				console.log(this.select.id);
-				fetch('http://localhost:5000/api/message/' + this.select.id +'/000000000000000000000001', {
+				this.dialog = true
+				fetch(baseUrl + '/api/message/' + this.select.id +'/000000000000000000000001', {
 					method: 'PUT',
 					headers: {
 					  'Accept': 'application/json',
@@ -116,7 +130,13 @@
 					body: JSON.stringify({
 						'text': this.msg
 					})
-				}).then(x => x.json()).then(x => updateMessages(this.select.id, this.messages[this.messages.length-1].timestamp)).then(w => this.msg = '').catch(e => alert(e))
+				}).then(
+					x => x.json()
+				).then(
+					x => updateMessages(this.select.id, this.messages[this.messages.length-1].timestamp)
+				).then(
+					w => {this.dialog = false; this.msg = '';}
+				).catch(e => alert(e))
 			}
 
 			const app = new Vue({
@@ -126,7 +146,8 @@
 						users: [],
 						messages: [],
 						select: {},
-						msg: ""
+						msg: "",
+						dialog: false
 					}
 				},
 				watch: {
