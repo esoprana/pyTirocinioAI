@@ -1,4 +1,5 @@
 import json from './json.js'
+import topicLink from './topicLink.js'
 
 export default {
 	template: `
@@ -25,9 +26,20 @@ export default {
 			<v-list subheader>
 			  <v-subheader>Condition</v-subheader>
 				<json title="OnMsg"    :json="raw.condition.onMsg"    v-if="raw.condition.onMsg !== null"></json>
-				<json title="OnParams" :json="raw.condition.onParams" ></json>
 				<json title="Py"       :json="raw.condition.py"       ></json>
 			</v-list>
+			<v-divider></v-divider>
+			<v-list subheader v-for="(item, index) in raw.condition.onParams">
+			  <v-subheader>Condition.OnParams {{ index }} </v-subheader>
+			  <v-list-tile>
+				<v-list-tile-content>
+				  <v-list-tile-title>Topic used</v-list-tile-title>
+				  <v-list-tile-sub-title><a-topic :id="item.__type__"/></v-list-tile-sub-title>
+				</v-list-tile-content>
+			  </v-list-tile>
+				<json title="Other conditions" :json="item" ></json>
+			</v-list>
+
 			<v-divider></v-divider>
 			<v-list subheader>
 			  <v-subheader>Action</v-subheader>
@@ -74,6 +86,9 @@ export default {
 		},
 	},
 	components: {
-		'json': json
+		'json': json,
+	},
+	beforeCreate: function () {
+	  this.$options.components['a-topic'] = topicLink
 	}
 }

@@ -4,6 +4,7 @@ from .user import ns as user_ns
 from .message import ns as message_ns
 from .context import ns as context_ns
 from .rule import ns as rule_ns
+from .topic import ns as topic_ns
 
 
 def create_api() -> Blueprint:
@@ -21,5 +22,8 @@ def create_api() -> Blueprint:
 
     rule_ns.url_prefix = '/rule'
     rule_ns.register(blueprint, {})
+
+    topic_ns.url_prefix = '/topic'
+    topic_ns.register(blueprint, {})
 
     return blueprint

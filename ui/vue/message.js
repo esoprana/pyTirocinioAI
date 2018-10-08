@@ -17,13 +17,9 @@ export default {
 				</v-card-text>
 			</v-flex>
 		  </v-layout>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-			<v-btn flat outline color="white" @click='showRaw()'>Show detailed info</v-btn>
-          </v-card-actions>
 		  <v-divider light></v-divider>
 		  <v-card-actions class="pa-3">
-			<span @click='showRaw()'>{{ message.id }}</span>&nbsp;&nbsp;<v-spacer></v-spacer>&nbsp;&nbsp;{{ message.timestamp }}
+			<v-btn flat outline color="white" @click='showRaw()' small>{{ message.id }}</v-btn>&nbsp;&nbsp;<v-spacer></v-spacer>&nbsp;&nbsp;{{ message.timestamp }}
 			<context :id='message.id' ref="ctx"></context>
 		  </v-card-actions>
 		</v-card>

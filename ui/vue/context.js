@@ -1,5 +1,6 @@
 import json from './json.js'
 import rule from './rule.js'
+import topicLink from './topicLink.js'
 
 export default {
 	template: `
@@ -64,7 +65,7 @@ export default {
 				  <v-list-tile>
 					<v-list-tile-content>
 					  <v-list-tile-title>OfTopic</v-list-tile-title>
-					  <v-list-tile-sub-title>{{ item.ofTopic }}</v-list-tile-sub-title>
+					  <v-list-tile-sub-title><a-topic :id="item.ofTopic"/></v-list-tile-sub-title>
 					</v-list-tile-content>
 				  </v-list-tile>
 				  <v-list-tile>
@@ -117,6 +118,7 @@ export default {
 	},
 	components: {
 		'json': json,
-		'rule': rule
+		'rule': rule,
+		'a-topic': topicLink,
 	}
 }

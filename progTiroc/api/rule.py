@@ -26,10 +26,10 @@ class SingleRule(HTTPMethodView):
 
             if error:
                 print(error)
-                return json({'message': 'Impossible to serialize message'}, 500)
+                return json({'message': 'Impossible to serialize rule'}, 500)
 
             return json(data, 200)
 
 
-ns = Blueprint('Message')
+ns = Blueprint('Rule')
 ns.add_route(SingleRule.as_view(), '/<oid:string>/')
