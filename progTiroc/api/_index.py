@@ -2,6 +2,7 @@ from sanic import Blueprint
 
 from .user import ns as user_ns
 from .message import ns as message_ns
+from .context import ns as context_ns
 
 
 def create_api() -> Blueprint:
@@ -13,5 +14,8 @@ def create_api() -> Blueprint:
 
     message_ns.url_prefix = '/message'
     message_ns.register(blueprint, {})
+
+    context_ns.url_prefix = '/context'
+    context_ns.register(blueprint, {})
 
     return blueprint
