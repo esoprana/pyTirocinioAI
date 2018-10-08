@@ -15,6 +15,6 @@ export default {
 		}
 	},
 	beforeCreate: function () {
-	  this.$options.components.topic = rule
+	  this.$options.components.topic = topic
 	}
 }

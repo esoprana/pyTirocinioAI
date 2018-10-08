@@ -83,7 +83,6 @@ export default {
 
 				  <json title="Values" :json="item.values"></json>
 				</v-list>
-				<v-divider inset></v-divider>
 			</v-list>
 		  </v-card>
 		</v-dialog>
