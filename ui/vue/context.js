@@ -1,3 +1,6 @@
+import json from './json.js'
+import rule from './rule.js'
+
 export default {
 	template: `
 	<v-layout row justify-center v-if="raw !== undefined">
@@ -13,10 +16,10 @@ export default {
 			<v-list subheader>
 			  <v-subheader>General</v-subheader>
 			  <v-list-tile>
-				<v-list-tile-content>
-				  <v-list-tile-title>OfUser</v-list-tile-title>
-				  <v-list-tile-sub-title>{{ raw.ofUser }}</v-list-tile-sub-title>
-				</v-list-tile-content>
+					<v-list-tile-content>
+					  <v-list-tile-title>OfUser</v-list-tile-title>
+					  <v-list-tile-sub-title>{{ raw.ofUser }}</v-list-tile-sub-title>
+					</v-list-tile-content>
 			  </v-list-tile>
 			  <v-list-tile>
 				<v-list-tile-content>
@@ -43,47 +46,21 @@ export default {
 			  <v-list-tile v-if="raw.message.cls == 'BotMessage'">
 				<v-list-tile-content>
 				  <v-list-tile-title>ofRule</v-list-tile-title>
-				  <v-list-tile-sub-title>{{ raw.message.fromRule }}</v-list-tile-sub-title>
+				  <v-list-tile-sub-title @click="showRule()"><a>{{ raw.message.fromRule }}</a></v-list-tile-sub-title>
+					<rule :id="raw.message.fromRule" ref="ofRule"></rule>
 				</v-list-tile-content>
 			  </v-list-tile>
-
-				<v-list-group no-action  v-if="raw.message.cls == 'UserMessage'">
-				  <v-list-tile slot="activator">
-					<v-list-tile-content>
-					  <v-list-tile-title>Intent</v-list-tile-title>
-					</v-list-tile-content>
-				  </v-list-tile>
-					<pre style="width: 100%"><code style="width: 100%">{{ raw.message.intent }}</code></pre>
-				</v-list-group>
-				<v-list-group no-action  v-if="raw.message.cls == 'UserMessage'">
-				  <v-list-tile slot="activator">
-					<v-list-tile-content>
-					  <v-list-tile-title>Sentiment</v-list-tile-title>
-					</v-list-tile-content>
-				  </v-list-tile>
-					<pre style="width: 100%"><code style="width: 100%">{{ raw.message.sentiment }}</code></pre>
-				</v-list-group>
-				<v-list-group no-action  v-if="raw.message.cls == 'UserMessage'">
-				  <v-list-tile slot="activator">
-					<v-list-tile-content>
-					  <v-list-tile-title>Photo</v-list-tile-title>
-					</v-list-tile-content>
-				  </v-list-tile>
-					<pre style="width: 100%"><code style="width: 100%">{{ raw.message.photo }}</code></pre>
-				</v-list-group>
-				<v-list-group no-action  v-if="raw.message.cls == 'UserMessage'">
-				  <v-list-tile slot="activator">
-					<v-list-tile-content>
-					  <v-list-tile-title>Google Topic</v-list-tile-title>
-					</v-list-tile-content>
-				  </v-list-tile>
-					<pre style="width: 100%"><code style="width: 100%">{{ raw.message.googleTopic }}</code></pre>
-				</v-list-group>
+			<div v-if="raw.message.cls == 'UserMessage'">
+				<json title="Intent"       :json="raw.message.intent"     ></json>
+				<json title="Sentiment"    :json="raw.message.sentiment"  ></json>
+				<json title="Photo"        :json="raw.message.photo"      ></json>
+				<json title="Google Topic" :json="raw.message.googleTopic"></json>
+			</div>
 			</v-list>
 			<v-divider></v-divider>
 			<v-list v-for="(item, index) in raw.params">
 				<v-list subheader>
-				  <v-subheader>Params {{index }}</v-subheader>
+				  <v-subheader>Params {{ index }}</v-subheader>
 				  <v-list-tile>
 					<v-list-tile-content>
 					  <v-list-tile-title>OfTopic</v-list-tile-title>
@@ -103,28 +80,10 @@ export default {
 					</v-list-tile-content>
 				  </v-list-tile>
 
-					<v-list-group no-action>
-					  <v-list-tile slot="activator">
-						<v-list-tile-content>
-						  <v-list-tile-title>Values</v-list-tile-title>
-						</v-list-tile-content>
-					  </v-list-tile>
-						<pre style="width: 100%"><code style="width: 100%">{{ item.values }}</code></pre>
-					</v-list-group>
+				  <json title="Values" :json="item.values"></json>
 				</v-list>
 				<v-divider inset></v-divider>
 			</v-list>
-		  </v-card>
-		</v-dialog>
-	  </v-layout>
-
-
-	  <v-layout row justify-center>
-		<v-dialog v-model="waiting" persistent max-width="290">
-		  <v-card>
-			<v-card-title class="headline">Please wait</v-card-title>
-			<v-card-text>Wait until the request is complete</v-card-text>
-			<v-progress-linear :indeterminate="true"></v-progress-linear>
 		  </v-card>
 		</v-dialog>
 	  </v-layout>
@@ -135,7 +94,6 @@ export default {
 		return {
 			'show': false,
 			'raw': undefined,
-			'waiting': false,
 		}
 	},
 	watch: {
@@ -152,4 +110,13 @@ export default {
 			}
 		},
 	},
+	methods: {
+		showRule(){
+			this.$refs.ofRule.show=true;
+		}
+	},
+	components: {
+		'json': json,
+		'rule': rule
+	}
 }
