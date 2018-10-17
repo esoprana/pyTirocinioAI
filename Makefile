@@ -39,7 +39,7 @@ clean_pytest_cache:
 # === Normal rules ===========================================================
 # Run rules
 run:
-	@cd ui_template; npm run build -- --mode production; cd ..; PYTHONPATH=$PWD:$PYTHONPATH python -m progTiroc
+	@PYTHONPATH=$PWD:$PYTHONPATH python -m progTiroc
 
 runi:
 	@PYTHONPATH=$PWD:$PYTHONPATH python -i -m progTiroc
