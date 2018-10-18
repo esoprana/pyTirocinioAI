@@ -7,7 +7,7 @@
       <v-toolbar-title style="margin-right: 1rem">User</v-toolbar-title>
       <v-select
         v-model="select"
-        :hint="`${select.id}`"
+        :hint="`${select.id || 'Pick a user'}`"
         :items="users"
         item-text="username"
         item-value="id"
@@ -86,99 +86,78 @@
   </v-app>
 </template>
 
-<script>
+<script type="application/typescript">
+
+import ApiClient from '@/ApiClient.ts'
 import message from '@/components/message.vue'
 
-const baseUrl = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
-
 export default {
-  el: "#app",
-  data(){
-    return {
-      users: [],
-      messages: [],
-      select: {},
-      msg: "",
-      waiting: false,
-      newUser: false,
-      newUsername: ""
-    }
-  },
-  created: function () {
-    this.updateUsers();
-  },
-  watch: {
-    select(val) {
-      this.updateMessages(val.id)
-    }
-  },
-  methods: {
-    updateMessages(userId, after) {
-      var url = baseUrl + '/api/message/user/' + userId
-      if (after != undefined) {
-        url+='?after='+encodeURIComponent(after)
-      }
-
-      return fetch(url).then(x => x.json()).then(x => {
-        if (after != undefined) {
-          this.messages = app.messages.concat(x.reverse())
-        } else {
-          this.messages = x.reverse()
+    el: "#app",
+    data(){
+        return {
+            apiClient: undefined,
+            users: [],
+            messages: [],
+            select: {},
+            msg: "",
+            waiting: false,
+            newUser: false,
+            newUsername: ""
         }
-      }).catch(w => alert('Errore:' + w))
     },
-    updateUsers(){
-      return fetch(baseUrl + '/api/user').then(x => x.json()).then(x => {
-        this.users = x
-      }).catch(w => alert('Errore:' + w))
+    created: function () {
+        ApiClient.init(process.env.VUE_APP_ROOT_API);
+        ApiClient.Instance.getUsers().then(r => this.users = r);
     },
-    sendMessage(e){
-      e.preventDefault()
-
-      this.waiting = true
-      return fetch(baseUrl + '/api/message/' + this.select.id +'/000000000000000000000001', {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+    watch: {
+        select(val) {
+            this.updateMessages(this.select.id);
+        }
+    },
+    methods: {
+        updateMessages(userId, after) {
+            return ApiClient.Instance.getMessages(userId, after).then(r => {
+                if (after !== undefined) {
+                    this.messages = this.messages.concat(r);
+                } else {
+                    this.messages = r;
+                }
+            }).catch(w => alert(w));
         },
-        body: JSON.stringify({
-          'text': this.msg
-        })
-      }).then(
-        x => x.json()
-      ).then(
-        x => updateMessages(this.select.id, this.messages[this.messages.length-1].timestamp)
-      ).then(
-        w => {this.waiting = false; this.msg = '';}
-      ).catch(e => alert(e))
-    },
-    createUser(e){
-      e.preventDefault()
-
-      this.waiting = true
-      fetch(baseUrl + '/api/user', {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+        updateUsers(){
+            return ApiClient.Instance
+                .getUsers()
+                .then(users => this.users)
+                .catch(w => alert('Errore:' + w));
         },
-        body: JSON.stringify({
-          'username': this.newUsername
-        })
-      }).then(
-        user => user.json()
-      ).then(
-        user => this.updateUsers().then(y => Promise.resolve(user))
-      ).then(
-        user => updateMessages(user.id)
-      ).then(
-        w => {this.waiting = false; this.newUser=false}
-      ).catch(e => alert(e))
+        sendMessage(e){
+            e.preventDefault();
+
+            this.waiting = true;
+            ApiClient.Instance
+                .sendMessage(this.select.id, this.msg)
+                .then( x => this.updateMessages(this.select.id, this.messages[this.messages.length-1].timestamp) )
+                .then( w => {this.waiting = false; this.msg = '';} )
+                .catch( e => alert(e) );
+        },
+        createUser(e){
+            e.preventDefault()
+
+            this.waiting = true
+            ApiClient.Instance
+                .createUser(this.newUsername)
+                .then( user => this.updateUsers().then(y => Promise.resolve(user)) )
+                .then( user => {
+                  this.select.id = user.id;
+                  this.select.username= user.username;
+                  this.updateMessages(user.id);
+                })
+                .then( w => {this.waiting = false; this.newUser=false;} )
+                .catch(e => alert(e));
+        }
+    },
+    components: {
+        'message': message
     }
-  },
-  components: {
-    'message': message
-  }
 }
 </script>

@@ -1,51 +1,50 @@
 <template>
-  <v-card :color="message.bot?'purple':'green'" class="white--text" v-bind:class="{user: !message.bot}" >
-    <v-layout row>
-    <v-flex xs10>
-      <v-card-title primary-title>
-      <div>
-        <div class="headline">{{ message.text }}</div>
-      </div>
-      </v-card-title>
-    </v-flex>
-    <v-flex xs2 style="text-align: right">
-      <v-card-text >
-        {{ message.bot?'Bot':'User' }}
-      </v-card-text>
-    </v-flex>
-    </v-layout>
-    <v-divider light></v-divider>
-    <v-card-actions class="pa-3">
-    <v-btn flat outline color="white" @click='showRaw()' small>{{ message.id }}</v-btn>&nbsp;&nbsp;<v-spacer></v-spacer>&nbsp;&nbsp;{{ message.timestamp }}
-    <context :id='message.id' ref="ctx"></context>
-    </v-card-actions>
-  </v-card>
+    <v-card :color="message.bot?'purple':'green'" class="white--text" v-bind:class="{user: !message.bot}" >
+        <v-layout row>
+            <v-flex xs10>
+                <v-card-title primary-title>
+                    <div>
+                        <div class="headline">{{ message.text }}</div>
+                    </div>
+                </v-card-title>
+            </v-flex>
+            <v-flex xs2 style="text-align: right">
+                <v-card-text>{{ message.bot?'Bot':'User' }}</v-card-text>
+            </v-flex>
+        </v-layout>
+        <v-divider light></v-divider>
+        <v-card-actions class="pa-3">
+            <v-btn flat outline color="white" @click='showRaw()' small>{{ message.id }}</v-btn>&nbsp;&nbsp;<v-spacer></v-spacer>&nbsp;&nbsp;{{ message.timestamp }}
+            <context :id='message.id' ref="ctx"></context>
+        </v-card-actions>
+    </v-card>
 </template>
+
+<style>
+.user{
+    margin-left: auto;
+    margin-right: 0
+}
+</style>
+
 <script>
 import context from '@/components/context.vue'
 
 export default {
-  name: 'message',
-  props: ['message'],
-  data () {
-    return {
-      'raw': {
-      }
+    name: 'message',
+    props: ['message'],
+    data () {
+        return {
+            'raw': {}
+        }
+    },
+    methods: {
+        showRaw () {
+            this.$refs.ctx.show = true
+        }
+    },
+    components: {
+        'context': context
     }
-  },
-  methods: {
-    showRaw () {
-      this.$refs.ctx.show = true
-    }
-  },
-  components: {
-    'context': context
-  }
 }
 </script>
-<style>
-.user{
-	margin-left: auto;
-	margin-right: 0
-}
-</style>
