@@ -4,17 +4,14 @@ export default class Api {
     private url: string;
 
     constructor(url: string) {
-        this.url = url;
-        if (!this.url.endsWith('/')) {
-            this.url += '/';
-        }
+        this.url = url.endsWith('/') ? url.slice(0, -1) : url;
     }
 
     public static init(url: string) {
         this._instance = new Api(url);
     }
 
-    public static get Instance() : Api|undefined {
+    public static get Instance(): Api|undefined {
         if (this._instance === undefined) {
             throw new Error('ApiClient not initialized(use ApiClient.init(url: string))');
         }
@@ -23,24 +20,27 @@ export default class Api {
     }
 
     public getContext(id: string) {
-        return fetch(this.url + 'context/' + id).then( (x) => x.json() );
+        const url = `${this.url}/context/${id}`;
+
+        return fetch(url).then( (x) => x.json() );
     }
 
     public getMessages(userId: string, after: string|undefined) {
-        let url = this.url + 'message/user/' + userId;
-        if (after !== undefined) {
-            url += '?after=' + encodeURIComponent(after);
-        }
+        const url = `${this.url}/message/user/${userId}${after === undefined? '': '?after' + encodeURIComponent(after)}`;
 
         return fetch(url).then( (x) => x.json() ).then( (x) => x.reverse() );
     }
 
     public getUsers() {
-        return fetch(this.url + 'user/').then( (x) => x.json() );
+        const url = `${this.url}/user/`;
+
+        return fetch(url).then( (x) => x.json() );
     }
 
     public sendMessage(id: number, msg: string) {
-        return fetch(this.url + 'message/' + id + '/000000000000000000000001', {
+        const url = `${this.url}/message/${id}/000000000000000000000001`
+
+        return fetch(url, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -53,7 +53,9 @@ export default class Api {
     }
 
     public createUser(username: string) {
-        return fetch(this.url + 'user', {
+        const url = `${this.url}/user`;
+
+        return fetch(url, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -66,10 +68,14 @@ export default class Api {
     }
 
     public getRule(id: string) {
-        return fetch(this.url + 'rule/' + id).then( (x) => x.json() );
+        const url = `${this.url}/rule/${id}`;
+
+        return fetch(url).then( (x) => x.json() );
     }
 
     public getTopic(id: string) {
-        return fetch(this.url + 'topic/' + id).then( (x) => x.json() );
+        const url = `${this.url}/topic/${id}`;
+
+        return fetch(url).then( (x) => x.json() );
     }
 }

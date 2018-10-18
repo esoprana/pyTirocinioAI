@@ -148,9 +148,9 @@ export default {
                 .createUser(this.newUsername)
                 .then( user => this.updateUsers().then(y => Promise.resolve(user)) )
                 .then( user => {
-                  this.select.id = user.id;
-                  this.select.username= user.username;
-                  this.updateMessages(user.id);
+                    this.select.id = user.id;
+                    this.select.username= user.username;
+                    this.updateMessages(user.id);
                 })
                 .then( w => {this.waiting = false; this.newUser=false;} )
                 .catch(e => alert(e));
