@@ -1,12 +1,12 @@
 <template>
     <div>
         <a @click="click()">{{ id }}</a>
-        <rule :id="id" ref="rule"></rule>
+        <InfoDialog tag="Rule" :id="id" ref="rule"/>
     </div>
 </template>
 
 <script>
-import rule from '@/components/rule.vue'
+import InfoDialog from '@/components/context.vue'
 
 export default {
     name: 'a-rule',
@@ -16,8 +16,8 @@ export default {
             this.$refs.rule.show = true
         }
     },
-    beforeCreate: function () {
-        this.$options.components.rule = rule
+    beforeCreate() {
+        this.$options.components.InfoDialog = InfoDialog;
     }
 }
 </script>

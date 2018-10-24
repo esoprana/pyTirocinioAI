@@ -9,9 +9,16 @@
     </v-list-group>
 </template>
 
-<script>
-export default {
-    name: 'json',
-    props: ['title', 'json']
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
+
+@Component({
+    name: 'json'
+})
+export default class Json extends Vue {
+    @Prop({ required: true }) title !: string
+    @Prop({ required: true }) json  !: object
 }
 </script>

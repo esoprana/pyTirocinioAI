@@ -1,0 +1,90 @@
+<template>
+    <div v-if="Object.keys(raw).length">
+        <v-list subheader>
+            <v-subheader>General</v-subheader>
+            <v-list-tile>
+                <v-list-tile-content>
+                    <v-list-tile-title>Score</v-list-tile-title>
+                    <v-list-tile-sub-title>{{ raw.score }}</v-list-tile-sub-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list subheader>
+            <v-subheader>Condition</v-subheader>
+            <json title="OnMsg"    :json="raw.condition.onMsg"    v-if="raw.condition.onMsg !== null"></json>
+            <json title="Py"       :json="raw.condition.py"       ></json>
+        </v-list>
+        <v-divider></v-divider>
+        <v-list subheader v-for="(item, index) in raw.condition.onParams">
+            <v-subheader>Condition.OnParams {{ index }} </v-subheader>
+            <v-list-tile>
+                <v-list-tile-content>
+                    <v-list-tile-title>Topic used</v-list-tile-title>
+                    <v-list-tile-sub-title><a-topic :id="item.__type__"/></v-list-tile-sub-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            <json title="Other conditions" :json="item" ></json>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list subheader>
+            <v-subheader>Action</v-subheader>
+            <v-list-tile>
+                <v-list-tile-content>
+                    <v-list-tile-title>ImmediatlyNext</v-list-tile-title>
+                    <v-list-tile-sub-title>{{ raw.action.immediatlyNext }}</v-list-tile-sub-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile>
+                <v-list-tile-content>
+                    <v-list-tile-title>IsQuestion</v-list-tile-title>
+                    <v-list-tile-sub-title>{{ raw.action.isQuestion }}</v-list-tile-sub-title>
+                </v-list-tile-content>
+            </v-list-tile>
+            <json title="Operations" :json="raw.action.operations"></json>
+            <json title="Text"       :json="raw.action.text"      ></json>
+        </v-list>
+    </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
+
+import json from '@/components/json.vue';
+import topicLink from '@/components/topicLink.vue';
+
+import ApiClient from '@/ApiClient.ts';
+
+@Component({
+    name: 'RuleView',
+    components: {
+        json,
+        'a-topic': topicLink
+    }
+})
+export default class RuleView extends Vue {
+    raw: object = {}
+
+    @Prop({ required: true }) id!: string
+
+    created() {
+        //this.$root.waiting = true;
+
+        ApiClient.Instance
+            .getRule(this.id)
+            .then(x => {
+                this.raw = x
+                //this.$root.waiting = false
+            }).catch(e => alert(e));
+    }
+    //beforeCreate: function () {
+    //    this.$options.components['a-topic'] = topicLink
+    //}
+}
+</script>

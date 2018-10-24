@@ -1,12 +1,12 @@
 <template>
-  <div>
-    <a @click="click()">{{ id }}</a>
-    <topic :id="id" ref="topic"></topic>
-  </div>
+    <div>
+        <a @click="click()">{{ id }}</a>
+        <InfoDialog tag="Topic" :id="id" ref="topic"/>
+    </div>
 </template>
 
 <script>
-import topic from '@/components/topic.vue'
+import InfoDialog from '@/components/context.vue'
 
 export default {
     name: 'a-topic',
@@ -16,8 +16,8 @@ export default {
             this.$refs.topic.show = true
         }
     },
-    beforeCreate: function () {
-        this.$options.components.topic = topic
+    beforeCreate() {
+        this.$options.components.InfoDialog = InfoDialog;
     }
 }
 </script>

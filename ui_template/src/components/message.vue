@@ -15,36 +15,40 @@
         <v-divider light></v-divider>
         <v-card-actions class="pa-3">
             <v-btn flat outline color="white" @click='showRaw()' small>{{ message.id }}</v-btn>&nbsp;&nbsp;<v-spacer></v-spacer>&nbsp;&nbsp;{{ message.timestamp }}
-            <context :id='message.id' ref="ctx"></context>
+            <InfoDialog :id='message.id' tag="Context" ref="ctx"/>
         </v-card-actions>
     </v-card>
 </template>
 
-<style>
+<style scoped>
 .user{
     margin-left: auto;
     margin-right: 0
 }
 </style>
 
-<script>
-import context from '@/components/context.vue'
+<script lang="ts">
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Prop } from 'vue-property-decorator';
 
-export default {
-    name: 'message',
-    props: ['message'],
-    data () {
-        return {
-            'raw': {}
-        }
-    },
-    methods: {
-        showRaw () {
-            this.$refs.ctx.show = true
-        }
-    },
+import InfoDialog from '@/components/context.vue'
+
+@Component({
+    name: 'Message',
     components: {
-        'context': context
+        InfoDialog
+    }
+})
+export default class Message extends Vue {
+    $refs!: {
+        ctx: InfoDialog
+    }
+
+    @Prop({ required: true }) message !: string;
+
+    showRaw () {
+        this.$refs.ctx.show = true;
     }
 }
 </script>

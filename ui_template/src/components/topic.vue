@@ -9,31 +9,13 @@
                     <v-toolbar-title>Topic {{id}}</v-toolbar-title>
                     <v-spacer></v-spacer>
                 </v-toolbar>
-                <v-list subheader>
-                    <v-subheader>General</v-subheader>
-                    <v-list-tile>
-                        <v-list-tile-content>
-                            <v-list-tile-title>Name</v-list-tile-title>
-                            <v-list-tile-sub-title>{{ raw.name }}</v-list-tile-sub-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list>
-                <v-divider></v-divider>
-                <v-list subheader>
-                    <v-subheader>Rules</v-subheader>
-                    <v-list-tile v-for="(item, index) in raw.rules">
-                        <v-list-tile-content>
-                            <v-list-tile-title>Rule {{ index }}</v-list-tile-title>
-                            <v-list-tile-sub-title><a-rule :id="item"/></v-list-tile-sub-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list>
             </v-card>
         </v-dialog>
     </v-layout>
 </template>
 
 <script>
+
 import ruleLink from '@/components/ruleLink.vue';
 
 import ApiClient from '@/ApiClient.ts';

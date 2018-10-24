@@ -3,7 +3,7 @@ import sys
 from distutils.util import strtobool
 from typing import Any
 
-from sanic import Sanic
+from sanic import Sanic, response
 from sanic_swagger import swagger_blueprint, openapi_blueprint
 import yaml
 
@@ -110,8 +110,17 @@ def setup() -> Sanic:
     app.blueprint(openapi_blueprint)  # For openapi files
     app.blueprint(swagger_blueprint)  # For swagger UI
 
-    app.static('/', 'ui/index.html')
-    app.static('/', 'ui/')
+    @app.route('/')
+    @app.route('/index.html')
+    @app.route('/ui')
+    async def default(request):
+        return response.redirect('/ui/index.html')
+
+    @app.route('/ui/index.html/<p:path>')
+    async def home(request, p):
+        return await response.file('ui/index.html')
+
+    app.static('/ui', 'ui')
 
     @app.listener('before_server_start')
     async def init(sanic, loop):

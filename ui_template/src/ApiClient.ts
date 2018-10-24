@@ -11,7 +11,7 @@ export default class Api {
         this._instance = new Api(url);
     }
 
-    public static get Instance(): Api|undefined {
+    public static get Instance(): Api {
         if (this._instance === undefined) {
             throw new Error('ApiClient not initialized(use ApiClient.init(url: string))');
         }
@@ -26,7 +26,7 @@ export default class Api {
     }
 
     public getMessages(userId: string, after: string|undefined) {
-        const url = `${this.url}/message/user/${userId}${after === undefined? '': '?after' + encodeURIComponent(after)}`;
+        const url = `${this.url}/message/user/${userId}${after === undefined? '': ('?after=' + encodeURIComponent(after))}`;
 
         return fetch(url).then( (x) => x.json() ).then( (x) => x.reverse() );
     }
