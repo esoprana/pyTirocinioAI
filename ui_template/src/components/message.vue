@@ -32,7 +32,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
-import InfoDialog from '@/components/context.vue'
+import InfoDialog from '@/components/InfoDialog.vue'
 
 @Component({
     name: 'Message',

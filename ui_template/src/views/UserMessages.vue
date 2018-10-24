@@ -28,6 +28,7 @@
 
 <script lang="js">
 import ApiClient from '@/ApiClient.ts'
+
 import message from '@/components/message.vue'
 
 export default {

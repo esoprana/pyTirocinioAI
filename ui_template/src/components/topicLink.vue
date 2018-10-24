@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import InfoDialog from '@/components/context.vue'
+import InfoDialog from '@/components/InfoDialog.vue'
 
 export default {
     name: 'a-topic',

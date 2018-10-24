@@ -82,8 +82,9 @@ import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
 import json from '@/components/json.vue';
-import InfoDialog from '@/components/context.vue';
 import topicLink from '@/components/topicLink.vue';
+
+import InfoDialog from '@/components/InfoDialog.vue';
 
 import Loading from '@/components/Loading.vue';
 
