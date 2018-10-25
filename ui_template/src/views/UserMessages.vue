@@ -1,6 +1,6 @@
 <template>
     <Loading v-if="!messages.length"/>
-    <div v-if="messages.length">
+    <div v-else>
         <v-container>
             <div ref="messageList" style="margin-top: 3rem">
                 <v-layout row v-for="message in messages" style="margin-top: 3rem" v-bind:class="{bot: message.bot}">
@@ -8,7 +8,8 @@
                 </v-layout>
             </div>
         </v-container>
-        <v-form @submit.prevent="sendMessage">
+        <Loading v-if="waiting"/>
+        <v-form @submit.prevent="sendMessage" v-else>
             <v-container>
                 <v-layout row wrap>
                     <v-flex xs12>
@@ -38,6 +39,7 @@ export default {
         return {
             messages: [],
             msg: "",
+            waiting: false,
         }
     },
     watch: {
@@ -50,11 +52,11 @@ export default {
     },
     methods: {
         updateMessages(userId, after) {
-            this.$root.waiting = true;
+            this.waiting = true;
 
             return ApiClient.Instance.getMessages(userId, after).then(r => {
                 this.messages = after === undefined ? r : this.messages.concat(r);
-                this.$root.waiting = false;
+                this.waiting = false;
             }).catch(w => alert(w));
         },
         updateUsers(){
@@ -66,12 +68,12 @@ export default {
         sendMessage(e){
             e.preventDefault();
 
-            this.$root.waiting = true;
+            this.waiting = true;
 
             ApiClient.Instance
                 .sendMessage(this.$route.params.id, this.msg)
                 .then( x => this.updateMessages(this.$route.params.id, this.messages[this.messages.length - 1].timestamp) )
-                .then( w => {this.$root.waiting = false; this.msg = '';} )
+                .then( w => {this.waiting = false; this.msg = '';} )
                 .catch( e => alert(e) );
         },
     },
