@@ -92,6 +92,8 @@ import Loading from '@/components/Loading.vue';
 
 import ApiClient from '@/ApiClient.ts';
 
+import { IContext } from '@/ApiInterfaces.ts';
+
 @Component({
     name: 'ContextView',
     components: {
@@ -100,18 +102,15 @@ import ApiClient from '@/ApiClient.ts';
     }
 })
 export default class ContextView extends Vue {
-    raw: object|null = null
+    raw: IContext|null = null
 
     @Prop({ required: true }) id !: string;
 
     created() {
-        //this.$root!.waiting = true;
-
         ApiClient.Instance
             .getContext(this.id)
             .then(x => {
                 this.raw = x;
-                //this.$root['waiting'] = false;
             }).catch(e => alert(e));
     }
 

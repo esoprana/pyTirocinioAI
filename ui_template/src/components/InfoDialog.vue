@@ -33,17 +33,12 @@ import RuleView from '@/views/Rule.vue';
 
 @Component({
     name: 'InfoDialog',
-    components: {
-        ContextView,
-        RuleView,
-        TopicView,
-    },
 })
 export default class InfoDialog extends Vue {
     show = false;
 
     @Prop({ required: true }) id  !: string;
-    @Prop({ required: true }) tag !: string;
+    @Prop({ required: true }) tag !: 'Context'|'Topic'|'Rule';
 
     get title() {
         return `${this.tag} ${this.id}`;

@@ -42,6 +42,8 @@ import Message from '@/components/Message.vue';
 
 import ApiClient from '@/ApiClient.ts';
 
+import { IMessage } from '@/ApiInterfaces.ts';
+
 @Component({
     name: 'TopicView',
     components: {
@@ -50,13 +52,13 @@ import ApiClient from '@/ApiClient.ts';
     }
 })
 export default class TopicView extends Vue {
-    @Prop({ required: true }) id !: string
-
-    messages: any[] = [];
+    messages: IMessage[] = [];
     msg: string = "";
     waiting: boolean = false;
 
-    updateMessages(userId: string, after: string|undefined) : Promise<void> {
+    @Prop({ required: true }) id !: string
+
+    updateMessages(userId: string, after: string|undefined): Promise<void> {
         this.waiting = true;
 
         return ApiClient.Instance.getMessages(userId, after).then(r => {
@@ -86,7 +88,7 @@ export default class TopicView extends Vue {
         this.updateMessages(this.id, undefined);
     }
 
-    created(){
+    created() {
         this.updateMessages(this.id, undefined);
     }
 }

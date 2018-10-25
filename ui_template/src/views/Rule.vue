@@ -49,6 +49,9 @@
             <Json title="Text"       :json="raw.action.text"      ></Json>
         </v-list>
     </div>
+    <div v-else>
+        <Loading/>
+    </div>
 </template>
 
 <script lang="ts">
@@ -58,28 +61,29 @@ import { Prop } from 'vue-property-decorator';
 
 import Json from '@/components/Json.vue';
 import InfoLink from '@/components/InfoLink.vue';
+import Loading from '@/components/Loading.vue';
 
 import ApiClient from '@/ApiClient.ts';
+
+import { IRule }from '@/ApiInterfaces.ts';
 
 @Component({
     name: 'RuleView',
     components: {
         Json,
+        Loading,
     }
 })
 export default class RuleView extends Vue {
-    raw: object|null = null
+    raw: IRule|null = null
 
     @Prop({ required: true }) id!: string
 
     created() {
-        //this.$root.waiting = true;
-
         ApiClient.Instance
             .getRule(this.id)
             .then(x => {
                 this.raw = x
-                //this.$root.waiting = false
             }).catch(e => alert(e));
     }
 

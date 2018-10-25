@@ -14,7 +14,7 @@
         </v-layout>
         <v-divider light></v-divider>
         <v-card-actions class="pa-3">
-            <v-btn flat outline color="white" @click='showRaw()' small>{{ message.id }}</v-btn>
+            <v-btn flat outline color="white" @click='$refs.ctx.show = true' small>{{ message.id }}</v-btn>
             <v-spacer class="pl-2 pr-2"></v-spacer>
             <v-tooltip bottom>
                 <span slot="activator">{{ formattedTimestamp }}</span>
@@ -38,14 +38,9 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
-import InfoDialog from '@/components/InfoDialog.vue'
+import InfoDialog from '@/components/InfoDialog.vue';
 
-interface IMessage {
-    bot: boolean;
-    id: string;
-    text: string;
-    timestamp: string;
-}
+import { IMessage } from '@/ApiInterfaces.ts';
 
 @Component({
     name: 'Message',
@@ -63,10 +58,6 @@ export default class Message extends Vue {
     get formattedTimestamp(){
         const t = this.message.timestamp;
         return (new Date(t)).toLocaleString();
-    }
-
-    showRaw () {
-        this.$refs.ctx.show = true;
     }
 }
 </script>

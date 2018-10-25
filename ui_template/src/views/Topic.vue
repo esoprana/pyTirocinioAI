@@ -31,10 +31,11 @@ import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
 import Loading from '@/components/Loading.vue';
-
 import InfoLink from '@/components/InfoLink.vue';
 
 import ApiClient from '@/ApiClient.ts';
+
+import { ITopic } from '@/ApiInterfaces.ts';
 
 @Component({
     name: 'TopicView',
@@ -45,9 +46,9 @@ import ApiClient from '@/ApiClient.ts';
 export default class TopicView extends Vue {
     @Prop({ required: true }) id !: string
 
-    raw: object|null = null
+    raw: ITopic|null = null
 
-    created(){
+    created() {
         ApiClient.Instance
             .getTopic(this.id)
             .then(x => {
