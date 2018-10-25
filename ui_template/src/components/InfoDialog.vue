@@ -35,37 +35,46 @@ import RuleView from '@/views/Rule.vue';
     name: 'InfoDialog',
 })
 export default class InfoDialog extends Vue {
-    show = false;
+    @Prop({ required: true })
+    public id  !: string;
 
-    @Prop({ required: true }) id  !: string;
-    @Prop({ required: true }) tag !: 'Context'|'Topic'|'Rule';
+    @Prop({ required: true })
+    public tag !: 'Context'|'Topic'|'Rule';
+
+    private show = false;
 
     get title() {
         return `${this.tag} ${this.id}`;
     }
 
     get fullPath() {
-        switch(this.tag) {
+        switch (this.tag) {
             case 'Context': return {
-                'name': 'context',
-                'params': { 'id': this.id }
+                name: 'context',
+                params: {
+                    id: this.id,
+                },
             };
             case 'Topic': return {
-                'name': 'topic',
-                'params': { 'id': this.id }
+                name: 'topic',
+                params: {
+                    id: this.id,
+                },
             };
             case 'Rule': return {
-                'name': 'rule',
-                'params': { 'id': this.id }
+                name: 'rule',
+                params: {
+                    id: this.id,
+                },
             };
 
             default: {
-                console.error('Wrong TagType(should be one of "Context", "Topic", "Rule")')
+                throw new Error('Wrong TagType(should be one of "Context", "Topic", "Rule")');
             }
         }
     }
 
-    beforeCreate() {
+    private beforeCreate(): void {
         this.$options!.components!.ContextView = ContextView;
         this.$options!.components!.RuleView = RuleView;
         this.$options!.components!.TopicView = TopicView;

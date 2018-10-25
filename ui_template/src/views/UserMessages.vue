@@ -42,39 +42,41 @@ import Message from '@/components/Message.vue';
 
 import ApiClient from '@/ApiClient.ts';
 
-import { IMessage } from '@/ApiInterfaces.ts';
+import { IMessage, IResponse } from '@/ApiInterfaces.ts';
 
 @Component({
     name: 'TopicView',
     components: {
         Message,
-        Loading
-    }
+        Loading,
+    },
 })
 export default class TopicView extends Vue {
-    messages: IMessage[] = [];
-    msg: string = "";
-    waiting: boolean = false;
 
-    @Prop({ required: true }) id !: string
+    @Prop({ required: true })
+    public id !: string;
 
-    updateMessages(userId: string, after: string|undefined): Promise<void> {
+    private messages: IMessage[] = [];
+    private msg: string = '';
+    private waiting: boolean = false;
+
+    private updateMessages(userId: string, after: string|undefined): Promise<void> {
         this.waiting = true;
 
-        return ApiClient.Instance.getMessages(userId, after).then(r => {
+        return ApiClient.Instance.getMessages(userId, after).then((r: IMessage[]) => {
             this.messages = after === undefined ? r : this.messages.concat(r);
             this.waiting = false;
-        }).catch(w => alert(w));
+        }).catch((w: any) => alert(w));
     }
 
-    sendMessage(ev: any){
+    private sendMessage(ev: any): void {
         ev.preventDefault();
 
         this.waiting = true;
 
         ApiClient.Instance
             .sendMessage(this.id, this.msg)
-            .then( (x: any) => this.updateMessages(this.id, this.messages[this.messages.length - 1].timestamp) )
+            .then( (x: IResponse) => this.updateMessages(this.id, this.messages[this.messages.length - 1].timestamp) )
             .then( (w: void) => {
                 this.waiting = false;
                 this.msg = '';
@@ -82,13 +84,12 @@ export default class TopicView extends Vue {
             .catch( (e: any) => alert(e) );
     }
 
-
     @Watch('id')
-    updateId(newId: string) {
+    private updateId(newId: string): void {
         this.updateMessages(this.id, undefined);
     }
 
-    created() {
+    private created(): void {
         this.updateMessages(this.id, undefined);
     }
 }

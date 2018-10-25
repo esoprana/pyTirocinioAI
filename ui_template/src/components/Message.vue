@@ -45,17 +45,14 @@ import { IMessage } from '@/ApiInterfaces.ts';
 @Component({
     name: 'Message',
     components: {
-        InfoDialog
-    }
+        InfoDialog,
+    },
 })
 export default class Message extends Vue {
-    $refs!: {
-        ctx: InfoDialog
-    }
+    @Prop({ required: true })
+    public message !: IMessage;
 
-    @Prop({ required: true }) message !: IMessage;
-
-    get formattedTimestamp(){
+    get formattedTimestamp(): string {
         const t = this.message.timestamp;
         return (new Date(t)).toLocaleString();
     }

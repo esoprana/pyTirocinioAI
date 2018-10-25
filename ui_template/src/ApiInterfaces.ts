@@ -5,7 +5,7 @@ export interface IMessage {
     bot: boolean;
 }
 
-export interface IResponse extends IMessage{
+export interface IResponse extends IMessage {
     response: string;
 }
 
@@ -39,7 +39,7 @@ interface IParams {
     priority: number;
 }
 
-export interface IContext{
+export interface IContext {
     params: IParams[];
     timestamp: string;
     ofUser: string;
@@ -47,7 +47,7 @@ export interface IContext{
 }
 
 interface IAction {
-    text: string[]
+    text: string[];
     operations: object[];
     isQuestion: boolean;
     immediatlyNext: boolean;

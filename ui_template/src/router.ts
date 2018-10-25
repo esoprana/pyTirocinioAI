@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Topic from '@/views/Topic.vue'
-import Rule from '@/views/Rule.vue'
+import Topic from '@/views/Topic.vue';
+import Rule from '@/views/Rule.vue';
 import Context from '@/views/Context.vue';
 
 import UserMessages from '@/views/UserMessages.vue';
@@ -15,27 +15,23 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: 'home'
-        },
-        {
+            name: 'home',
+        }, {
             path: '/context/:id',
             name: 'context',
             component: Context,
             props: true,
-        },
-        {
+        }, {
             path: '/rule/:id',
             name: 'rule',
             component: Rule,
             props: true,
-        },
-        {
+        }, {
             path: '/topic/:id',
             name: 'topic',
             component: Topic,
             props: true,
-        },
-        {
+        }, {
             path: '/userMessages/:id',
             name: 'userMessages',
             component: UserMessages,

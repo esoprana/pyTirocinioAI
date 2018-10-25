@@ -15,10 +15,13 @@ import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
 @Component({
-    name: 'Json'
+    name: 'Json',
 })
 export default class Json extends Vue {
-    @Prop({ required: true }) title !: string
-    @Prop({ required: true }) json  !: object
+    @Prop({ required: true })
+    public title !: string;
+
+    @Prop({ required: true })
+    public json  !: object;
 }
 </script>

@@ -65,29 +65,30 @@ import Loading from '@/components/Loading.vue';
 
 import ApiClient from '@/ApiClient.ts';
 
-import { IRule }from '@/ApiInterfaces.ts';
+import { IRule } from '@/ApiInterfaces.ts';
 
 @Component({
     name: 'RuleView',
     components: {
         Json,
         Loading,
-    }
+    },
 })
 export default class RuleView extends Vue {
-    raw: IRule|null = null
+    @Prop({ required: true })
+    public id!: string;
 
-    @Prop({ required: true }) id!: string
+    private raw: IRule|null = null;
 
-    created() {
+    private created(): void {
         ApiClient.Instance
             .getRule(this.id)
-            .then(x => {
-                this.raw = x
-            }).catch(e => alert(e));
+            .then((x: IRule) => {
+                this.raw = x;
+            }).catch((e: any) => alert(e));
     }
 
-    beforeCreate() {
+    private beforeCreate(): void {
         this.$options!.components!.InfoLink = InfoLink;
     }
 }

@@ -93,24 +93,24 @@ import ApiClient from '@/ApiClient.ts';
 import Loading from '@/components/Loading.vue';
 
 export default {
-    el: "#app",
-    data(){
+    el: '#app',
+    data() {
         return {
             dark: true,
             users: [],
             select: {
                 id: undefined,
-                username: undefined
+                username: undefined,
             },
             waiting: false,
             newUser: false,
-            newUsername: "",
+            newUsername: '',
             showUsers: false,
-        }
+        };
     },
-    created: function () {
+    created() {
         ApiClient.init(process.env.VUE_APP_ROOT_API);
-        ApiClient.Instance.getUsers().then(r => {
+        ApiClient.Instance.getUsers().then((r) => {
             this.users = r;
 
             if (this.$route.name === 'userMessages') {
@@ -119,38 +119,43 @@ export default {
         });
     },
     watch: {
-        select(newVal){
-            this.$router.push({ name: 'userMessages', params: { id: newVal.id } });
-        }
+        select(newVal) {
+            this.$router.push({
+                name: 'userMessages',
+                params: {
+                    id: newVal.id,
+                },
+            });
+        },
     },
     methods: {
-        updateUsers(){
+        updateUsers() {
             return ApiClient.Instance
                 .getUsers()
-                .then(users => this.users = users)
-                .catch(w => alert('Errore:' + w));
+                .then((users) => this.users = users)
+                .catch((w) => alert('Errore:' + w));
         },
-        createUser(e){
-            e.preventDefault()
+        createUser(ev) {
+            ev.preventDefault();
 
             this.waiting = true;
 
             ApiClient.Instance
                 .createUser(this.newUsername)
-                .then( user => {
+                .then( (user) => {
                     this.newUser = false;
                     this.waiting = false;
 
                     this.select.id = user.id;
                     this.select.username = user.username;
                 })
-                .catch(e => alert(e));
-        }
+                .catch((e) => alert(e));
+        },
     },
     components: {
-        Loading
-    }
-}
+        Loading,
+    },
+};
 </script>
 <style>
 .v-toolbar__extension{

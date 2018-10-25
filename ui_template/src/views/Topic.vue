@@ -41,22 +41,24 @@ import { ITopic } from '@/ApiInterfaces.ts';
     name: 'TopicView',
     components: {
         Loading,
-    }
+    },
 })
 export default class TopicView extends Vue {
-    @Prop({ required: true }) id !: string
 
-    raw: ITopic|null = null
+    @Prop({ required: true })
+    public id !: string;
 
-    created() {
+    private raw: ITopic|null = null;
+
+    private created(): void {
         ApiClient.Instance
             .getTopic(this.id)
-            .then(x => {
-                this.raw = x
-            }).catch(e => alert(e));
+            .then((x: ITopic) => {
+                this.raw = x;
+            }).catch((e: any) => alert(e));
     }
 
-    beforeCreate() {
+    private beforeCreate(): void {
         this.$options!.components!.InfoLink = InfoLink;
     }
 }

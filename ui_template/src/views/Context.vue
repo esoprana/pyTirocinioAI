@@ -99,22 +99,23 @@ import { IContext } from '@/ApiInterfaces.ts';
     components: {
         Json,
         Loading,
-    }
+    },
 })
 export default class ContextView extends Vue {
-    raw: IContext|null = null
+    @Prop({ required: true })
+    public id !: string;
 
-    @Prop({ required: true }) id !: string;
+    private raw: IContext|null = null;
 
-    created() {
+    private created(): void {
         ApiClient.Instance
             .getContext(this.id)
-            .then(x => {
+            .then((x: IContext) => {
                 this.raw = x;
-            }).catch(e => alert(e));
+            }).catch((e: any) => alert(e));
     }
 
-    beforeCreate() {
+    private beforeCreate(): void {
         this.$options!.components!.InfoDialog = InfoDialog;
         this.$options!.components!.InfoLink   = InfoLink;
     }
