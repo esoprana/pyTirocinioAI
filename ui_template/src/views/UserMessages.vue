@@ -1,5 +1,6 @@
 <template>
-    <div>
+    <Loading v-if="!messages.length"/>
+    <div v-if="messages.length">
         <v-container>
             <div ref="messageList" style="margin-top: 3rem">
                 <v-layout row v-for="message in messages" style="margin-top: 3rem" v-bind:class="{bot: message.bot}">
@@ -27,9 +28,10 @@
 </template>
 
 <script lang="js">
-import ApiClient from '@/ApiClient.ts'
+import ApiClient from '@/ApiClient.ts';
 
-import message from '@/components/message.vue'
+import message from '@/components/message.vue';
+import Loading from '@/components/Loading.vue';
 
 export default {
     data(){
@@ -74,7 +76,8 @@ export default {
         },
     },
     components: {
-        'message': message
+        'message': message,
+        Loading
     }
 }
 </script>

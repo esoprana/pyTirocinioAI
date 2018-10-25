@@ -39,6 +39,12 @@
 
         <v-toolbar app fixed extended extension-height="4">
             <v-spacer></v-spacer>
+            <div v-if="select.id !== undefined && $route.name !== 'userMessages'">
+                <span>Messages</span>
+                <v-btn flat icon @click.stop="$router.push({name: 'userMessages', params: { id: select.id }})" color="white">
+                    <v-icon>mail_outline</v-icon>
+                </v-btn>
+            </div>
             <span>{{ select.username }}</span>
             <v-btn flat icon @click.stop="showUsers = !showUsers" color="white">
                 <v-icon>person</v-icon>
