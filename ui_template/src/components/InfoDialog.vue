@@ -69,5 +69,11 @@ export default class InfoDialog extends Vue {
             }
         }
     }
+
+    beforeCreate() {
+        this.$options!.components!.ContextView = ContextView;
+        this.$options!.components!.RuleView = RuleView;
+        this.$options!.components!.TopicView = TopicView;
+    }
 }
 </script>

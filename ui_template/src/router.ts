@@ -39,6 +39,7 @@ export default new Router({
             path: '/userMessages/:id',
             name: 'userMessages',
             component: UserMessages,
+            props: true,
         },
     ],
 });

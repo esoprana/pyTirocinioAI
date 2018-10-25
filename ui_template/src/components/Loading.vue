@@ -17,5 +17,5 @@ import { Prop } from 'vue-property-decorator';
 @Component({
     name: 'Loading',
 })
-export default class Message extends Vue {}
+export default class Loading extends Vue {}
 </script>

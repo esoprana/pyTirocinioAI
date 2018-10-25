@@ -1,6 +1,5 @@
-
 <template>
-    <div v-if="Object.keys(raw).length">
+    <div v-if="raw !== null">
         <v-list subheader>
             <v-subheader>General</v-subheader>
             <v-list-tile>
@@ -47,7 +46,7 @@ import ApiClient from '@/ApiClient.ts';
 export default class TopicView extends Vue {
     @Prop({ required: true }) id !: string
 
-    raw: object = {}
+    raw: object|null = null
 
     created(){
         ApiClient.Instance

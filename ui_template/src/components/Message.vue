@@ -61,7 +61,7 @@ export default class Message extends Vue {
     @Prop({ required: true }) message !: IMessage;
 
     get formattedTimestamp(){
-        const t = (this.message.timestamp) as string;
+        const t = this.message.timestamp;
         return (new Date(t)).toLocaleString();
     }
 

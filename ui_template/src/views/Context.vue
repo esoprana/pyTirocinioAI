@@ -1,5 +1,5 @@
 <template>
-    <div v-if="Object.keys(raw).length">
+    <div v-if="raw !== null">
         <v-list subheader>
             <v-subheader>General</v-subheader>
             <v-list-tile>
@@ -38,10 +38,10 @@
             </v-list-tile-content>
             </v-list-tile>
             <div v-if="raw.message.cls == 'UserMessage'">
-                <json title="Intent"       :json="raw.message.intent"     ></json>
-                <json title="Sentiment"    :json="raw.message.sentiment"  ></json>
-                <json title="Photo"        :json="raw.message.photo"      ></json>
-                <json title="Google Topic" :json="raw.message.googleTopic"></json>
+                <Json title="Intent"       :json="raw.message.intent"     ></Json>
+                <Json title="Sentiment"    :json="raw.message.sentiment"  ></Json>
+                <Json title="Photo"        :json="raw.message.photo"      ></Json>
+                <Json title="Google Topic" :json="raw.message.googleTopic"></Json>
             </div>
         </v-list>
         <v-divider></v-divider>
@@ -67,7 +67,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <json title="Values" :json="item.values"></json>
+                <Json title="Values" :json="item.values"></Json>
             </v-list>
         </v-list>
     </div>
@@ -81,7 +81,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
-import json from '@/components/json.vue';
+import Json from '@/components/Json.vue';
 import topicLink from '@/components/topicLink.vue';
 
 import InfoDialog from '@/components/InfoDialog.vue';
@@ -93,13 +93,13 @@ import ApiClient from '@/ApiClient.ts';
 @Component({
     name: 'ContextView',
     components: {
-        json,
+        Json,
         Loading,
         'a-topic': topicLink
     }
 })
 export default class ContextView extends Vue {
-    raw: object = {}
+    raw: object|null = null
 
     $refs!: {
         ofRule: InfoDialog

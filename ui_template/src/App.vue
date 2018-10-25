@@ -9,7 +9,7 @@
                     </v-list-tile-content>
                 </v-list-tile>
 
-                <v-btn flat icon color="green" @click="newUser = true">
+                <v-btn flat icon color="green" @click="showUsers=false; newUser = true;">
                     <v-icon>add</v-icon>
                 </v-btn>
                 <v-btn flat icon color="green" @click="updateUsers">
@@ -40,16 +40,16 @@
         <v-toolbar app fixed>
             <v-spacer></v-spacer>
             <v-btn flat @click.native="dark = !dark">
-                <v-icon dark>invert_colors</v-icon> Invert colors
+                <v-icon dark class="mr-1">invert_colors</v-icon> Invert colors
             </v-btn>
             <v-divider vertical/>
             <div v-if="select.id !== undefined && $route.name !== 'userMessages'">
                 <v-btn flat @click.stop="$router.push({name: 'userMessages', params: { id: select.id }})">
-                    <v-icon dark>mail_outline</v-icon> Messages
+                    <v-icon dark class="mr-1">mail_outline</v-icon> Messages
                 </v-btn>
             </div>
             <v-btn flat @click.stop="showUsers = !showUsers">
-                <v-icon dark>person</v-icon> {{ select.username }}
+                <v-icon dark class="mr-1">person</v-icon> {{ select.username === undefined? 'Select user': select.username }}
             </v-btn>
         </v-toolbar>
 
@@ -90,7 +90,6 @@
 <script lang="js">
 import ApiClient from '@/ApiClient.ts';
 
-import message from '@/components/message.vue';
 import Loading from '@/components/Loading.vue';
 
 export default {
@@ -121,7 +120,7 @@ export default {
     },
     watch: {
         select(newVal){
-            this.$router.push({ path: `/userMessages/${newVal.id}` });
+            this.$router.push({ name: 'userMessages', params: { id: newVal.id } });
         }
     },
     methods: {
@@ -135,23 +134,20 @@ export default {
             e.preventDefault()
 
             this.waiting = true;
+
             ApiClient.Instance
                 .createUser(this.newUsername)
                 .then( user => {
-                    this.newUser=false;
+                    this.newUser = false;
                     this.waiting = false;
-                    return this.updateUsers().then(y => Promise.resolve(user));
-                })
-                .then( user => {
+
                     this.select.id = user.id;
                     this.select.username = user.username;
-                    this.$router.push({ name: 'userMessages', params: { id: user.id } });
                 })
                 .catch(e => alert(e));
         }
     },
     components: {
-        'message': message,
         Loading
     }
 }
