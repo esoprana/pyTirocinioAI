@@ -37,7 +37,7 @@
             </v-list>
         </v-navigation-drawer>
 
-        <v-toolbar app fixed extended extension-height="4">
+        <v-toolbar app fixed>
             <v-spacer></v-spacer>
             <div v-if="select.id !== undefined && $route.name !== 'userMessages'">
                 <span>Messages</span>
@@ -49,13 +49,6 @@
             <v-btn flat icon @click.stop="showUsers = !showUsers" color="white">
                 <v-icon>person</v-icon>
             </v-btn>
-            <v-progress-linear
-                slot="extension"
-                :indeterminate="true"
-                style="height: 4px; width: 100vw"
-                class="ma-0"
-                v-if="waiting"
-            >Progress?</v-progress-linear>
         </v-toolbar>
 
         <v-content>
