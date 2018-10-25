@@ -57,7 +57,8 @@ class Params(EmbeddedDocument):
 
     ofTopic = fields.ReferenceField(Topic, dbRef=True, required=True)
     values = fields.DictField(required=False)
-    startTime = fields.DateTimeField(required=True)
+    startTime = fields.StrictDateTimeField(
+        tz_aware=True, format="iso", required=True)
     priority = fields.IntegerField(required=True)
 
 
@@ -113,6 +114,7 @@ class Context(Document):
     :ivar Message message:
     """
     ofUser = fields.ReferenceField(User, dbRef=True, required=True)
-    timestamp = fields.DateTimeField(required=True)
+    timestamp = fields.StrictDateTimeField(
+        tz_aware=True, format="iso", required=True)
     params = fields.ListField(fields.EmbeddedField(Params))
     message = fields.EmbeddedField(Message)

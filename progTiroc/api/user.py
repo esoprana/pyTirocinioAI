@@ -100,12 +100,12 @@ class UserList(HTTPMethodView):
             paramFirst = db_ctx.Params(
                 ofTopic=request.app.default_topic,
                 values=request.json,
-                startTime=datetime.now(),
+                startTime=datetime.utcnow(),
                 priority=0)
 
             context = db_ctx.Context(
                 ofUser=user,
-                timestamp=datetime.now(),
+                timestamp=datetime.utcnow(),
                 params=[paramFirst],
                 message=db_ctx.Message(text='Hi!'))
 

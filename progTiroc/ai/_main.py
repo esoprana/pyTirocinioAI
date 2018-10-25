@@ -373,7 +373,7 @@ class AI:
                 new_param = db_ctx.Params(
                     ofTopic=old_param.ofTopic,
                     values=old_param.values,
-                    startTime=datetime.now(),
+                    startTime=datetime.utcnow(),
                     priority=old_param.priority)
 
                 # Change/add value using eval(no globals only locals)
@@ -393,7 +393,7 @@ class AI:
                 new_param = db_ctx.Params(
                     ofTopic=do['topic'],
                     values={},
-                    startTime=datetime.now(),
+                    startTime=datetime.utcnow(),
                     priority=max_pr)
 
                 new_ctx.params.append(new_param)
@@ -453,7 +453,7 @@ class AI:
 
                     no_und_ctx = db_ctx.Context(
                         ofUser=old_ctx.ofUser,
-                        timestamp=datetime.now(),
+                        timestamp=datetime.utcnow(),
                         params=ord_param,
                         message=db_ctx.BotMessage(
                             text=fallback_rule.action.text[randint(
@@ -482,7 +482,7 @@ class AI:
                 db_ctx, mapping, rule.action, options,
                 dict(
                     ofUser=old_ctx.ofUser,
-                    timestamp=datetime.now(),
+                    timestamp=datetime.utcnow(),
                     params=ord_param,
                     message=db_ctx.BotMessage(
                         text=text.format(**options), fromRule=rule.id)))

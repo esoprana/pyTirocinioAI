@@ -21,7 +21,7 @@ def patch_datetime_now(monkeypatch):
         FAKE_TIME = datetime.datetime(2000, 12, 25, 17, 5, 55)
 
         @classmethod
-        def now(cls):
+        def utcnow(cls):
             return MockedDatetime.FAKE_TIME
 
     with mock.patch('datetime.datetime', MockedDatetime), mock.patch(
@@ -76,7 +76,7 @@ def test_user_save(db_ctx):
 
 @pytest.mark.usefixtures('patch_datetime_now')
 def test_now():
-    assert datetime.datetime.now() == datetime.datetime.FAKE_TIME
+    assert datetime.datetime.utcnow() == datetime.datetime.FAKE_TIME
 
 
 async def gen_standard(
@@ -125,20 +125,20 @@ def test_update1(db_ctx):
         }, {
             'ofUser': user.id,
             'params': [firstParam],
-            'timestamp': datetime.datetime.now(),
+            'timestamp': datetime.datetime.utcnow(),
             'message': db_ctx.Message(text='aaa')
         })
         await new_ctx.commit()
 
         test_ctx = db_ctx.Context(
             ofUser=user.id,
-            timestamp=datetime.datetime.now(),
+            timestamp=datetime.datetime.utcnow(),
             params=[
                 firstParam,
                 db_ctx.Params(
                     ofTopic=topic.id,
                     values={},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=0)
             ],
             message=db_ctx.Message(text='aaa'))
@@ -172,13 +172,13 @@ def test_update2(db_ctx):
 
         old_ctx = db_ctx.Context(
             ofUser=user.id,
-            timestamp=datetime.datetime.now(),
+            timestamp=datetime.datetime.utcnow(),
             params=[
                 firstParam,
                 db_ctx.Params(
                     ofTopic=topic.id,
                     values={},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=0)
             ],
             message=db_ctx.Message(text='aaa'))
@@ -192,14 +192,14 @@ def test_update2(db_ctx):
         }, {
             'ofUser': user.id,
             'params': old_ctx.params,
-            'timestamp': datetime.datetime.now(),
+            'timestamp': datetime.datetime.utcnow(),
             'message': db_ctx.Message(text='aaa')
         })
         await new_ctx.commit()
 
         old_ctx.params[1].values['test'] = 1
-        old_ctx.params[1].startTime = datetime.datetime.now()
-        old_ctx.timestamp = datetime.datetime.now()
+        old_ctx.params[1].startTime = datetime.datetime.utcnow()
+        old_ctx.timestamp = datetime.datetime.utcnow()
         await old_ctx.commit()
 
         assert remove_id(old_ctx) == remove_id(new_ctx)
@@ -229,13 +229,13 @@ def test_udpate3(db_ctx):
 
         old_ctx = db_ctx.Context(
             ofUser=user.id,
-            timestamp=datetime.datetime.now(),
+            timestamp=datetime.datetime.utcnow(),
             params=[
                 firstParam,
                 db_ctx.Params(
                     ofTopic=topic,
                     values={'test': 1},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=0)
             ],
             message=db_ctx.Message(text='aaa'))
@@ -249,15 +249,15 @@ def test_udpate3(db_ctx):
         }, {
             'ofUser': user.id,
             'params': old_ctx.params,
-            'timestamp': datetime.datetime.now(),
+            'timestamp': datetime.datetime.utcnow(),
             'message': db_ctx.Message(text='aaa')
         })
 
         await new_ctx.commit()
 
         old_ctx.params[1].values['test'] = 2
-        old_ctx.params[1].startTime = datetime.datetime.now()
-        old_ctx.timestamp = datetime.datetime.now()
+        old_ctx.params[1].startTime = datetime.datetime.utcnow()
+        old_ctx.timestamp = datetime.datetime.utcnow()
         await old_ctx.commit()
 
         assert remove_id(old_ctx) == remove_id(new_ctx)
@@ -287,13 +287,13 @@ def test_update4(db_ctx):
 
         old_ctx = db_ctx.Context(
             ofUser=user.id,
-            timestamp=datetime.datetime.now(),
+            timestamp=datetime.datetime.utcnow(),
             params=[
                 firstParam,
                 db_ctx.Params(
                     ofTopic=topic,
                     values={'test': 2},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=0)
             ],
             message=db_ctx.UserMessage(text='aaa'))
@@ -307,15 +307,15 @@ def test_update4(db_ctx):
         }, {
             'ofUser': user.id,
             'params': old_ctx.params,
-            'timestamp': datetime.datetime.now(),
+            'timestamp': datetime.datetime.utcnow(),
             'message': db_ctx.UserMessage(text='aaa')
         })
 
         await new_ctx.commit()
 
         del old_ctx.params[1].values['test']
-        old_ctx.params[1].startTime = datetime.datetime.now()
-        old_ctx.timestamp = datetime.datetime.now()
+        old_ctx.params[1].startTime = datetime.datetime.utcnow()
+        old_ctx.timestamp = datetime.datetime.utcnow()
         await old_ctx.commit()
 
         assert remove_id(old_ctx) == remove_id(new_ctx)
@@ -343,28 +343,28 @@ def test_update5(db_ctx):
 
         old_ctx = db_ctx.Context(
             ofUser=user.id,
-            timestamp=datetime.datetime.now(),
+            timestamp=datetime.datetime.utcnow(),
             params=[
                 firstParam,
                 db_ctx.Params(
                     ofTopic=topic,
                     values={'test': 2},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=0),
                 db_ctx.Params(
                     ofTopic=topic,
                     values={'test': 5},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=-1),
                 db_ctx.Params(
                     ofTopic=topic,
                     values={'test': 95},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=-2),
                 db_ctx.Params(
                     ofTopic=topic,
                     values={'test': 25},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=-3)
             ],
             message=db_ctx.Message(text='aaa'))
@@ -380,14 +380,14 @@ def test_update5(db_ctx):
         }, {
             'ofUser': user.id,
             'params': old_ctx.params,
-            'timestamp': datetime.datetime.now(),
+            'timestamp': datetime.datetime.utcnow(),
             'message': db_ctx.Message(text='aaa')
         })
 
         await new_ctx.commit()
 
         old_ctx.params = [old_ctx.params[0], old_ctx.params[1]]
-        old_ctx.timestamp = datetime.datetime.now()
+        old_ctx.timestamp = datetime.datetime.utcnow()
         await old_ctx.commit()
 
         assert remove_id(old_ctx) == remove_id(new_ctx)
@@ -414,28 +414,28 @@ def test_update6(db_ctx):
 
         old_ctx = db_ctx.Context(
             ofUser=user.id,
-            timestamp=datetime.datetime.now(),
+            timestamp=datetime.datetime.utcnow(),
             params=[
                 firstParam,
                 db_ctx.Params(
                     ofTopic=topic,
                     values={'test': 2},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=0),
                 db_ctx.Params(
                     ofTopic=topic,
                     values={'test': 5},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=-1),
                 db_ctx.Params(
                     ofTopic=topic,
                     values={'test': 95},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=-2),
                 db_ctx.Params(
                     ofTopic=topic,
                     values={'test': 25},
-                    startTime=datetime.datetime.now(),
+                    startTime=datetime.datetime.utcnow(),
                     priority=-3)
             ],
             message=db_ctx.Message(text='aaa'))
@@ -451,14 +451,14 @@ def test_update6(db_ctx):
         }, {
             'ofUser': user,
             'params': old_ctx.params,
-            'timestamp': datetime.datetime.now(),
+            'timestamp': datetime.datetime.utcnow(),
             'message': db_ctx.Message(text='aaa')
         })
 
         await new_ctx.commit()
 
         old_ctx.params = old_ctx.params[:-1]
-        old_ctx.timestamp = datetime.datetime.now()
+        old_ctx.timestamp = datetime.datetime.utcnow()
         await old_ctx.commit()
 
         assert remove_id(old_ctx) == remove_id(new_ctx)

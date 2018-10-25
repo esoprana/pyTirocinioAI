@@ -159,7 +159,7 @@ class SingleMessage(HTTPMethodView):
 
             context = db_ctx.Context(
                 ofUser=old_context.ofUser,
-                timestamp=datetime.now(),
+                timestamp=datetime.utcnow(),
                 params=old_context.params,
                 message=msg)
             await context.commit()
