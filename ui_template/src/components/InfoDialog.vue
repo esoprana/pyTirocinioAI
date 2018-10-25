@@ -6,7 +6,7 @@
                     <v-toolbar-title>{{ title }}</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-btn icon dark @click.native="$router.push(fullPath)">
-                        <v-icon>present_to_all</v-icon>
+                        <v-icon>open_in_browser</v-icon>
                     </v-btn>
                     <v-btn icon dark @click.native="show = false">
                         <v-icon>close</v-icon>

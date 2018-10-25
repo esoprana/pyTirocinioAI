@@ -1,5 +1,5 @@
 <template>
-    <v-app dark>
+    <v-app :dark="dark">
 
         <v-navigation-drawer v-model="showUsers" app temporary right>
             <v-list>
@@ -39,15 +39,17 @@
 
         <v-toolbar app fixed>
             <v-spacer></v-spacer>
+            <v-btn flat @click.native="dark = !dark">
+                <v-icon dark>invert_colors</v-icon> Invert colors
+            </v-btn>
+            <v-divider vertical/>
             <div v-if="select.id !== undefined && $route.name !== 'userMessages'">
-                <span>Messages</span>
-                <v-btn flat icon @click.stop="$router.push({name: 'userMessages', params: { id: select.id }})" color="white">
-                    <v-icon>mail_outline</v-icon>
+                <v-btn flat @click.stop="$router.push({name: 'userMessages', params: { id: select.id }})">
+                    <v-icon dark>mail_outline</v-icon> Messages
                 </v-btn>
             </div>
-            <span>{{ select.username }}</span>
-            <v-btn flat icon @click.stop="showUsers = !showUsers" color="white">
-                <v-icon>person</v-icon>
+            <v-btn flat @click.stop="showUsers = !showUsers">
+                <v-icon dark>person</v-icon> {{ select.username }}
             </v-btn>
         </v-toolbar>
 
@@ -56,23 +58,26 @@
                 <v-dialog v-model="newUser" max-width="600">
                     <v-card>
                         <v-card-title class="headline">Create new user</v-card-title>
-                        <v-form @submit.prevent="createUser">
-                            <v-text-field
-                                v-model="newUsername"
-                                box
-                                label="Username"
-                                clearable
-                            ></v-text-field>
-                        </v-form>
-                        <v-card-actions>
-                            <v-btn flat icon color="red" @click="newUser = false">
-                                <v-icon>cancel</v-icon>
-                            </v-btn>
-                            <v-spacer></v-spacer>
-                            <v-btn flat icon color="green" @click="createUser">
-                                <v-icon>add</v-icon>
-                            </v-btn>
-                        </v-card-actions>
+                        <Loading v-if="waiting"/>
+                        <div v-else>
+                            <v-form @submit.prevent="createUser">
+                                <v-text-field
+                                    v-model="newUsername"
+                                    box
+                                    label="Username"
+                                    clearable
+                                ></v-text-field>
+                            </v-form>
+                            <v-card-actions>
+                                <v-btn flat icon color="red" @click="newUser = false">
+                                    <v-icon>cancel</v-icon>
+                                </v-btn>
+                                <v-spacer></v-spacer>
+                                <v-btn flat icon color="green" @click="createUser">
+                                    <v-icon>add</v-icon>
+                                </v-btn>
+                            </v-card-actions>
+                        </div>
                     </v-card>
                 </v-dialog>
             </v-layout>
@@ -83,13 +88,16 @@
 </template>
 
 <script lang="js">
-import ApiClient from '@/ApiClient.ts'
-import message from '@/components/message.vue'
+import ApiClient from '@/ApiClient.ts';
+
+import message from '@/components/message.vue';
+import Loading from '@/components/Loading.vue';
 
 export default {
     el: "#app",
     data(){
         return {
+            dark: true,
             users: [],
             select: {
                 id: undefined,
@@ -126,21 +134,25 @@ export default {
         createUser(e){
             e.preventDefault()
 
-            this.$root.waiting = true;
+            this.waiting = true;
             ApiClient.Instance
                 .createUser(this.newUsername)
-                .then( user => this.updateUsers().then(y => Promise.resolve(user)) )
+                .then( user => {
+                    this.newUser=false;
+                    this.waiting = false;
+                    return this.updateUsers().then(y => Promise.resolve(user));
+                })
                 .then( user => {
                     this.select.id = user.id;
                     this.select.username = user.username;
                     this.$router.push({ name: 'userMessages', params: { id: user.id } });
                 })
-                .then( w => {this.$root.waiting = false; this.newUser=false;} )
                 .catch(e => alert(e));
         }
     },
     components: {
-        'message': message
+        'message': message,
+        Loading
     }
 }
 </script>
