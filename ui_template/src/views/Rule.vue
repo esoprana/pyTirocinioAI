@@ -23,7 +23,7 @@
             <v-list-tile>
                 <v-list-tile-content>
                     <v-list-tile-title>Topic used</v-list-tile-title>
-                    <v-list-tile-sub-title><a-topic :id="item.__type__"/></v-list-tile-sub-title>
+                    <v-list-tile-sub-title><InfoLink tag="Topic" :id="item.__type__"/></v-list-tile-sub-title>
                 </v-list-tile-content>
             </v-list-tile>
             <Json title="Other conditions" :json="item"></Json>
@@ -57,7 +57,7 @@ import Component from 'vue-class-component';
 import { Prop } from 'vue-property-decorator';
 
 import Json from '@/components/Json.vue';
-import topicLink from '@/components/topicLink.vue';
+import InfoLink from '@/components/InfoLink.vue';
 
 import ApiClient from '@/ApiClient.ts';
 
@@ -65,7 +65,6 @@ import ApiClient from '@/ApiClient.ts';
     name: 'RuleView',
     components: {
         Json,
-        'a-topic': topicLink
     }
 })
 export default class RuleView extends Vue {
@@ -82,6 +81,10 @@ export default class RuleView extends Vue {
                 this.raw = x
                 //this.$root.waiting = false
             }).catch(e => alert(e));
+    }
+
+    beforeCreate() {
+        this.$options!.components!.InfoLink = InfoLink;
     }
 }
 </script>

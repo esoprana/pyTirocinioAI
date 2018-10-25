@@ -33,8 +33,9 @@
             <v-list-tile v-if="raw.message.cls == 'BotMessage'">
             <v-list-tile-content>
                 <v-list-tile-title>ofRule</v-list-tile-title>
-                <v-list-tile-sub-title @click="showRule()"><a>{{ raw.message.fromRule }}</a></v-list-tile-sub-title>
-                <InfoDialog :id="raw.message.fromRule" tag="Rule" ref="ofRule"/>
+                <v-list-tile-sub-title>
+                    <InfoLink :id="raw.message.fromRule" tag="Rule"/>
+                </v-list-tile-sub-title>
             </v-list-tile-content>
             </v-list-tile>
             <div v-if="raw.message.cls == 'UserMessage'">
@@ -51,7 +52,7 @@
                 <v-list-tile>
                     <v-list-tile-content>
                         <v-list-tile-title>OfTopic</v-list-tile-title>
-                        <v-list-tile-sub-title><a-topic :id="item.ofTopic"/></v-list-tile-sub-title>
+                        <v-list-tile-sub-title><InfoLink tag="Topic" :id="item.ofTopic"/></v-list-tile-sub-title>
                     </v-list-tile-content>
                 </v-list-tile>
                 <v-list-tile>
@@ -85,6 +86,7 @@ import Json from '@/components/Json.vue';
 import topicLink from '@/components/topicLink.vue';
 
 import InfoDialog from '@/components/InfoDialog.vue';
+import InfoLink from '@/components/InfoLink.vue';
 
 import Loading from '@/components/Loading.vue';
 
@@ -95,21 +97,12 @@ import ApiClient from '@/ApiClient.ts';
     components: {
         Json,
         Loading,
-        'a-topic': topicLink
     }
 })
 export default class ContextView extends Vue {
     raw: object|null = null
 
-    $refs!: {
-        ofRule: InfoDialog
-    }
-
     @Prop({ required: true }) id !: string;
-
-    showRule () {
-        this.$refs.ofRule.show = true
-    }
 
     created() {
         //this.$root!.waiting = true;
@@ -124,6 +117,7 @@ export default class ContextView extends Vue {
 
     beforeCreate() {
         this.$options!.components!.InfoDialog = InfoDialog;
+        this.$options!.components!.InfoLink   = InfoLink;
     }
 }
 </script>
