@@ -28,59 +28,66 @@
     </div>
 </template>
 
-<script lang="js">
-import ApiClient from '@/ApiClient.ts';
+<script lang="ts">
 
-import Message from '@/components/Message.vue';
+
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Prop, Watch } from 'vue-property-decorator';
+
 import Loading from '@/components/Loading.vue';
 
-export default {
-    props: ['id'],
-    data(){
-        return {
-            messages: [],
-            msg: "",
-            waiting: false,
-        }
-    },
-    watch: {
-        id: function(newId) {
-            this.updateMessages(this.id, undefined);
-        }
-    },
-    created(){
-        this.updateMessages(this.id, undefined);
-    },
-    methods: {
-        updateMessages(userId, after) {
-            this.waiting = true;
+import InfoLink from '@/components/InfoLink.vue';
+import Message from '@/components/Message.vue';
 
-            return ApiClient.Instance.getMessages(userId, after).then(r => {
-                this.messages = after === undefined ? r : this.messages.concat(r);
-                this.waiting = false;
-            }).catch(w => alert(w));
-        },
-        updateUsers(){
-            return ApiClient.Instance
-                .getUsers()
-                .then(users => this.users)
-                .catch(w => alert('Errore:' + w));
-        },
-        sendMessage(e){
-            e.preventDefault();
+import ApiClient from '@/ApiClient.ts';
 
-            this.waiting = true;
-
-            ApiClient.Instance
-                .sendMessage(this.id, this.msg)
-                .then( x => this.updateMessages(this.id, this.messages[this.messages.length - 1].timestamp) )
-                .then( w => {this.waiting = false; this.msg = '';} )
-                .catch( e => alert(e) );
-        },
-    },
+@Component({
+    name: 'TopicView',
     components: {
         Message,
         Loading
+    }
+})
+export default class TopicView extends Vue {
+    @Prop({ required: true }) id !: string
+
+    messages: any[] = [];
+    msg: string = "";
+    waiting: boolean = false;
+
+    updateMessages(userId: string, after: string|undefined) : Promise<void> {
+        this.waiting = true;
+
+        return ApiClient.Instance.getMessages(userId, after).then(r => {
+            this.messages = after === undefined ? r : this.messages.concat(r);
+            this.waiting = false;
+        }).catch(w => alert(w));
+    }
+
+    sendMessage(ev: any){
+        ev.preventDefault();
+
+        this.waiting = true;
+
+        ApiClient.Instance
+            .sendMessage(this.id, this.msg)
+            .then( (x: any) => this.updateMessages(this.id, this.messages[this.messages.length - 1].timestamp) )
+            .then( (w: void) => {
+                this.waiting = false;
+                this.msg = '';
+            })
+            .catch( (e: any) => alert(e) );
+    }
+
+
+    @Watch('id')
+    updateId(newId: string) {
+        this.updateMessages(this.id, undefined);
+    }
+
+    created(){
+        this.updateMessages(this.id, undefined);
     }
 }
 </script>

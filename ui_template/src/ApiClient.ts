@@ -37,7 +37,7 @@ export default class Api {
         return fetch(url).then( (x) => x.json() );
     }
 
-    public sendMessage(id: number, msg: string) {
+    public sendMessage(id: string, msg: string) {
         const url = `${this.url}/message/${id}/000000000000000000000001`
 
         return fetch(url, {
